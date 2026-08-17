@@ -1,3 +1,8 @@
+// Must match a verified "Send mail as" alias in the Gmail account running
+// this script (Gmail Settings → Accounts and Import → Send mail as).
+const FROM_EMAIL = "studio@aboustate.tech";
+const FROM_NAME = "aboustate.tech";
+
 const SHEET_NAME = "Submissions";
 const HEADERS = [
   "Timestamp",
@@ -61,10 +66,10 @@ function sendConfirmationEmail(data) {
     ? "We've received your quote request — aboustate.tech"
     : "We've received your appointment request — aboustate.tech";
 
-  MailApp.sendEmail({
-    to: data.email,
-    subject: subject,
+  GmailApp.sendEmail(data.email, subject, "", {
     htmlBody: buildConfirmationEmailHtml(data, isQuotation),
+    from: FROM_EMAIL,
+    name: FROM_NAME,
   });
 }
 
