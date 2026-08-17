@@ -1,50 +1,81 @@
+import { createClient } from "@supabase/supabase-js";
 import { isAuthenticated } from "../_lib/adminAuth.js";
 
 export default async function handler(req, res) {
-  if (!isAuthenticated(req)) {
-    res.status(401).json({ error: "unauthorized" });
-    return;
-  }
-
-  const appsScriptUrl = process.env.APPS_SCRIPT_URL;
-  const apiKey = process.env.ADMIN_SHEET_API_KEY;
-
-  if (!appsScriptUrl || !apiKey) {
-    res.status(500).json({ error: "server_not_configured" });
-    return;
-  }
-
-  if (req.method === "GET") {
-    try {
-      const response = await fetch(`${appsScriptUrl}?key=${encodeURIComponent(apiKey)}`);
-      const data = await response.json();
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(502).json({ error: "upstream_failed" });
-    }
-    return;
-  }
-
-  if (req.method === "PATCH") {
-    const { id, status, notes } = req.body || {};
-    if (!id) {
-      res.status(400).json({ error: "missing_id" });
+  try {
+    if (!isAuthenticated(req)) {
+      res.status(401).json({ error: "unauthorized" });
       return;
     }
 
-    try {
-      const response = await fetch(appsScriptUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "updateLead", key: apiKey, id, status, notes }),
-      });
-      const data = await response.json();
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(502).json({ error: "upstream_failed" });
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      res.status(500).json({ error: "server_not_configured" });
+      return;
     }
-    return;
-  }
 
-  res.status(405).json({ error: "method_not_allowed" });
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+    if (req.method === "GET") {
+      const { data, error } = await supabase
+        .from("service_requests")
+        .select("*")
+        .order("submitted_at", { ascending: false });
+
+      if (error) {
+        res.status(502).json({ error: "database_read_failed" });
+        return;
+      }
+
+      res.status(200).json({ leads: data.map(toDashboardShape) });
+      return;
+    }
+
+    if (req.method === "PATCH") {
+      const { id, status, notes } = req.body || {};
+      if (!id) {
+        res.status(400).json({ error: "missing_id" });
+        return;
+      }
+
+      const patch = {};
+      if (typeof status === "string") patch.status = status;
+      if (typeof notes === "string") patch.notes = notes;
+
+      const { error } = await supabase.from("service_requests").update(patch).eq("id", id);
+
+      if (error) {
+        res.status(502).json({ error: "database_update_failed" });
+        return;
+      }
+
+      res.status(200).json({ status: "ok" });
+      return;
+    }
+
+    res.status(405).json({ error: "method_not_allowed" });
+  } catch (error) {
+    console.error("admin/leads crashed:", error);
+    res.status(500).json({ error: "unexpected_error" });
+  }
+}
+
+// Matches the shape the dashboard already expects (originally the Apps
+// Script doGet response), so Dashboard.jsx/BoardView.jsx/csv.js need no
+// changes for this migration.
+function toDashboardShape(row) {
+  return {
+    ID: row.id,
+    Timestamp: row.submitted_at,
+    Type: row.type,
+    Name: row.name,
+    Email: row.email,
+    Phone: row.phone,
+    "Project Description": row.project_description,
+    Timeline: row.timeline,
+    "Student Project": row.is_student_project ? "Yes" : "No",
+    Services: Array.isArray(row.services) ? row.services.join(", ") : "",
+    "Other Service Description": row.other_service_description,
+    Status: row.status,
+    Notes: row.notes,
+  };
 }
