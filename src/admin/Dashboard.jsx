@@ -1,12 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
+import { BoardView } from "./BoardView.jsx";
+import { exportLeadsToCsv } from "./csv.js";
 
 const STATUS_OPTIONS = ["New", "Contacted", "Won", "Lost"];
+const PAGE_SIZE = 15;
 
 const STATUS_STYLES = {
   New: "bg-mint-100 text-green-950",
   Contacted: "bg-beige-300 text-green-950",
   Won: "bg-accent text-green-950",
   Lost: "bg-beige-500 text-text-secondary",
+};
+
+const SORTABLE_COLUMNS = {
+  Submitted: "Timestamp",
+  Type: "Type",
+  Name: "Name",
+  Status: "Status",
 };
 
 export function Dashboard({ onLogout }) {
@@ -17,10 +27,21 @@ export function Dashboard({ onLogout }) {
   const [typeFilter, setTypeFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState(null);
+  const [view, setView] = useState("table"); // table | board
+  const [sortKey, setSortKey] = useState("Timestamp");
+  const [sortDir, setSortDir] = useState("desc");
+  const [page, setPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkStatus, setBulkStatus] = useState(STATUS_OPTIONS[0]);
 
   useEffect(() => {
     loadLeads();
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+    setSelectedIds(new Set());
+  }, [statusFilter, typeFilter, search]);
 
   async function loadLeads() {
     setLoading(true);
@@ -53,6 +74,12 @@ export function Dashboard({ onLogout }) {
     }
   }
 
+  async function applyBulkStatus() {
+    const ids = Array.from(selectedIds);
+    await Promise.all(ids.map((id) => updateLead(id, { status: bulkStatus })));
+    setSelectedIds(new Set());
+  }
+
   const filteredLeads = useMemo(() => {
     const q = search.trim().toLowerCase();
     return leads.filter((lead) => {
@@ -67,6 +94,49 @@ export function Dashboard({ onLogout }) {
       return true;
     });
   }, [leads, statusFilter, typeFilter, search]);
+
+  const sortedLeads = useMemo(() => {
+    const sorted = [...filteredLeads].sort((a, b) => {
+      const aVal = a[sortKey] || "";
+      const bVal = b[sortKey] || "";
+      if (aVal < bVal) return sortDir === "asc" ? -1 : 1;
+      if (aVal > bVal) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [filteredLeads, sortKey, sortDir]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedLeads.length / PAGE_SIZE));
+  const pagedLeads = sortedLeads.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function toggleSort(column) {
+    const key = SORTABLE_COLUMNS[column];
+    if (sortKey === key) {
+      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  }
+
+  function toggleSelect(id) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAllOnPage() {
+    setSelectedIds((prev) => {
+      const pageIds = pagedLeads.map((l) => l.ID);
+      const allSelected = pageIds.every((id) => prev.has(id));
+      const next = new Set(prev);
+      pageIds.forEach((id) => (allSelected ? next.delete(id) : next.add(id)));
+      return next;
+    });
+  }
 
   const stats = useMemo(() => {
     const total = leads.length;
@@ -88,6 +158,9 @@ export function Dashboard({ onLogout }) {
 
     return { total, quotations, appointments, studentProjects, topService };
   }, [leads]);
+
+  const allOnPageSelected =
+    pagedLeads.length > 0 && pagedLeads.every((l) => selectedIds.has(l.ID));
 
   return (
     <div className="min-h-screen bg-surface-page">
@@ -128,7 +201,7 @@ export function Dashboard({ onLogout }) {
           />
         </div>
 
-        <div className="mb-4 flex flex-wrap gap-3">
+        <div className="mb-4 flex flex-wrap items-center gap-3">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -155,7 +228,7 @@ export function Dashboard({ onLogout }) {
             placeholder="Search name, email, brief…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-[200px] rounded-sm border border-border-subtle bg-surface-card px-3 py-2 font-body text-small text-text-primary outline-none focus:border-accent"
+            className="min-w-[200px] flex-1 rounded-sm border border-border-subtle bg-surface-card px-3 py-2 font-body text-small text-text-primary outline-none focus:border-accent"
           />
           <button
             type="button"
@@ -164,44 +237,155 @@ export function Dashboard({ onLogout }) {
           >
             Refresh
           </button>
+          <button
+            type="button"
+            onClick={() => exportLeadsToCsv(filteredLeads, "aboustate-leads.csv")}
+            className="rounded-sm border border-border-subtle px-4 py-2 font-body text-small font-semibold text-text-primary transition-colors duration-150 hover:border-accent hover:text-text-accent"
+          >
+            Export CSV
+          </button>
+
+          <div className="ml-auto flex rounded-sm border border-border-subtle bg-surface-card p-1">
+            {["table", "board"].map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setView(v)}
+                className={[
+                  "rounded-sm px-4 py-1.5 font-body text-small font-semibold capitalize transition-colors duration-150",
+                  view === v ? "bg-accent text-green-950" : "text-text-secondary hover:text-text-accent",
+                ].join(" ")}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {view === "table" && selectedIds.size > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-3 rounded-sm border border-accent bg-mint-100 px-4 py-2.5">
+            <span className="font-body text-small font-semibold text-green-950">
+              {selectedIds.size} selected
+            </span>
+            <select
+              value={bulkStatus}
+              onChange={(e) => setBulkStatus(e.target.value)}
+              className="rounded-sm border border-border-subtle bg-surface-card px-2 py-1.5 font-body text-small text-text-primary outline-none focus:border-accent"
+            >
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  Set status: {s}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={applyBulkStatus}
+              className="rounded-sm bg-accent px-3 py-1.5 font-body text-small font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700"
+            >
+              Apply
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                exportLeadsToCsv(
+                  leads.filter((l) => selectedIds.has(l.ID)),
+                  "aboustate-leads-selected.csv"
+                )
+              }
+              className="rounded-sm border border-border-subtle bg-surface-card px-3 py-1.5 font-body text-small font-semibold text-text-primary transition-colors duration-150 hover:border-accent hover:text-text-accent"
+            >
+              Export selected
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedIds(new Set())}
+              className="ml-auto font-body text-small text-text-secondary hover:text-text-primary"
+            >
+              Clear
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <p className="font-body text-small text-text-secondary">Loading leads…</p>
         ) : filteredLeads.length === 0 ? (
           <p className="font-body text-small text-text-secondary">No leads match.</p>
+        ) : view === "board" ? (
+          <BoardView leads={filteredLeads} onUpdate={updateLead} />
         ) : (
-          <div className="overflow-x-auto rounded-md border border-border-subtle bg-surface-card">
-            <table className="w-full min-w-[900px] border-collapse">
-              <thead>
-                <tr className="border-b border-border-subtle text-left">
-                  {["Submitted", "Type", "Name", "Contact", "Services", "Student", "Status", "Notes"].map(
-                    (h) => (
-                      <th
-                        key={h}
-                        className="px-4 py-3 font-mono text-micro uppercase tracking-mono text-text-accent"
-                      >
-                        {h}
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredLeads.map((lead) => (
-                  <LeadRow
-                    key={lead.ID}
-                    lead={lead}
-                    expanded={expandedId === lead.ID}
-                    onToggleExpand={() =>
-                      setExpandedId((prev) => (prev === lead.ID ? null : lead.ID))
-                    }
-                    onUpdate={updateLead}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <div className="overflow-x-auto rounded-md border border-border-subtle bg-surface-card">
+              <table className="w-full min-w-[960px] border-collapse">
+                <thead>
+                  <tr className="border-b border-border-subtle text-left">
+                    <th className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={allOnPageSelected}
+                        onChange={toggleSelectAllOnPage}
+                        className="h-4 w-4 rounded-xs border border-border-subtle accent-accent"
+                      />
+                    </th>
+                    {["Submitted", "Type", "Name", "Contact", "Services", "Student", "Status", "Notes"].map(
+                      (h) => (
+                        <th
+                          key={h}
+                          onClick={() => SORTABLE_COLUMNS[h] && toggleSort(h)}
+                          className={[
+                            "px-4 py-3 font-mono text-micro uppercase tracking-mono text-text-accent",
+                            SORTABLE_COLUMNS[h] ? "cursor-pointer select-none hover:text-mint-700" : "",
+                          ].join(" ")}
+                        >
+                          {h}
+                          {SORTABLE_COLUMNS[h] === sortKey && (sortDir === "asc" ? " ↑" : " ↓")}
+                        </th>
+                      )
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {pagedLeads.map((lead) => (
+                    <LeadRow
+                      key={lead.ID}
+                      lead={lead}
+                      selected={selectedIds.has(lead.ID)}
+                      onToggleSelect={() => toggleSelect(lead.ID)}
+                      expanded={expandedId === lead.ID}
+                      onToggleExpand={() =>
+                        setExpandedId((prev) => (prev === lead.ID ? null : lead.ID))
+                      }
+                      onUpdate={updateLead}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="rounded-sm border border-border-subtle px-3 py-1.5 font-body text-small font-semibold text-text-primary transition-colors duration-150 hover:border-accent hover:text-text-accent disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Prev
+                </button>
+                <span className="font-body text-small text-text-secondary">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  className="rounded-sm border border-border-subtle px-3 py-1.5 font-body text-small font-semibold text-text-primary transition-colors duration-150 hover:border-accent hover:text-text-accent disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
@@ -218,12 +402,23 @@ function StatCard({ label, value, sub }) {
   );
 }
 
-function LeadRow({ lead, expanded, onToggleExpand, onUpdate }) {
+function LeadRow({ lead, selected, onToggleSelect, expanded, onToggleExpand, onUpdate }) {
   const [notes, setNotes] = useState(lead.Notes || "");
 
   return (
     <>
-      <tr className="cursor-pointer border-b border-border-subtle last:border-0 hover:bg-surface-page" onClick={onToggleExpand}>
+      <tr
+        className="cursor-pointer border-b border-border-subtle last:border-0 hover:bg-surface-page"
+        onClick={onToggleExpand}
+      >
+        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onToggleSelect}
+            className="h-4 w-4 rounded-xs border border-border-subtle accent-accent"
+          />
+        </td>
         <td className="whitespace-nowrap px-4 py-3 font-body text-small text-text-secondary">
           {formatDate(lead.Timestamp)}
         </td>
@@ -270,7 +465,7 @@ function LeadRow({ lead, expanded, onToggleExpand, onUpdate }) {
       </tr>
       {expanded && (
         <tr className="border-b border-border-subtle bg-surface-page">
-          <td colSpan={8} className="px-4 py-4">
+          <td colSpan={9} className="px-4 py-4">
             <div className="font-body text-small text-text-secondary">
               <p className="mb-1 font-semibold text-text-primary">Project description</p>
               <p className="mb-3">{lead["Project Description"] || "—"}</p>
