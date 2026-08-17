@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BoardView } from "./BoardView.jsx";
 import { exportLeadsToCsv } from "./csv.js";
 import { OrderForm } from "./OrderForm.jsx";
+import { QuoteBuilder } from "./QuoteBuilder.jsx";
 
 const STATUS_OPTIONS = ["New", "Contacted", "Won", "Lost"];
 const PAGE_SIZE = 15;
@@ -428,6 +429,7 @@ function StatCard({ label, value, sub }) {
 
 function LeadRow({ lead, selected, onToggleSelect, expanded, onToggleExpand, onUpdate, onDelete }) {
   const [notes, setNotes] = useState(lead.Notes || "");
+  const [showQuoteBuilder, setShowQuoteBuilder] = useState(false);
 
   return (
     <>
@@ -508,8 +510,25 @@ function LeadRow({ lead, selected, onToggleSelect, expanded, onToggleExpand, onU
               {lead["Other Service Description"] && (
                 <>
                   <p className="mb-1 font-semibold text-text-primary">Other service</p>
-                  <p>{lead["Other Service Description"]}</p>
+                  <p className="mb-3">{lead["Other Service Description"]}</p>
                 </>
+              )}
+
+              {!showQuoteBuilder ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowQuoteBuilder(true);
+                  }}
+                  className="rounded-sm bg-accent px-4 py-2 font-body text-small font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700"
+                >
+                  Generate quote PDF
+                </button>
+              ) : (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <QuoteBuilder order={lead} onClose={() => setShowQuoteBuilder(false)} />
+                </div>
               )}
             </div>
           </td>

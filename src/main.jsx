@@ -1,15 +1,31 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import "./globals.css";
 import App from "./App.jsx";
-import AdminApp from "./admin/AdminApp.jsx";
-import AccountApp from "./account/AccountApp.jsx";
+
+// Code-split: marketing visitors should never download the admin
+// dashboard (or its PDF-generation dependency) or the account/auth
+// bundle. Only the route actually being visited loads its JS.
+const AdminApp = lazy(() => import("./admin/AdminApp.jsx"));
+const AccountApp = lazy(() => import("./account/AccountApp.jsx"));
 
 const path = window.location.pathname;
 
 function Root() {
-  if (path.startsWith("/admin")) return <AdminApp />;
-  if (path.startsWith("/account")) return <AccountApp />;
+  if (path.startsWith("/admin")) {
+    return (
+      <Suspense fallback={null}>
+        <AdminApp />
+      </Suspense>
+    );
+  }
+  if (path.startsWith("/account")) {
+    return (
+      <Suspense fallback={null}>
+        <AccountApp />
+      </Suspense>
+    );
+  }
   return <App />;
 }
 
