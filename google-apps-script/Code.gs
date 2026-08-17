@@ -8,8 +8,16 @@ const FROM_NAME = "aboustate.tech";
 // it's just sent from the script's own account to this inbox.
 const NOTIFY_EMAIL = "mostafaaboustate@gmail.com";
 
+// Shared secret for the admin dashboard's server-to-server calls (Vercel
+// serverless functions → this script). Never sent to the browser directly —
+// only the Vercel function holds this value, via an env var of the same
+// name. Change this to your own long random string before going live, and
+// keep it in sync with the ADMIN_SHEET_API_KEY env var on Vercel.
+const SHEET_API_KEY = "78c725457acf3b8272246ec599936f68a95753872b21d13f";
+
 const SHEET_NAME = "Submissions";
 const HEADERS = [
+  "ID",
   "Timestamp",
   "Type",
   "Name",
@@ -20,12 +28,19 @@ const HEADERS = [
   "Student Project",
   "Services",
   "Other Service Description",
+  "Status",
+  "Notes",
 ];
 
 function doPost(e) {
   const data = JSON.parse(e.postData.contents);
 
-  appendToSheet(data);
+  if (data.action === "updateLead") {
+    return handleUpdateLead(data);
+  }
+
+  const id = Utilities.getUuid();
+  appendToSheet(id, data);
 
   // Never let a broken email (e.g. an unverified "Send mail as" alias) cost
   // us the lead that's already safely in the sheet.
@@ -42,14 +57,67 @@ function doPost(e) {
   }
 
   return ContentService
+    .createTextOutput(JSON.stringify({ status: "ok", id: id }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  if (!e || e.parameter.key !== SHEET_API_KEY) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: "unauthorized" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  const sheet = getOrCreateSheet();
+  const values = sheet.getDataRange().getValues();
+  const rows = values.slice(1).map((row) => {
+    const record = {};
+    HEADERS.forEach((header, i) => {
+      record[header] = row[i] instanceof Date ? row[i].toISOString() : row[i];
+    });
+    return record;
+  });
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ leads: rows }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function handleUpdateLead(data) {
+  if (data.key !== SHEET_API_KEY) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: "unauthorized" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  const sheet = getOrCreateSheet();
+  const idColumn = sheet.getRange(2, 1, Math.max(sheet.getLastRow() - 1, 0), 1).getValues();
+  const rowIndex = idColumn.findIndex((row) => row[0] === data.id);
+
+  if (rowIndex === -1) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: "not_found" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  const sheetRow = rowIndex + 2; // +1 for header, +1 for 1-indexing
+  if (typeof data.status === "string") {
+    sheet.getRange(sheetRow, HEADERS.indexOf("Status") + 1).setValue(data.status);
+  }
+  if (typeof data.notes === "string") {
+    sheet.getRange(sheetRow, HEADERS.indexOf("Notes") + 1).setValue(data.notes);
+  }
+
+  return ContentService
     .createTextOutput(JSON.stringify({ status: "ok" }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-function appendToSheet(data) {
+function appendToSheet(id, data) {
   const sheet = getOrCreateSheet();
 
   sheet.appendRow([
+    id,
     new Date(data.submittedAt || Date.now()),
     data.type || "",
     data.name || "",
@@ -60,6 +128,8 @@ function appendToSheet(data) {
     data.isStudentProject ? "Yes" : "No",
     Array.isArray(data.services) ? data.services.join(", ") : "",
     data.otherServiceDescription || "",
+    "New",
+    "",
   ]);
 }
 
