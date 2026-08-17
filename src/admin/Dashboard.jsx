@@ -19,7 +19,7 @@ const SORTABLE_COLUMNS = {
   Status: "Status",
 };
 
-export function Dashboard({ onLogout }) {
+export function Dashboard() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -163,27 +163,8 @@ export function Dashboard({ onLogout }) {
     pagedLeads.length > 0 && pagedLeads.every((l) => selectedIds.has(l.ID));
 
   return (
-    <div className="min-h-screen bg-surface-page">
-      <header className="border-b border-border-on-inverse bg-surface-inverse px-4 py-4 sm:px-6">
-        <div className="mx-auto flex max-w-[1400px] items-center justify-between">
-          <div className="font-display text-lg font-bold tracking-tight text-text-on-inverse">
-            aboustate<span className="text-accent">.</span>tech
-            <span className="ml-2 font-mono text-micro font-normal uppercase tracking-mono text-text-on-inverse-muted">
-              Admin
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="rounded-sm border border-border-on-inverse px-4 py-2 font-body text-small font-semibold text-text-on-inverse transition-colors duration-150 hover:border-accent hover:text-accent"
-          >
-            Log out
-          </button>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6">
-        {error && (
+    <div>
+      {error && (
           <div className="mb-6 rounded-sm border border-mint-700 bg-mint-100 px-4 py-3 font-body text-small text-green-950">
             {error}
           </div>
@@ -387,7 +368,6 @@ export function Dashboard({ onLogout }) {
             )}
           </>
         )}
-      </main>
     </div>
   );
 }
