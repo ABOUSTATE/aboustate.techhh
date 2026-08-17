@@ -21,6 +21,7 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
   const [otherServiceDescription, setOtherServiceDescription] = useState("");
   const [timeline, setTimeline] = useState(TIMELINE_OPTIONS[0]);
   const [isStudentProject, setIsStudentProject] = useState(false);
+  const [website, setWebsite] = useState(""); // honeypot — real users never see or fill this
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
 
   const isOtherSelected = selectedServiceIds.includes(OTHER_SERVICE_ID);
@@ -39,12 +40,21 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
     setOtherServiceDescription("");
     setTimeline(TIMELINE_OPTIONS[0]);
     setIsStudentProject(false);
+    setWebsite("");
     setSelectedServiceIds([]);
     setStatus("idle");
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
+
+    // Honeypot: real users never fill this out. Bots that fill every field
+    // trip it — pretend success so they don't learn to skip it.
+    if (website) {
+      setStatus("success");
+      return;
+    }
+
     setStatus("loading");
 
     const payload = {
@@ -119,6 +129,22 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
           onSubmit={handleSubmit}
           className="rounded-md border border-border-subtle bg-surface-card p-5 sm:p-8"
         >
+          <div
+            aria-hidden="true"
+            className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
+          >
+            <label htmlFor="website">Website</label>
+            <input
+              id="website"
+              name="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+            />
+          </div>
+
           {mode === "quotation" && (
             <div className="mb-6">
               <label className="mb-2 block font-body text-small font-semibold text-text-primary">
