@@ -3,6 +3,12 @@
 const FROM_EMAIL = "studio@aboustate.tech";
 const FROM_NAME = "aboustate.tech";
 
+// Free push notifications via ntfy.sh — no account needed. Install the ntfy
+// app (iOS/Android) and subscribe to this exact topic name. Anyone who knows
+// this string can also subscribe/post to it, so treat it like a password —
+// it's set to something unguessable below; change it if it ever leaks.
+const NTFY_TOPIC = "aboustate-tech-leads-k7p2mzq9vx";
+
 const SHEET_NAME = "Submissions";
 const HEADERS = [
   "Timestamp",
@@ -28,6 +34,12 @@ function doPost(e) {
     sendConfirmationEmail(data);
   } catch (error) {
     Logger.log("sendConfirmationEmail failed: " + error);
+  }
+
+  try {
+    notifyPhone(data);
+  } catch (error) {
+    Logger.log("notifyPhone failed: " + error);
   }
 
   return ContentService
@@ -63,6 +75,34 @@ function getOrCreateSheet() {
     sheet.setFrozenRows(1);
   }
   return sheet;
+}
+
+function notifyPhone(data) {
+  const isQuotation = data.type === "quotation";
+  const title = isQuotation ? "New quote request" : "New appointment request";
+
+  const lines = [
+    data.name || "(no name)",
+    data.email || "",
+    data.phone || "",
+  ];
+  if (isQuotation && Array.isArray(data.services) && data.services.length) {
+    lines.push("Services: " + data.services.join(", "));
+  }
+  if (data.projectDescription) {
+    lines.push(data.projectDescription);
+  }
+
+  UrlFetchApp.fetch("https://ntfy.sh/" + NTFY_TOPIC, {
+    method: "post",
+    contentType: "text/plain; charset=utf-8",
+    payload: lines.filter(Boolean).join("\n"),
+    headers: {
+      Title: title,
+      Priority: "high",
+      Tags: "bell",
+    },
+  });
 }
 
 function sendConfirmationEmail(data) {
