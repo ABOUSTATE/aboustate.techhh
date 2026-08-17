@@ -1,70 +1,81 @@
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "method_not_allowed" });
-    return;
-  }
+  try {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "method_not_allowed" });
+      return;
+    }
 
-  const body = req.body || {};
-  const {
-    type,
-    name,
-    email,
-    phone,
-    projectDescription,
-    timeline,
-    isStudentProject,
-    services,
-    otherServiceDescription,
-    submittedAt,
-    website, // honeypot — never persisted
-  } = body;
-
-  // Honeypot: pretend success without touching the database or sending mail.
-  if (website) {
-    res.status(200).json({ success: true });
-    return;
-  }
-
-  if (!name || !email || (type !== "appointment" && type !== "quotation")) {
-    res.status(400).json({ error: "invalid_payload" });
-    return;
-  }
-
-  const { data, error: dbError } = await supabase
-    .from("service_requests")
-    .insert({
+    const body = req.body || {};
+    const {
       type,
       name,
       email,
-      phone: phone || null,
-      project_description: projectDescription || null,
-      timeline: timeline || null,
-      is_student_project: Boolean(isStudentProject),
-      services: Array.isArray(services) ? services : [],
-      other_service_description: otherServiceDescription || null,
-      submitted_at: submittedAt || new Date().toISOString(),
-    })
-    .select("id")
-    .single();
+      phone,
+      projectDescription,
+      timeline,
+      isStudentProject,
+      services,
+      otherServiceDescription,
+      submittedAt,
+      website, // honeypot — never persisted
+    } = body;
 
-  if (dbError) {
-    res.status(500).json({ error: "database_insert_failed" });
-    return;
+    // Honeypot: pretend success without touching the database or sending mail.
+    if (website) {
+      res.status(200).json({ success: true });
+      return;
+    }
+
+    if (!name || !email || (type !== "appointment" && type !== "quotation")) {
+      res.status(400).json({ error: "invalid_payload" });
+      return;
+    }
+
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      res.status(500).json({ error: "supabase_not_configured" });
+      return;
+    }
+
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+    const { data, error: dbError } = await supabase
+      .from("service_requests")
+      .insert({
+        type,
+        name,
+        email,
+        phone: phone || null,
+        project_description: projectDescription || null,
+        timeline: timeline || null,
+        is_student_project: Boolean(isStudentProject),
+        services: Array.isArray(services) ? services : [],
+        other_service_description: otherServiceDescription || null,
+        submitted_at: submittedAt || new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+
+    if (dbError) {
+      console.error("Supabase insert failed:", dbError);
+      res.status(500).json({ error: "database_insert_failed", detail: dbError.message });
+      return;
+    }
+
+    // Never fail the request over a broken email — the lead is already saved.
+    try {
+      await sendConfirmationEmail(body);
+    } catch (emailError) {
+      console.error("sendConfirmationEmail failed:", emailError);
+    }
+
+    res.status(200).json({ success: true, id: data.id });
+  } catch (error) {
+    console.error("request-service crashed:", error);
+    res.status(500).json({ error: "unexpected_error", detail: String(error && error.message) });
   }
-
-  // Never fail the request over a broken email — the lead is already saved.
-  try {
-    await sendConfirmationEmail(body);
-  } catch (emailError) {
-    console.error("sendConfirmationEmail failed:", emailError);
-  }
-
-  res.status(200).json({ success: true, id: data.id });
 }
 
 async function sendConfirmationEmail(data) {
