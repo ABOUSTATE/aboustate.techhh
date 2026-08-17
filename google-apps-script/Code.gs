@@ -21,7 +21,14 @@ function doPost(e) {
   const data = JSON.parse(e.postData.contents);
 
   appendToSheet(data);
-  sendConfirmationEmail(data);
+
+  // Never let a broken email (e.g. an unverified "Send mail as" alias) cost
+  // us the lead that's already safely in the sheet.
+  try {
+    sendConfirmationEmail(data);
+  } catch (error) {
+    Logger.log("sendConfirmationEmail failed: " + error);
+  }
 
   return ContentService
     .createTextOutput(JSON.stringify({ status: "ok" }))
