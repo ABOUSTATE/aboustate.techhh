@@ -3,11 +3,10 @@
 const FROM_EMAIL = "studio@aboustate.tech";
 const FROM_NAME = "aboustate.tech";
 
-// Free push notifications via ntfy.sh — no account needed. Install the ntfy
-// app (iOS/Android) and subscribe to this exact topic name. Anyone who knows
-// this string can also subscribe/post to it, so treat it like a password —
-// it's set to something unguessable below; change it if it ever leaks.
-const NTFY_TOPIC = "aboustate-tech-leads-k7p2mzq9vx";
+// Internal lead-notification email — lands as a normal push notification via
+// the Gmail app on your phone. Doesn't need to be a verified alias since
+// it's just sent from the script's own account to this inbox.
+const NOTIFY_EMAIL = "mostafaaboustate@gmail.com";
 
 const SHEET_NAME = "Submissions";
 const HEADERS = [
@@ -79,7 +78,7 @@ function getOrCreateSheet() {
 
 function notifyPhone(data) {
   const isQuotation = data.type === "quotation";
-  const title = isQuotation ? "New quote request" : "New appointment request";
+  const subject = isQuotation ? "New quote request" : "New appointment request";
 
   const lines = [
     data.name || "(no name)",
@@ -93,37 +92,7 @@ function notifyPhone(data) {
     lines.push(data.projectDescription);
   }
 
-  const response = UrlFetchApp.fetch("https://ntfy.sh/" + NTFY_TOPIC, {
-    method: "post",
-    contentType: "text/plain; charset=utf-8",
-    payload: lines.filter(Boolean).join("\n"),
-    headers: {
-      Title: title,
-      Priority: "high",
-      Tags: "bell",
-    },
-    muteHttpExceptions: true,
-  });
-
-  logDebug(
-    "notifyPhone response: " +
-      response.getResponseCode() +
-      " " +
-      response.getContentText()
-  );
-}
-
-// Temporary diagnostic aid — writes to a "Debug" tab instead of Logger.log,
-// since Executions/Cloud Logs can be a pain to dig into in the UI. Safe to
-// delete this function (and its call sites) once notifyPhone is confirmed
-// working.
-function logDebug(message) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName("Debug");
-  if (!sheet) {
-    sheet = ss.insertSheet("Debug");
-  }
-  sheet.appendRow([new Date(), message]);
+  GmailApp.sendEmail(NOTIFY_EMAIL, subject, lines.filter(Boolean).join("\n"));
 }
 
 function sendConfirmationEmail(data) {
