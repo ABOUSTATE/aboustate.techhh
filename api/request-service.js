@@ -41,6 +41,17 @@ export default async function handler(req, res) {
 
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
+    // Optional account link: if the request carries a valid Supabase access
+    // token, attach the submission to that user. Anonymous submissions
+    // (no header, or an invalid/expired token) still work identically.
+    let userId = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice("Bearer ".length);
+      const { data: userData } = await supabase.auth.getUser(token);
+      userId = userData?.user?.id || null;
+    }
+
     const { data, error: dbError } = await supabase
       .from("service_requests")
       .insert({
@@ -54,6 +65,7 @@ export default async function handler(req, res) {
         services: Array.isArray(services) ? services : [],
         other_service_description: otherServiceDescription || null,
         submitted_at: submittedAt || new Date().toISOString(),
+        user_id: userId,
       })
       .select("id")
       .single();

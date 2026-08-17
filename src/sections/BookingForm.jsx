@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SERVICES } from "../data/services.js";
 import { SuccessModal } from "../components/SuccessModal.tsx";
+import { supabase } from "../lib/supabaseClient.js";
 
 const REQUEST_SERVICE_URL = "/api/request-service";
 
@@ -77,9 +78,18 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
     };
 
     try {
+      // Optional: if the visitor is signed in, attach their session so the
+      // request links to their account. Submitting without an account works
+      // exactly the same either way.
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+
       const response = await fetch(REQUEST_SERVICE_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify(payload),
       });
       const data = await response.json();

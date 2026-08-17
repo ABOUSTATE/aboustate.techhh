@@ -13,6 +13,12 @@ export function Nav() {
             Services
           </a>
           <a
+            href="/account"
+            className="hidden font-body text-small text-text-on-inverse-muted hover:text-text-on-inverse sm:inline"
+          >
+            Sign in
+          </a>
+          <a
             href="#quote-form"
             className="rounded-sm bg-accent px-3 py-2 font-body text-small font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700 sm:px-4"
           >
