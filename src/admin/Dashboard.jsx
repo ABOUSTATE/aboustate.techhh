@@ -436,7 +436,8 @@ function LeadRow({ lead, selected, onToggleSelect, expanded, onToggleExpand, onU
         </td>
         <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
           <select
-            value={lead.Status || "New"}
+            key={lead.Status || "New"}
+            defaultValue={lead.Status || "New"}
             onChange={(e) => onUpdate(lead.ID, { status: e.target.value })}
             className={[
               "rounded-pill border-0 px-2.5 py-1 font-body text-small font-medium outline-none",
