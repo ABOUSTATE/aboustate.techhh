@@ -3,7 +3,7 @@ import { SERVICES } from "../data/services.js";
 import { SuccessModal } from "../components/SuccessModal.tsx";
 
 // Google Apps Script Web App /exec URL — see google-apps-script/README.md to deploy.
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyMC7Wj56Wc8XH2CQdlpo3wUQ0Jj9fDxuemeWMWTNPRZy1Gs3U6HTb3x9y-xxbPBA/exec";
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzWZ5wzGXeAQuR47BrjGWGOofM9GFCE1YaBmjFKZpUIv90h6-BgxO41qhYrZzx3Kquv/exec";
 
 const TIMELINE_OPTIONS = ["ASAP", "1–3 months", "3–6 months", "Flexible"];
 
