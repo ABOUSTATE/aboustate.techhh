@@ -223,6 +223,7 @@ export function UsersPanel() {
               }
               onAction={performAction}
               onSaveNotes={saveNotes}
+              onOrdersChanged={loadUsers}
             />
           ))}
         </div>
@@ -231,7 +232,7 @@ export function UsersPanel() {
   );
 }
 
-function UserCard({ user, busy, expanded, onToggleExpand, onAction, onSaveNotes }) {
+function UserCard({ user, busy, expanded, onToggleExpand, onAction, onSaveNotes, onOrdersChanged }) {
   const isBanned = user.bannedUntil && new Date(user.bannedUntil) > new Date();
   const [notes, setNotes] = useState(user.adminNotes || "");
 
@@ -323,12 +324,14 @@ function UserCard({ user, busy, expanded, onToggleExpand, onAction, onSaveNotes 
         />
       </div>
 
-      {expanded && <UserOrders userId={user.id} userEmail={user.email} />}
+      {expanded && (
+        <UserOrders userId={user.id} userEmail={user.email} onOrdersChanged={onOrdersChanged} />
+      )}
     </div>
   );
 }
 
-function UserOrders({ userId, userEmail }) {
+function UserOrders({ userId, userEmail, onOrdersChanged }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -360,6 +363,7 @@ function UserOrders({ userId, userEmail }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
+      onOrdersChanged();
     } catch {
       loadOrders();
     }
@@ -388,6 +392,7 @@ function UserOrders({ userId, userEmail }) {
           onCreated={() => {
             setShowAdd(false);
             loadOrders();
+            onOrdersChanged();
           }}
         />
       )}
