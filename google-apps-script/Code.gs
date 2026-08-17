@@ -105,12 +105,25 @@ function notifyPhone(data) {
     muteHttpExceptions: true,
   });
 
-  Logger.log(
+  logDebug(
     "notifyPhone response: " +
       response.getResponseCode() +
       " " +
       response.getContentText()
   );
+}
+
+// Temporary diagnostic aid — writes to a "Debug" tab instead of Logger.log,
+// since Executions/Cloud Logs can be a pain to dig into in the UI. Safe to
+// delete this function (and its call sites) once notifyPhone is confirmed
+// working.
+function logDebug(message) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName("Debug");
+  if (!sheet) {
+    sheet = ss.insertSheet("Debug");
+  }
+  sheet.appendRow([new Date(), message]);
 }
 
 function sendConfirmationEmail(data) {
