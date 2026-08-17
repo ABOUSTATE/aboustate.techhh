@@ -2,7 +2,6 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -69,6 +68,12 @@ export default async function handler(req, res) {
 }
 
 async function sendConfirmationEmail(data) {
+  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+    console.warn("Resend not configured yet — skipping confirmation email.");
+    return;
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const isQuotation = data.type === "quotation";
   const subject = isQuotation
     ? "We've received your quote request — aboustate.tech"
