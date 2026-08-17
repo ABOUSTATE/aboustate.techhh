@@ -2,8 +2,7 @@ import { useState } from "react";
 import { SERVICES } from "../data/services.js";
 import { SuccessModal } from "../components/SuccessModal.tsx";
 
-// Google Apps Script Web App /exec URL — see google-apps-script/README.md to deploy.
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzWZ5wzGXeAQuR47BrjGWGOofM9GFCE1YaBmjFKZpUIv90h6-BgxO41qhYrZzx3Kquv/exec";
+const REQUEST_SERVICE_URL = "/api/request-service";
 
 const TIMELINE_OPTIONS = ["ASAP", "1–3 months", "3–6 months", "Flexible"];
 
@@ -74,19 +73,17 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
       otherServiceDescription:
         mode === "quotation" && isOtherSelected ? otherServiceDescription : "",
       submittedAt: new Date().toISOString(),
+      website, // honeypot, checked server-side too
     };
 
     try {
-      // Apps Script web apps don't send CORS headers, so the response is
-      // opaque (mode: "no-cors") — a resolved fetch means the request went
-      // out, not that the script's own logic succeeded. See
-      // google-apps-script/README.md for the tradeoffs and an alternative.
-      await fetch(WEBHOOK_URL, {
+      const response = await fetch(REQUEST_SERVICE_URL, {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || "request_failed");
       setStatus("success");
     } catch (error) {
       setStatus("error");
