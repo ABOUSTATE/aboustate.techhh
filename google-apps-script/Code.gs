@@ -93,7 +93,7 @@ function notifyPhone(data) {
     lines.push(data.projectDescription);
   }
 
-  UrlFetchApp.fetch("https://ntfy.sh/" + NTFY_TOPIC, {
+  const response = UrlFetchApp.fetch("https://ntfy.sh/" + NTFY_TOPIC, {
     method: "post",
     contentType: "text/plain; charset=utf-8",
     payload: lines.filter(Boolean).join("\n"),
@@ -102,7 +102,15 @@ function notifyPhone(data) {
       Priority: "high",
       Tags: "bell",
     },
+    muteHttpExceptions: true,
   });
+
+  Logger.log(
+    "notifyPhone response: " +
+      response.getResponseCode() +
+      " " +
+      response.getContentText()
+  );
 }
 
 function sendConfirmationEmail(data) {
