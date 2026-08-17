@@ -47,6 +47,7 @@ export default async function handler(req, res) {
         emailConfirmedAt: u.email_confirmed_at,
         bannedUntil: u.banned_until || null,
         requestCount: requestCounts[u.id] || 0,
+        adminNotes: u.user_metadata?.adminNotes || "",
       }));
 
       res.status(200).json({ users });
@@ -118,6 +119,20 @@ export default async function handler(req, res) {
         const { error } = await supabase.auth.admin.deleteUser(userId);
         if (error) {
           res.status(502).json({ error: "delete_failed", detail: error.message });
+          return;
+        }
+      } else if (action === "updateNotes") {
+        const { notes } = req.body || {};
+        const { data: userData, error: getError } = await supabase.auth.admin.getUserById(userId);
+        if (getError) {
+          res.status(502).json({ error: "user_lookup_failed" });
+          return;
+        }
+        const { error } = await supabase.auth.admin.updateUserById(userId, {
+          user_metadata: { ...userData.user.user_metadata, adminNotes: notes || "" },
+        });
+        if (error) {
+          res.status(502).json({ error: "update_notes_failed", detail: error.message });
           return;
         }
       } else {

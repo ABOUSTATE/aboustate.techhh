@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BoardView } from "./BoardView.jsx";
 import { exportLeadsToCsv } from "./csv.js";
+import { OrderForm } from "./OrderForm.jsx";
 
 const STATUS_OPTIONS = ["New", "Contacted", "Won", "Lost"];
 const PAGE_SIZE = 15;
@@ -33,6 +34,7 @@ export function Dashboard() {
   const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [bulkStatus, setBulkStatus] = useState(STATUS_OPTIONS[0]);
+  const [showAddOrder, setShowAddOrder] = useState(false);
 
   useEffect(() => {
     loadLeads();
@@ -78,6 +80,30 @@ export function Dashboard() {
     const ids = Array.from(selectedIds);
     await Promise.all(ids.map((id) => updateLead(id, { status: bulkStatus })));
     setSelectedIds(new Set());
+  }
+
+  async function deleteOrder(id) {
+    if (!window.confirm("Permanently delete this order? This cannot be undone.")) return;
+
+    setLeads((prev) => prev.filter((l) => l.ID !== id));
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+
+    try {
+      const response = await fetch("/api/admin/leads", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+    } catch {
+      setError("Delete failed — reload to check the actual state.");
+      loadLeads();
+    }
   }
 
   const filteredLeads = useMemo(() => {
@@ -225,6 +251,13 @@ export function Dashboard() {
           >
             Export CSV
           </button>
+          <button
+            type="button"
+            onClick={() => setShowAddOrder((prev) => !prev)}
+            className="rounded-sm bg-accent px-4 py-2 font-body text-small font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700"
+          >
+            {showAddOrder ? "Cancel" : "+ Add order"}
+          </button>
 
           <div className="ml-auto flex rounded-sm border border-border-subtle bg-surface-card p-1">
             {["table", "board"].map((v) => (
@@ -242,6 +275,16 @@ export function Dashboard() {
             ))}
           </div>
         </div>
+
+        {showAddOrder && (
+          <OrderForm
+            onCancel={() => setShowAddOrder(false)}
+            onCreated={() => {
+              setShowAddOrder(false);
+              loadLeads();
+            }}
+          />
+        )}
 
         {view === "table" && selectedIds.size > 0 && (
           <div className="mb-4 flex flex-wrap items-center gap-3 rounded-sm border border-accent bg-mint-100 px-4 py-2.5">
@@ -308,7 +351,7 @@ export function Dashboard() {
                         className="h-4 w-4 rounded-xs border border-border-subtle accent-accent"
                       />
                     </th>
-                    {["Submitted", "Type", "Name", "Contact", "Services", "Student", "Status", "Notes"].map(
+                    {["Submitted", "Type", "Name", "Contact", "Services", "Student", "Status", "Notes", ""].map(
                       (h) => (
                         <th
                           key={h}
@@ -337,6 +380,7 @@ export function Dashboard() {
                         setExpandedId((prev) => (prev === lead.ID ? null : lead.ID))
                       }
                       onUpdate={updateLead}
+                      onDelete={deleteOrder}
                     />
                   ))}
                 </tbody>
@@ -382,7 +426,7 @@ function StatCard({ label, value, sub }) {
   );
 }
 
-function LeadRow({ lead, selected, onToggleSelect, expanded, onToggleExpand, onUpdate }) {
+function LeadRow({ lead, selected, onToggleSelect, expanded, onToggleExpand, onUpdate, onDelete }) {
   const [notes, setNotes] = useState(lead.Notes || "");
 
   return (
@@ -443,10 +487,19 @@ function LeadRow({ lead, selected, onToggleSelect, expanded, onToggleExpand, onU
             className="w-40 rounded-sm border border-border-subtle bg-surface-page px-2 py-1 font-body text-small text-text-primary outline-none focus:border-accent"
           />
         </td>
+        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={() => onDelete(lead.ID)}
+            className="rounded-sm border border-mint-700 px-2.5 py-1 font-body text-small font-medium text-mint-700 transition-colors duration-150 hover:bg-mint-100"
+          >
+            Delete
+          </button>
+        </td>
       </tr>
       {expanded && (
         <tr className="border-b border-border-subtle bg-surface-page">
-          <td colSpan={9} className="px-4 py-4">
+          <td colSpan={10} className="px-4 py-4">
             <div className="font-body text-small text-text-secondary">
               <p className="mb-1 font-semibold text-text-primary">Project description</p>
               <p className="mb-3">{lead["Project Description"] || "—"}</p>

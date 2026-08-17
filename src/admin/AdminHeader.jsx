@@ -11,7 +11,7 @@ export function AdminHeader({ activeTab, onTabChange, onLogout }) {
           </div>
           <nav className="flex gap-1 rounded-sm border border-border-on-inverse p-1">
             {[
-              { key: "leads", label: "Leads" },
+              { key: "leads", label: "Orders" },
               { key: "users", label: "Users" },
             ].map((tab) => (
               <button

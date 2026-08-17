@@ -30,6 +30,56 @@ export default async function handler(req, res) {
       return;
     }
 
+    if (req.method === "POST") {
+      const {
+        type,
+        name,
+        email,
+        phone,
+        projectDescription,
+        timeline,
+        isStudentProject,
+        services,
+        otherServiceDescription,
+        status,
+        notes,
+        userId,
+      } = req.body || {};
+
+      if (!name || !email || (type !== "appointment" && type !== "quotation")) {
+        res.status(400).json({ error: "invalid_payload" });
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("service_requests")
+        .insert({
+          type,
+          name,
+          email,
+          phone: phone || null,
+          project_description: projectDescription || null,
+          timeline: timeline || null,
+          is_student_project: Boolean(isStudentProject),
+          services: Array.isArray(services) ? services : [],
+          other_service_description: otherServiceDescription || null,
+          status: status || "New",
+          notes: notes || "",
+          user_id: userId || null,
+          submitted_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        res.status(502).json({ error: "database_insert_failed", detail: error.message });
+        return;
+      }
+
+      res.status(200).json({ ok: true, id: data.id });
+      return;
+    }
+
     if (req.method === "PATCH") {
       const { id, status, notes } = req.body || {};
       if (!id) {
@@ -52,6 +102,24 @@ export default async function handler(req, res) {
       return;
     }
 
+    if (req.method === "DELETE") {
+      const { id } = req.body || {};
+      if (!id) {
+        res.status(400).json({ error: "missing_id" });
+        return;
+      }
+
+      const { error } = await supabase.from("service_requests").delete().eq("id", id);
+
+      if (error) {
+        res.status(502).json({ error: "database_delete_failed" });
+        return;
+      }
+
+      res.status(200).json({ ok: true });
+      return;
+    }
+
     res.status(405).json({ error: "method_not_allowed" });
   } catch (error) {
     console.error("admin/leads crashed:", error);
@@ -65,6 +133,7 @@ export default async function handler(req, res) {
 function toDashboardShape(row) {
   return {
     ID: row.id,
+    UserId: row.user_id,
     Timestamp: row.submitted_at,
     Type: row.type,
     Name: row.name,
