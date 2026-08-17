@@ -1,0 +1,135 @@
+/* Served from Google Fonts CDN (both families are published there) instead
+   of the self-hosted ttf files in public/assets/fonts, so deploys don't need
+   to ship ~650KB of font binaries. Same families/weights either way. */
+@import url("https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+
+:root{
+  /* color core */
+  --green-950:#011f1a;
+  --green-900:#02362f;
+  --green-700:#1b4943;
+  --green-500:#4c706a;
+  --green-300:#7e9792;
+  --green-100:#d5dbd7;
+  --mint-700:#65826b;
+  --mint-500:#90b495;
+  --mint-300:#bacfbb;
+  --mint-100:#e5eae2;
+  --beige-700:#898780;
+  --beige-500:#c3bcb3;
+  --beige-300:#dfdad4;
+  --beige-100:#f2efeb;
+  --black:#020c0a;
+  --white:#faf8f5;
+
+  /* color semantic */
+  --surface-page:var(--beige-100);
+  --surface-card:var(--white);
+  --surface-inverse:var(--green-900);
+  --surface-sunken:var(--beige-300);
+  --text-primary:var(--green-950);
+  --text-secondary:var(--green-500);
+  --text-on-inverse:var(--beige-100);
+  --text-on-inverse-muted:var(--mint-300);
+  --text-accent:var(--mint-700);
+  --accent:var(--mint-500);
+  --accent-strong:var(--green-900);
+  --border-subtle:var(--beige-500);
+  --border-on-inverse:var(--green-700);
+  --focus-ring:var(--mint-500);
+
+  /* typography */
+  --font-display:"Funnel Display",ui-sans-serif,system-ui,sans-serif;
+  --font-body:"DM Sans",ui-sans-serif,system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono","SF Mono",ui-monospace,Menlo,monospace;
+  --size-display-xl:clamp(3.5rem,6vw,6.5rem);
+  --size-display-l:clamp(2.75rem,4.5vw,4.5rem);
+  --size-h1:clamp(2rem,3vw,3rem);
+  --size-h2:1.75rem;
+  --size-h3:1.375rem;
+  --size-body-l:1.125rem;
+  --size-body:1rem;
+  --size-small:0.875rem;
+  --size-micro:0.75rem;
+  --lh-tight:1.02;
+  --lh-heading:1.12;
+  --lh-body:1.55;
+  --ls-tight:-0.02em;
+  --ls-mono:0.08em;
+  --weight-light:300;
+  --weight-regular:400;
+  --weight-medium:500;
+  --weight-semibold:600;
+  --weight-bold:700;
+  --weight-extrabold:800;
+
+  /* spacing */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+  --space-7:48px;
+  --space-8:64px;
+  --space-9:96px;
+  --space-10:128px;
+
+  /* radius */
+  --radius-xs:2px;
+  --radius-sm:4px;
+  --radius-md:6px;
+  --radius-lg:10px;
+  --radius-pill:999px;
+
+  /* layout */
+  --container-max:1280px;
+  --gutter:var(--space-6);
+  --border-width:1px;
+  --border-width-thick:1.5px;
+
+  /* effects */
+  --shadow-sm:0 1px 2px rgba(2,12,10,0.08);
+  --shadow-md:0 4px 16px rgba(2,12,10,0.10);
+  --shadow-lg:0 16px 48px rgba(2,12,10,0.16);
+  --shadow-inset-line:inset 0 0 0 1px var(--border-subtle);
+  --ease-standard:cubic-bezier(0.4,0,0.2,1);
+  --ease-out:cubic-bezier(0,0,0.2,1);
+  --duration-fast:120ms;
+  --duration-base:200ms;
+  --duration-slow:400ms;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-tight);
+}
+
+code, pre {
+  font-family: var(--font-mono);
+  letter-spacing: var(--ls-mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@tailwind components;
+@tailwind utilities;
