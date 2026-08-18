@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PasscodeGate } from "./PasscodeGate.jsx";
 import { BriefForm } from "./BriefForm.jsx";
 
 export default function BriefPage() {
   const [session, setSession] = useState(null); // { code, clientName } | null
   const [referenceNumber, setReferenceNumber] = useState(null);
+
+  useEffect(() => {
+    document.title = "Project brief — aboustate.tech";
+  }, []);
 
   if (!session) {
     return <PasscodeGate onUnlocked={(code, clientName) => setSession({ code, clientName })} />;

@@ -7,6 +7,10 @@ export default function AccountApp() {
   const [session, setSession] = useState(undefined); // undefined = checking, null = signed out
 
   useEffect(() => {
+    document.title = "Your account — aboustate.tech";
+  }, []);
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, newSession) => {

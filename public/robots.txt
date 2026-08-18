@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /brief
 
 Sitemap: https://www.aboustate.tech/sitemap.xml

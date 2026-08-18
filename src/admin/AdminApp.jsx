@@ -12,6 +12,10 @@ export default function AdminApp() {
   const [tab, setTab] = useState("leads");
 
   useEffect(() => {
+    document.title = "Admin — aboustate.tech";
+  }, []);
+
+  useEffect(() => {
     fetch("/api/admin/me")
       .then((res) => (res.ok ? setAuthState("in") : setAuthState("out")))
       .catch(() => setAuthState("out"));

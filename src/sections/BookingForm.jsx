@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { SERVICES } from "../data/services.js";
 import { SuccessModal } from "../components/SuccessModal.tsx";
-import { supabase } from "../lib/supabaseClient.js";
 
 const REQUEST_SERVICE_URL = "/api/request-service";
 
@@ -80,7 +79,9 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
     try {
       // Optional: if the visitor is signed in, attach their session so the
       // request links to their account. Submitting without an account works
-      // exactly the same either way.
+      // exactly the same either way. Supabase is loaded lazily here so its
+      // SDK never ships in the main landing-page bundle.
+      const { supabase } = await import("../lib/supabaseClient.js");
       const { data: sessionData } = await supabase.auth.getSession();
       const accessToken = sessionData.session?.access_token;
 
@@ -104,7 +105,7 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
     <section id="quote-form" className="bg-surface-page px-4 py-14 sm:px-6 sm:py-20">
       <SuccessModal open={status === "success"} onClose={resetForm} />
       <div className="mx-auto max-w-[720px]">
-        <div className="mb-2 font-mono text-micro uppercase tracking-mono text-text-accent">
+        <div className="mb-2 font-mono text-micro uppercase tracking-mono text-text-secondary">
           Start a project
         </div>
         <h2 className="mb-8 font-display text-h1 font-bold tracking-tight text-text-primary">

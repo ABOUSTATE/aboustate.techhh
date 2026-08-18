@@ -14,7 +14,7 @@ export function ServicesDirectory({ selectedServiceIds, onSelectForQuote }) {
   return (
     <section id="services" className="bg-surface-page px-4 py-14 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-container">
-        <div className="mb-2 font-mono text-micro uppercase tracking-mono text-text-accent">
+        <div className="mb-2 font-mono text-micro uppercase tracking-mono text-text-secondary">
           Capabilities
         </div>
         <h2 className="mb-8 max-w-[24ch] font-display text-h1 font-bold tracking-tight text-text-primary">
