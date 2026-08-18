@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AdminHeader } from "./AdminHeader.jsx";
 import { Dashboard } from "./Dashboard.jsx";
 import { UsersPanel } from "./UsersPanel.jsx";
+import { BriefsPanel } from "./BriefsPanel.jsx";
 
 export default function AdminApp() {
   const [authState, setAuthState] = useState("checking"); // checking | out | in
@@ -102,7 +103,9 @@ export default function AdminApp() {
     <div className="min-h-screen bg-surface-page">
       <AdminHeader activeTab={tab} onTabChange={setTab} onLogout={handleLogout} />
       <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6">
-        {tab === "leads" ? <Dashboard /> : <UsersPanel />}
+        {tab === "leads" && <Dashboard />}
+        {tab === "users" && <UsersPanel />}
+        {tab === "briefs" && <BriefsPanel />}
       </main>
     </div>
   );
