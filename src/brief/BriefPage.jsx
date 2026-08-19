@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { PasscodeGate } from "./PasscodeGate.jsx";
 import { BriefForm } from "./BriefForm.jsx";
+import { getRoastLine } from "./roastLines.js";
 
 export default function BriefPage() {
   const [session, setSession] = useState(null); // { code, clientName } | null
+  const [stage, setStage] = useState("form"); // form | roast | done
   const [referenceNumber, setReferenceNumber] = useState(null);
+  const [roastLine, setRoastLine] = useState("");
 
   useEffect(() => {
     document.title = "Project brief — aboustate.tech";
@@ -14,7 +17,29 @@ export default function BriefPage() {
     return <PasscodeGate onUnlocked={(code, clientName) => setSession({ code, clientName })} />;
   }
 
-  if (referenceNumber) {
+  if (stage === "roast") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface-inverse px-4 text-center">
+        <div className="w-full max-w-[480px]">
+          <div className="mb-4 font-mono text-micro uppercase tracking-mono text-accent">
+            Brief received
+          </div>
+          <h1 className="font-display text-h1 font-bold leading-heading tracking-tight text-text-on-inverse">
+            {roastLine}
+          </h1>
+          <button
+            type="button"
+            onClick={() => setStage("done")}
+            className="mt-8 rounded-sm bg-accent px-6 py-3 font-body text-small font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700"
+          >
+            Show me the confirmation
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (stage === "done") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-page px-4">
         <div className="w-full max-w-[440px] rounded-md border border-border-subtle bg-surface-card p-8 text-center">
@@ -49,7 +74,11 @@ export default function BriefPage() {
       <BriefForm
         code={session.code}
         clientName={session.clientName}
-        onSubmitted={(ref) => setReferenceNumber(ref)}
+        onSubmitted={(ref, values) => {
+          setReferenceNumber(ref);
+          setRoastLine(getRoastLine(values));
+          setStage("roast");
+        }}
       />
     </div>
   );

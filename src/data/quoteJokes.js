@@ -19,3 +19,17 @@ export const QUOTE_JOKES = [
 export function getRandomQuoteJoke() {
   return QUOTE_JOKES[Math.floor(Math.random() * QUOTE_JOKES.length)];
 }
+
+export const LOADING_LINES = [
+  "Rendering…",
+  "Color grading the request…",
+  "Waiting on client approval (from ourselves)…",
+  "Exporting at full resolution…",
+  "Syncing dailies…",
+  "Buffering good vibes…",
+  "Finding the right take…",
+];
+
+export function getRandomLoadingLine() {
+  return LOADING_LINES[Math.floor(Math.random() * LOADING_LINES.length)];
+}

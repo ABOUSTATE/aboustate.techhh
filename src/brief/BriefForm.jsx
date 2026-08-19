@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Field } from "./Field.jsx";
+import { getRandomLoadingLine } from "../data/quoteJokes.js";
 import {
   SERVICE_OPTIONS,
   CONTACT_SECTION,
@@ -43,6 +44,14 @@ export function BriefForm({ code, clientName, onSubmitted }) {
   const [values, setValues] = useState({ service: [] });
   const [status, setStatus] = useState("idle"); // idle | submitting | error
   const [error, setError] = useState("");
+  const [loadingLine, setLoadingLine] = useState("Submitting…");
+
+  useEffect(() => {
+    if (status !== "submitting") return;
+    setLoadingLine(getRandomLoadingLine());
+    const interval = setInterval(() => setLoadingLine(getRandomLoadingLine()), 1200);
+    return () => clearInterval(interval);
+  }, [status]);
 
   function setField(name, value) {
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -75,7 +84,7 @@ export function BriefForm({ code, clientName, onSubmitted }) {
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || "submit_failed");
-      onSubmitted(result.referenceNumber);
+      onSubmitted(result.referenceNumber, values);
     } catch {
       setError("Couldn't submit the brief. Check your connection and try again.");
       setStatus("idle");
@@ -165,7 +174,7 @@ export function BriefForm({ code, clientName, onSubmitted }) {
         disabled={status === "submitting"}
         className="w-full rounded-sm bg-accent px-6 py-3.5 font-body text-body font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {status === "submitting" ? "Submitting…" : "Submit brief"}
+        {status === "submitting" ? loadingLine : "Submit brief"}
       </button>
     </form>
   );

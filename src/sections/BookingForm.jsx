@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SERVICES } from "../data/services.js";
 import { SuccessModal } from "../components/SuccessModal.tsx";
+import { getRandomLoadingLine } from "../data/quoteJokes.js";
 
 const REQUEST_SERVICE_URL = "/api/request-service";
 
@@ -22,6 +23,14 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
   const [isStudentProject, setIsStudentProject] = useState(false);
   const [website, setWebsite] = useState(""); // honeypot — real users never see or fill this
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [loadingLine, setLoadingLine] = useState("Sending...");
+
+  useEffect(() => {
+    if (status !== "loading") return;
+    setLoadingLine(getRandomLoadingLine());
+    const interval = setInterval(() => setLoadingLine(getRandomLoadingLine()), 1200);
+    return () => clearInterval(interval);
+  }, [status]);
 
   const isOtherSelected = selectedServiceIds.includes(OTHER_SERVICE_ID);
 
@@ -300,7 +309,7 @@ export function BookingForm({ mode, setMode, selectedServiceIds, setSelectedServ
             className="mt-6 w-full rounded-sm bg-accent px-6 py-3 font-body text-small font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {status === "loading"
-              ? "Sending..."
+              ? loadingLine
               : mode === "quotation"
               ? "Request Quotation"
               : "Request Appointment"}
