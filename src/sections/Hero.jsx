@@ -1,4 +1,4 @@
-export function Hero() {
+export function Hero({ onGetQuoteClick }) {
   return (
     <section className="bg-surface-inverse px-4 py-16 text-text-on-inverse sm:px-6 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-container">
@@ -13,12 +13,13 @@ export function Hero() {
           One team, one spec, one delivery — from first frame to final report.
         </p>
         <div className="mt-8 flex flex-wrap gap-4">
-          <a
-            href="#quote-form"
+          <button
+            type="button"
+            onClick={onGetQuoteClick}
             className="w-full rounded-sm bg-accent px-6 py-3 text-center font-body text-small font-semibold text-green-950 shadow-sm transition-colors duration-150 hover:bg-mint-700 sm:w-auto"
           >
             Get a Quote
-          </a>
+          </button>
           <a
             href="#services"
             className="w-full rounded-sm border border-border-on-inverse px-6 py-3 text-center font-body text-small font-semibold text-text-on-inverse transition-colors duration-150 hover:border-accent hover:text-accent sm:w-auto"

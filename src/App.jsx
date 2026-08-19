@@ -4,10 +4,13 @@ import { Hero } from "./sections/Hero.jsx";
 import { ServicesDirectory } from "./sections/ServicesDirectory.jsx";
 import { BookingForm } from "./sections/BookingForm.jsx";
 import { Footer } from "./sections/Footer.jsx";
+import { QuoteJokeModal } from "./components/QuoteJokeModal.tsx";
+import { getRandomQuoteJoke } from "./data/quoteJokes.js";
 
 export default function App() {
   const [formMode, setFormMode] = useState("appointment");
   const [selectedServiceIds, setSelectedServiceIds] = useState([]);
+  const [quoteJoke, setQuoteJoke] = useState(null);
 
   function handleSelectForQuote(serviceId) {
     setFormMode("quotation");
@@ -17,10 +20,19 @@ export default function App() {
     document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
   }
 
+  function handleGetQuoteClick() {
+    setQuoteJoke(getRandomQuoteJoke());
+  }
+
+  function goToRealForm() {
+    setQuoteJoke(null);
+    document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
     <>
-      <Nav />
-      <Hero />
+      <Nav onGetQuoteClick={handleGetQuoteClick} />
+      <Hero onGetQuoteClick={handleGetQuoteClick} />
       <ServicesDirectory
         selectedServiceIds={selectedServiceIds}
         onSelectForQuote={handleSelectForQuote}
@@ -32,6 +44,12 @@ export default function App() {
         setSelectedServiceIds={setSelectedServiceIds}
       />
       <Footer />
+      <QuoteJokeModal
+        open={quoteJoke !== null}
+        quote={quoteJoke || ""}
+        onClose={() => setQuoteJoke(null)}
+        onContinue={goToRealForm}
+      />
     </>
   );
 }

@@ -1,4 +1,4 @@
-export function Nav() {
+export function Nav({ onGetQuoteClick }) {
   return (
     <header className="sticky top-0 z-20 border-b border-border-on-inverse bg-surface-inverse/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-container items-center justify-between px-4 sm:px-6">
@@ -24,12 +24,13 @@ export function Nav() {
           >
             Project brief
           </a>
-          <a
-            href="#quote-form"
+          <button
+            type="button"
+            onClick={onGetQuoteClick}
             className="rounded-sm bg-accent px-3 py-2 font-body text-small font-semibold text-green-950 transition-colors duration-150 hover:bg-mint-700 sm:px-4"
           >
             Get a Quote
-          </a>
+          </button>
         </nav>
       </div>
     </header>
