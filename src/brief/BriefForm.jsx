@@ -69,6 +69,13 @@ export function BriefForm({ code, clientName, onSubmitted }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
+    if (!values.contact_name || !values.contact_email) {
+      setError("Please fill in your name and email at the top of the form (section 1) before submitting.");
+      document.getElementById("contact_name")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById("contact_name")?.focus();
+      return;
+    }
     if (!values.consent_contact) {
       setError("Please check the consent box to continue.");
       return;
@@ -94,7 +101,7 @@ export function BriefForm({ code, clientName, onSubmitted }) {
   const selectedServices = Array.isArray(values.service) ? values.service : [];
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-[820px] px-4 py-12 sm:px-6">
+    <form onSubmit={handleSubmit} noValidate className="mx-auto max-w-[820px] px-4 py-12 sm:px-6">
       <div className="mb-2 font-mono text-micro uppercase tracking-mono text-text-accent">
         Project brief
       </div>
