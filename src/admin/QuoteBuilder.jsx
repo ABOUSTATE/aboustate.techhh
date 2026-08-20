@@ -84,7 +84,7 @@ export function QuoteBuilder({ order, onClose }) {
         taxRate: Number(taxRate) || 0,
         total,
         currency,
-        validUntil,
+        validUntil: validUntil || null,
         notes,
       };
 

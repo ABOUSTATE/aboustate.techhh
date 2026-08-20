@@ -182,7 +182,7 @@ export function QuotePdfDocument({ quote }) {
                   day: "numeric",
                 })}
               </Text>
-              {validUntil && (
+              {Boolean(validUntil) && (
                 <>
                   <Text style={[styles.metaLabel, { marginTop: 8 }]}>Valid until</Text>
                   <Text style={styles.metaValue}>
@@ -239,7 +239,7 @@ export function QuotePdfDocument({ quote }) {
             </View>
           </View>
 
-          {notes && (
+          {Boolean(notes) && (
             <View style={styles.notes}>
               <Text style={styles.notesLabel}>Notes</Text>
               <Text style={styles.notesText}>{notes}</Text>
