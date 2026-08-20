@@ -104,12 +104,18 @@ export default async function handler(req, res) {
 
 async function generateQuoteNumber(supabase) {
   const year = new Date().getFullYear();
-  const { count } = await supabase
+  // Based on the highest existing sequence number, not a row count - a
+  // count breaks as soon as any quote is deleted, since a gap makes the
+  // count regenerate a number that's already taken.
+  const { data } = await supabase
     .from("quotations")
-    .select("id", { count: "exact", head: true })
+    .select("quote_number")
     .gte("created_at", `${year}-01-01`)
-    .lt("created_at", `${year + 1}-01-01`);
+    .lt("created_at", `${year + 1}-01-01`)
+    .order("quote_number", { ascending: false })
+    .limit(1);
 
-  const sequence = String((count || 0) + 1).padStart(4, "0");
+  const lastSequence = data?.[0]?.quote_number ? parseInt(data[0].quote_number.split("-").pop(), 10) : 0;
+  const sequence = String(lastSequence + 1).padStart(4, "0");
   return `Q-${year}-${sequence}`;
 }
