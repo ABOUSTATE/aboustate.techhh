@@ -980,6 +980,271 @@
       }
 
       /* ==========================================================
+         WIZARD (standardized talent profile flow)
+         ========================================================== */
+      .modal--wizard {
+        max-width: 620px;
+      }
+
+      .wizard-progress {
+        margin-bottom: var(--space-6);
+      }
+      .wizard-progress__bar {
+        height: 4px;
+        border-radius: var(--radius-pill);
+        background: var(--surface-sunken);
+        overflow: hidden;
+      }
+      .wizard-progress__fill {
+        height: 100%;
+        width: 0%;
+        background: var(--accent);
+        transition: width var(--duration-base) var(--ease-out);
+      }
+      .wizard-progress__label {
+        margin-top: var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+      }
+
+      .wizard-panel {
+        display: none;
+      }
+      .wizard-panel.is-active {
+        display: block;
+        animation: fade-up var(--duration-base) var(--ease-out) both;
+      }
+      .wizard-step-head {
+        margin-bottom: var(--space-5);
+      }
+      .wizard-step-head h3 {
+        margin: var(--space-2) 0 0;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--size-h3);
+      }
+
+      .wizard-intro-copy {
+        margin: 0 0 var(--space-4);
+        color: var(--text-secondary);
+        font-size: var(--size-small);
+      }
+      .wizard-checklist-plain {
+        margin: 0 0 var(--space-6);
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+      .wizard-checklist-plain li {
+        padding-left: var(--space-5);
+        position: relative;
+        font-size: var(--size-small);
+        color: var(--text-primary);
+      }
+      .wizard-checklist-plain li::before {
+        content: "•";
+        position: absolute;
+        left: var(--space-1);
+        color: var(--accent);
+      }
+      .wizard-divider {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin: var(--space-6) 0;
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        text-transform: uppercase;
+        letter-spacing: var(--ls-mono);
+        color: var(--text-tertiary);
+      }
+      .wizard-divider::before,
+      .wizard-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border-subtle);
+      }
+
+      .wizard-nav {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-4);
+        margin-top: var(--space-6);
+      }
+      .wizard-nav .btn {
+        flex: 1;
+      }
+
+      /* Upload slots */
+      .upload-drop {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        min-height: 160px;
+        padding: var(--space-6);
+        border: 1.5px dashed var(--border-subtle);
+        border-radius: var(--radius-md);
+        background: var(--surface-sunken);
+        text-align: center;
+        cursor: pointer;
+        transition: border-color var(--duration-base) var(--ease-out), background-color var(--duration-base) var(--ease-out);
+      }
+      .upload-drop:hover,
+      .upload-drop:focus-visible {
+        border-color: var(--accent);
+        outline: none;
+      }
+      .upload-drop.is-dragover {
+        border-color: var(--accent);
+        background: rgba(144, 180, 149, 0.06);
+      }
+      .upload-drop__prompt {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+      .upload-drop__prompt strong {
+        font-size: var(--size-small);
+        color: var(--text-primary);
+      }
+      .upload-drop__prompt span {
+        font-size: var(--size-micro);
+        color: var(--text-tertiary);
+      }
+      .upload-drop__preview {
+        display: none;
+      }
+      .upload-drop__preview.has-preview {
+        display: block;
+        max-width: 100%;
+        max-height: 180px;
+      }
+      .upload-drop__preview img {
+        max-height: 180px;
+        border-radius: var(--radius-sm);
+        display: block;
+      }
+      .upload-drop__preview video {
+        max-height: 180px;
+        max-width: 100%;
+        border-radius: var(--radius-sm);
+        display: block;
+      }
+
+      .upload-checklist {
+        margin: var(--space-4) 0 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+      .upload-checklist li {
+        padding-left: var(--space-6);
+        position: relative;
+        font-size: var(--size-small);
+        color: var(--text-tertiary);
+      }
+      .upload-checklist li::before {
+        content: "○";
+        position: absolute;
+        left: var(--space-1);
+      }
+      .upload-checklist li.is-pass {
+        color: var(--text-primary);
+      }
+      .upload-checklist li.is-pass::before {
+        content: "✓";
+        color: var(--accent);
+      }
+      .upload-checklist li.is-fail::before {
+        content: "✕";
+        color: var(--mint-300);
+      }
+      .upload-checklist li.is-fail {
+        color: var(--text-primary);
+      }
+      .upload-status {
+        margin: var(--space-3) 0 0;
+        font-size: var(--size-small);
+        color: var(--text-secondary);
+        min-height: 1.4em;
+      }
+      .upload-status.is-error {
+        color: var(--mint-300);
+      }
+      .upload-status.is-uploading {
+        color: var(--accent);
+      }
+
+      /* Review step */
+      .wizard-review dl {
+        margin: 0 0 var(--space-5);
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: var(--space-2) var(--space-4);
+        font-size: var(--size-small);
+      }
+      .wizard-review dt {
+        color: var(--text-tertiary);
+      }
+      .wizard-review dd {
+        margin: 0;
+        color: var(--text-primary);
+        font-weight: var(--weight-medium);
+      }
+      .wizard-review__media {
+        display: flex;
+        gap: var(--space-4);
+        margin-bottom: var(--space-5);
+        flex-wrap: wrap;
+      }
+      .wizard-review__media img,
+      .wizard-review__media video {
+        width: 100px;
+        height: 125px;
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-subtle);
+      }
+
+      .wizard-uid-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        margin: var(--space-5) 0 var(--space-3);
+        padding: var(--space-4);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        background: var(--surface-sunken);
+      }
+      .wizard-uid-box__label {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        text-transform: uppercase;
+        letter-spacing: var(--ls-mono);
+        color: var(--text-tertiary);
+      }
+      .wizard-uid-box__value {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: var(--accent);
+      }
+
+      /* ==========================================================
          MOTION
          ========================================================== */
       @keyframes pulse {
@@ -1280,41 +1545,141 @@
     </footer>
 
     <!-- ============================================================
-         MODAL — I am Talent
+         MODAL — I am Talent (standardized profile wizard)
          ============================================================ -->
     <div class="modal-overlay" id="talent-modal" data-modal-overlay aria-hidden="true">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="talent-modal-heading">
+      <div class="modal modal--wizard" role="dialog" aria-modal="true" aria-labelledby="talent-modal-heading">
         <div class="modal__head">
           <div>
             <div class="eyebrow">For talent</div>
-            <h2 id="talent-modal-heading">Create your profile</h2>
+            <h2 id="talent-modal-heading" data-wizard-title>Create your profile</h2>
           </div>
           <button type="button" class="modal__close" data-close-modal aria-label="Close">✕</button>
+        </div>
+
+        <div class="wizard-progress" data-wizard-progress aria-hidden="true">
+          <div class="wizard-progress__bar"><div class="wizard-progress__fill" data-wizard-fill></div></div>
+          <div class="wizard-progress__label" data-wizard-step-label>Step 1 of 7</div>
         </div>
 
         <div class="modal__body">
           <div class="form-error" data-form-error></div>
 
-          <form class="modal__form" data-talent-form novalidate>
+          <!-- Step 0: intro + continue-existing -->
+          <div class="wizard-panel is-active" data-step-panel="0">
+            <p class="wizard-intro-copy">
+              This builds a standardized profile — same fields, same photo and video specs, for
+              everyone. Takes about 5 minutes.
+            </p>
+            <ul class="wizard-checklist-plain">
+              <li>A plain-background portrait photo (headshot)</li>
+              <li>A full-body photo</li>
+              <li>A 15–180 second video (self-tape or reel)</li>
+            </ul>
+            <button type="button" class="btn btn--primary btn--full" data-wizard-start>
+              Start my profile
+            </button>
+
+            <div class="wizard-divider"><span>or</span></div>
+
+            <div class="field">
+              <label for="talent-uid-lookup">Continue an existing profile</label>
+              <div class="field-row" style="grid-template-columns: 1fr auto;">
+                <input id="talent-uid-lookup" type="text" placeholder="e.g. AB3X7QRT" style="text-transform: uppercase;" />
+                <button type="button" class="btn btn--ghost" data-wizard-lookup>Continue</button>
+              </div>
+              <span class="hint">Enter the profile ID you were given when you first submitted.</span>
+            </div>
+          </div>
+
+          <!-- Step 1: basic info -->
+          <div class="wizard-panel" data-step-panel="1">
+            <div class="wizard-step-head">
+              <div class="eyebrow">Step 1 of 7</div>
+              <h3>Basic information</h3>
+            </div>
             <div class="field field-row">
               <div>
-                <label for="talent-name">Full name *</label>
-                <input id="talent-name" name="name" type="text" required autocomplete="name" />
+                <label for="w-name">Full name *</label>
+                <input id="w-name" data-field="name" type="text" required autocomplete="name" />
               </div>
               <div>
-                <label for="talent-email">Email *</label>
-                <input id="talent-email" name="email" type="email" required autocomplete="email" />
+                <label for="w-email">Email *</label>
+                <input id="w-email" data-field="email" type="email" required autocomplete="email" />
               </div>
             </div>
-
             <div class="field field-row">
               <div>
-                <label for="talent-phone">Phone</label>
-                <input id="talent-phone" name="phone" type="tel" autocomplete="tel" />
+                <label for="w-phone">Phone *</label>
+                <input id="w-phone" data-field="phone" type="tel" required autocomplete="tel" />
               </div>
               <div>
-                <label for="talent-role-type">Role type</label>
-                <select id="talent-role-type" name="roleType">
+                <label for="w-city">City *</label>
+                <input id="w-city" data-field="city" type="text" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="w-nationality">Nationality *</label>
+              <input id="w-nationality" data-field="nationality" type="text" required />
+            </div>
+          </div>
+
+          <!-- Step 2: physical & demographics -->
+          <div class="wizard-panel" data-step-panel="2">
+            <div class="wizard-step-head">
+              <div class="eyebrow">Step 2 of 7</div>
+              <h3>Physical &amp; demographics</h3>
+            </div>
+            <div class="field field-row">
+              <div>
+                <label for="w-age-range">Age range *</label>
+                <select id="w-age-range" data-field="ageRange" required>
+                  <option value="">Select</option>
+                  <option>Under 18</option>
+                  <option>18–25</option>
+                  <option>26–35</option>
+                  <option>36–45</option>
+                  <option>46–60</option>
+                  <option>60+</option>
+                </select>
+              </div>
+              <div>
+                <label for="w-gender">Gender *</label>
+                <select id="w-gender" data-field="gender" required>
+                  <option value="">Select</option>
+                  <option>Female</option>
+                  <option>Male</option>
+                  <option>Non-binary</option>
+                  <option>Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+            <div class="field field-row">
+              <div>
+                <label for="w-height">Height (cm)</label>
+                <input id="w-height" data-field="heightCm" type="number" min="0" placeholder="e.g. 175" />
+              </div>
+              <div>
+                <label for="w-weight">Weight (kg)</label>
+                <input id="w-weight" data-field="weightKg" type="number" min="0" placeholder="e.g. 68" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="w-languages">Languages</label>
+              <input id="w-languages" data-field="languages" type="text" placeholder="e.g. Arabic, English" />
+            </div>
+          </div>
+
+          <!-- Step 3: skills & experience -->
+          <div class="wizard-panel" data-step-panel="3">
+            <div class="wizard-step-head">
+              <div class="eyebrow">Step 3 of 7</div>
+              <h3>Skills &amp; experience</h3>
+            </div>
+            <div class="field field-row">
+              <div>
+                <label for="w-role-type">Role type *</label>
+                <select id="w-role-type" data-field="roleType" required>
                   <option value="">Select</option>
                   <option>Actor</option>
                   <option>Model</option>
@@ -1324,48 +1689,138 @@
                   <option>Other</option>
                 </select>
               </div>
+              <div>
+                <label for="w-experience">Experience level *</label>
+                <select id="w-experience" data-field="experienceLevel" required>
+                  <option value="">Select</option>
+                  <option>Beginner</option>
+                  <option>Intermediate</option>
+                  <option>Professional</option>
+                </select>
+              </div>
             </div>
-
+            <div class="field">
+              <label for="w-skills">Special skills</label>
+              <input id="w-skills" data-field="skills" type="text" placeholder="e.g. Horseback riding, singing, stage combat" />
+            </div>
             <div class="field field-row">
               <div>
-                <label for="talent-reel">Reel URL</label>
-                <input id="talent-reel" name="reelUrl" type="url" placeholder="https://" />
+                <label for="w-instagram">Instagram handle</label>
+                <input id="w-instagram" data-field="instagramHandle" type="text" placeholder="@handle" />
               </div>
               <div>
-                <label for="talent-portfolio">Portfolio URL</label>
-                <input id="talent-portfolio" name="portfolioUrl" type="url" placeholder="https://" />
+                <label for="w-availability">Availability</label>
+                <input id="w-availability" data-field="availability" type="text" placeholder="e.g. Weekdays" />
               </div>
             </div>
-
             <div class="field">
-              <label for="talent-availability">Availability</label>
-              <input id="talent-availability" name="availability" type="text" placeholder="e.g. Weekdays, from March" />
+              <label for="w-notes">Anything else</label>
+              <textarea id="w-notes" data-field="notes"></textarea>
             </div>
+          </div>
 
-            <div class="field">
-              <label for="talent-notes">Anything else</label>
-              <textarea id="talent-notes" name="notes" placeholder="Height, range, languages, special skills…"></textarea>
+          <!-- Step 4: headshot -->
+          <div class="wizard-panel" data-step-panel="4">
+            <div class="wizard-step-head">
+              <div class="eyebrow">Step 4 of 7</div>
+              <h3>Headshot</h3>
             </div>
-
-            <!-- Honeypot — real users never see or fill this -->
-            <div class="field field--hp" aria-hidden="true">
-              <label for="talent-website">Website</label>
-              <input id="talent-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            <div class="upload-slot" data-upload-slot="headshot" data-slot-label="headshot">
+              <div class="upload-drop" data-upload-drop tabindex="0" role="button" aria-label="Choose headshot photo">
+                <div class="upload-drop__preview" data-upload-preview></div>
+                <div class="upload-drop__prompt" data-upload-prompt>
+                  <strong>Click to choose a photo</strong>
+                  <span>Portrait, plain background, good lighting</span>
+                </div>
+                <input type="file" accept="image/jpeg,image/png,image/webp" data-upload-input hidden />
+              </div>
+              <ul class="upload-checklist" data-upload-checklist>
+                <li data-check="format">JPG, PNG, or WebP</li>
+                <li data-check="dimensions">At least 1000 × 1250px, portrait orientation</li>
+                <li data-check="size">Under 8MB</li>
+              </ul>
+              <p class="upload-status" data-upload-status></p>
             </div>
+          </div>
 
-            <button type="submit" class="btn btn--primary btn--full" data-submit-btn>
-              Submit profile
-            </button>
-          </form>
+          <!-- Step 5: full body -->
+          <div class="wizard-panel" data-step-panel="5">
+            <div class="wizard-step-head">
+              <div class="eyebrow">Step 5 of 7</div>
+              <h3>Full-body photo</h3>
+            </div>
+            <div class="upload-slot" data-upload-slot="fullbody" data-slot-label="full-body photo">
+              <div class="upload-drop" data-upload-drop tabindex="0" role="button" aria-label="Choose full-body photo">
+                <div class="upload-drop__preview" data-upload-preview></div>
+                <div class="upload-drop__prompt" data-upload-prompt>
+                  <strong>Click to choose a photo</strong>
+                  <span>Full body visible, standing, plain background</span>
+                </div>
+                <input type="file" accept="image/jpeg,image/png,image/webp" data-upload-input hidden />
+              </div>
+              <ul class="upload-checklist" data-upload-checklist>
+                <li data-check="format">JPG, PNG, or WebP</li>
+                <li data-check="dimensions">At least 1200 × 1600px, portrait orientation</li>
+                <li data-check="size">Under 8MB</li>
+              </ul>
+              <p class="upload-status" data-upload-status></p>
+            </div>
+          </div>
 
+          <!-- Step 6: video -->
+          <div class="wizard-panel" data-step-panel="6">
+            <div class="wizard-step-head">
+              <div class="eyebrow">Step 6 of 7</div>
+              <h3>Video</h3>
+            </div>
+            <div class="upload-slot" data-upload-slot="video" data-slot-label="video">
+              <div class="upload-drop" data-upload-drop tabindex="0" role="button" aria-label="Choose video file">
+                <div class="upload-drop__preview" data-upload-preview></div>
+                <div class="upload-drop__prompt" data-upload-prompt>
+                  <strong>Click to choose a video</strong>
+                  <span>Self-tape or reel — state your name and role type at the start</span>
+                </div>
+                <input type="file" accept="video/mp4,video/quicktime" data-upload-input hidden />
+              </div>
+              <ul class="upload-checklist" data-upload-checklist>
+                <li data-check="format">MP4 or MOV</li>
+                <li data-check="duration">15 seconds to 3 minutes long</li>
+                <li data-check="orientation">Landscape orientation</li>
+                <li data-check="size">Under 200MB</li>
+              </ul>
+              <p class="upload-status" data-upload-status></p>
+            </div>
+          </div>
+
+          <!-- Step 7: review -->
+          <div class="wizard-panel" data-step-panel="7">
+            <div class="wizard-step-head">
+              <div class="eyebrow">Step 7 of 7</div>
+              <h3>Review &amp; submit</h3>
+            </div>
+            <div class="wizard-review" data-wizard-review></div>
+          </div>
+
+          <div class="wizard-nav" data-wizard-nav style="display: none;">
+            <button type="button" class="btn btn--ghost" data-wizard-back>Back</button>
+            <button type="button" class="btn btn--primary" data-wizard-next>Next</button>
+          </div>
+
+          <!-- Success: shows the profile UID prominently -->
           <div class="modal__success" data-success>
             <div class="modal__success-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M5 12.5L10 17.5L19 7.5" stroke="#90b495" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </div>
-            <h3>Profile received.</h3>
-            <p>We verify submissions and add you to the matching pool. Check your inbox for confirmation.</p>
+            <h3 data-success-heading>Profile saved.</h3>
+            <p data-success-copy>We verify submissions and add you to the matching pool.</p>
+            <div class="wizard-uid-box" data-uid-box>
+              <span class="wizard-uid-box__label">Your profile ID</span>
+              <span class="wizard-uid-box__value" data-uid-value>—</span>
+              <button type="button" class="btn btn--ghost" data-uid-copy>Copy</button>
+            </div>
+            <p class="hint">Save this — it's how you'll come back to edit your profile later. It's also emailed to you.</p>
           </div>
         </div>
       </div>
@@ -1449,11 +1904,26 @@
       </div>
     </div>
 
+    <!-- Supabase JS SDK — used only to upload photos/video straight to
+         Storage via signed upload URLs the server hands out. The key
+         below is the public/anon key: safe to expose, every table it
+         can touch is locked down by Row Level Security. -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
     <script>
       (function () {
         "use strict";
 
         var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        var SUPABASE_URL = "https://yxenwgpakjcrfkyljohj.supabase.co";
+        var SUPABASE_ANON_KEY =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4ZW53Z3Bha2pjcmZreWxqb2hqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NzAzOTIsImV4cCI6MjEwMjU0NjM5Mn0.uxQeAkRdzNqyKH39q2-1NTofMa_IBF531EbX7cYwtNY";
+        var MEDIA_BUCKET = "on-talent-media";
+        var storageClient =
+          window.supabase && window.supabase.createClient
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            : null;
 
         /* ------------------------------------------------------------
            1. Scroll-reveal for [data-reveal] elements.
@@ -1645,26 +2115,617 @@
               })
               .finally(function () {
                 submitBtn.disabled = false;
-                submitBtn.textContent = form === document.querySelector("[data-talent-form]")
-                  ? "Submit profile"
-                  : "Submit brief";
+                submitBtn.textContent = "Submit brief";
               });
+          });
+        }
+
+        /* ------------------------------------------------------------
+           5. Talent profile wizard — the standardized, step-by-step
+              flow. Owns its own state; only touches the talent-modal
+              subtree. Media (headshot/full-body/video) uploads go
+              straight to Supabase Storage via a signed URL fetched
+              from /api/on (action:"upload-url") — Vercel's serverless
+              functions cap request bodies well under video file
+              sizes, so the file never passes through our API.
+           ------------------------------------------------------------ */
+        var UPLOAD_REQUIREMENTS = {
+          headshot: {
+            kind: "image",
+            accept: ["image/jpeg", "image/png", "image/webp"],
+            minWidth: 1000,
+            minHeight: 1250,
+            maxSize: 8 * 1024 * 1024,
+            orientation: "portrait",
+          },
+          fullbody: {
+            kind: "image",
+            accept: ["image/jpeg", "image/png", "image/webp"],
+            minWidth: 1200,
+            minHeight: 1600,
+            maxSize: 8 * 1024 * 1024,
+            orientation: "portrait",
+          },
+          video: {
+            kind: "video",
+            accept: ["video/mp4", "video/quicktime"],
+            minDuration: 15,
+            maxDuration: 180,
+            maxSize: 200 * 1024 * 1024,
+            orientation: "landscape",
+          },
+        };
+
+        function initTalentWizard() {
+          var overlay = document.getElementById("talent-modal");
+          if (!overlay) return;
+
+          var TOTAL_STEPS = 7;
+          var state = {
+            step: 0,
+            uid: null,
+            isEdit: false,
+            media: {
+              headshot: { file: null, publicUrl: null, path: null, valid: false, contentType: null },
+              fullbody: { file: null, publicUrl: null, path: null, valid: false, contentType: null },
+              video: { file: null, publicUrl: null, path: null, valid: false, contentType: null },
+            },
+          };
+
+          var panels = overlay.querySelectorAll("[data-step-panel]");
+          var nav = overlay.querySelector("[data-wizard-nav]");
+          var backBtn = overlay.querySelector("[data-wizard-back]");
+          var nextBtn = overlay.querySelector("[data-wizard-next]");
+          var fillEl = overlay.querySelector("[data-wizard-fill]");
+          var stepLabelEl = overlay.querySelector("[data-wizard-step-label]");
+          var errorEl = overlay.querySelector("[data-form-error]");
+          var successEl = overlay.querySelector("[data-success]");
+          var titleEl = overlay.querySelector("[data-wizard-title]");
+
+          function fieldsInPanel(step) {
+            var panel = overlay.querySelector('[data-step-panel="' + step + '"]');
+            return panel ? Array.prototype.slice.call(panel.querySelectorAll("[data-field]")) : [];
+          }
+
+          function showError(message) {
+            errorEl.textContent = message;
+            errorEl.classList.add("is-visible");
+          }
+          function clearError() {
+            errorEl.textContent = "";
+            errorEl.classList.remove("is-visible");
+          }
+
+          function showStep(step) {
+            state.step = step;
+            panels.forEach(function (panel) {
+              panel.classList.toggle("is-active", Number(panel.getAttribute("data-step-panel")) === step);
+            });
+            clearError();
+
+            if (step === 0) {
+              nav.style.display = "none";
+            } else {
+              nav.style.display = "flex";
+              backBtn.style.visibility = step === 1 ? "hidden" : "visible";
+              nextBtn.textContent = step === TOTAL_STEPS ? (state.isEdit ? "Save changes" : "Submit profile") : "Next";
+              fillEl.style.width = Math.round((step / TOTAL_STEPS) * 100) + "%";
+              stepLabelEl.textContent = "Step " + step + " of " + TOTAL_STEPS;
+            }
+
+            if (step === 7) renderReview();
+
+            var firstField = overlay.querySelector('[data-step-panel="' + step + '"] input, [data-step-panel="' + step + '"] select');
+            if (firstField && step !== 0) firstField.focus();
+          }
+
+          function validateTextStep(step) {
+            var fields = fieldsInPanel(step);
+            for (var i = 0; i < fields.length; i++) {
+              if (fields[i].hasAttribute("required") && !fields[i].value.trim()) {
+                fields[i].focus();
+                showError("Please fill in the required fields (marked with *).");
+                return false;
+              }
+              if (fields[i].type === "email" && fields[i].value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields[i].value)) {
+                fields[i].focus();
+                showError("That email address doesn't look right.");
+                return false;
+              }
+            }
+            return true;
+          }
+
+          function collectFields() {
+            var data = {};
+            overlay.querySelectorAll("[data-field]").forEach(function (el) {
+              data[el.getAttribute("data-field")] = el.value.trim();
+            });
+            return data;
+          }
+
+          function populateFields(profile) {
+            var map = {
+              name: "name",
+              email: "email",
+              phone: "phone",
+              city: "city",
+              nationality: "nationality",
+              ageRange: "age_range",
+              gender: "gender",
+              heightCm: "height_cm",
+              weightKg: "weight_kg",
+              languages: "languages",
+              roleType: "role_type",
+              experienceLevel: "experience_level",
+              skills: "skills",
+              instagramHandle: "instagram_handle",
+              availability: "availability",
+              notes: "notes",
+            };
+            overlay.querySelectorAll("[data-field]").forEach(function (el) {
+              var key = map[el.getAttribute("data-field")];
+              if (key && profile[key] != null) el.value = profile[key];
+            });
+          }
+
+          // -------------------- Upload slots --------------------
+          function readImageMeta(file) {
+            return new Promise(function (resolve, reject) {
+              var url = URL.createObjectURL(file);
+              var img = new Image();
+              img.onload = function () {
+                resolve({ width: img.naturalWidth, height: img.naturalHeight, url: url });
+              };
+              img.onerror = function () {
+                URL.revokeObjectURL(url);
+                reject(new Error("unreadable_image"));
+              };
+              img.src = url;
+            });
+          }
+
+          function readVideoMeta(file) {
+            return new Promise(function (resolve, reject) {
+              var url = URL.createObjectURL(file);
+              var videoEl = document.createElement("video");
+              videoEl.preload = "metadata";
+              videoEl.onloadedmetadata = function () {
+                resolve({ width: videoEl.videoWidth, height: videoEl.videoHeight, duration: videoEl.duration, url: url });
+              };
+              videoEl.onerror = function () {
+                URL.revokeObjectURL(url);
+                reject(new Error("unreadable_video"));
+              };
+              videoEl.src = url;
+            });
+          }
+
+          function setupUploadSlot(slot) {
+            var req = UPLOAD_REQUIREMENTS[slot];
+            var root = overlay.querySelector('[data-upload-slot="' + slot + '"]');
+            if (!root) return;
+            var drop = root.querySelector("[data-upload-drop]");
+            var input = root.querySelector("[data-upload-input]");
+            var previewEl = root.querySelector("[data-upload-preview]");
+            var promptEl = root.querySelector("[data-upload-prompt]");
+            var checklistEl = root.querySelector("[data-upload-checklist]");
+            var statusEl = root.querySelector("[data-upload-status]");
+
+            function setCheck(name, pass) {
+              var li = checklistEl.querySelector('[data-check="' + name + '"]');
+              if (!li) return;
+              li.classList.toggle("is-pass", pass === true);
+              li.classList.toggle("is-fail", pass === false);
+            }
+            function resetChecks() {
+              checklistEl.querySelectorAll("li").forEach(function (li) {
+                li.classList.remove("is-pass", "is-fail");
+              });
+            }
+
+            function showExistingPreview(url) {
+              previewEl.innerHTML =
+                req.kind === "image"
+                  ? '<img src="' + url + '" alt="" />'
+                  : '<video src="' + url + '" controls></video>';
+              previewEl.classList.add("has-preview");
+              promptEl.style.display = "none";
+              statusEl.textContent = "Current file on record. Click to replace it.";
+              statusEl.className = "upload-status";
+            }
+
+            function handleFile(file) {
+              resetChecks();
+              statusEl.className = "upload-status";
+              state.media[slot].file = null;
+              state.media[slot].valid = false;
+
+              var formatOk = req.accept.indexOf(file.type) !== -1;
+              setCheck("format", formatOk);
+              var sizeOk = file.size <= req.maxSize;
+              setCheck("size", sizeOk);
+
+              if (!formatOk) {
+                statusEl.textContent = "Unsupported file type — use " + req.accept.map(function (t) { return t.split("/")[1]; }).join(" or ") + ".";
+                statusEl.classList.add("is-error");
+                return;
+              }
+              if (!sizeOk) {
+                statusEl.textContent = "File is too large (" + (file.size / 1024 / 1024).toFixed(1) + "MB). Max " + (req.maxSize / 1024 / 1024) + "MB.";
+                statusEl.classList.add("is-error");
+                return;
+              }
+
+              var reader = req.kind === "image" ? readImageMeta(file) : readVideoMeta(file);
+              reader
+                .then(function (meta) {
+                  var ok = true;
+
+                  if (req.kind === "image") {
+                    var dimsOk = meta.width >= req.minWidth && meta.height >= req.minHeight;
+                    var orientOk = meta.height >= meta.width;
+                    setCheck("dimensions", dimsOk && orientOk);
+                    if (!dimsOk) {
+                      statusEl.textContent = "Image is " + meta.width + "×" + meta.height + " — needs at least " + req.minWidth + "×" + req.minHeight + ".";
+                      statusEl.classList.add("is-error");
+                      ok = false;
+                    } else if (!orientOk) {
+                      statusEl.textContent = "Needs to be portrait orientation (taller than wide).";
+                      statusEl.classList.add("is-error");
+                      ok = false;
+                    }
+                    if (ok) {
+                      previewEl.innerHTML = '<img src="' + meta.url + '" alt="" />';
+                      previewEl.classList.add("has-preview");
+                      promptEl.style.display = "none";
+                    }
+                  } else {
+                    var durOk = meta.duration >= req.minDuration && meta.duration <= req.maxDuration;
+                    var landscapeOk = meta.width > meta.height;
+                    setCheck("duration", durOk);
+                    setCheck("orientation", landscapeOk);
+                    if (!durOk) {
+                      var mm = Math.floor(meta.duration / 60);
+                      var ss = Math.round(meta.duration % 60);
+                      statusEl.textContent = "Video is " + mm + ":" + String(ss).padStart(2, "0") + " — needs to be between 15s and 3:00.";
+                      statusEl.classList.add("is-error");
+                      ok = false;
+                    } else if (!landscapeOk) {
+                      statusEl.textContent = "Needs to be landscape orientation (wider than tall).";
+                      statusEl.classList.add("is-error");
+                      ok = false;
+                    }
+                    if (ok) {
+                      previewEl.innerHTML = '<video src="' + meta.url + '" controls></video>';
+                      previewEl.classList.add("has-preview");
+                      promptEl.style.display = "none";
+                    }
+                  }
+
+                  if (ok) {
+                    state.media[slot].file = file;
+                    state.media[slot].contentType = file.type;
+                    state.media[slot].valid = true;
+                    // A newly chosen file invalidates any previously uploaded one.
+                    state.media[slot].publicUrl = null;
+                    state.media[slot].path = null;
+                    statusEl.textContent = "Looks good.";
+                  }
+                })
+                .catch(function () {
+                  statusEl.textContent = "Couldn't read that file — try a different one.";
+                  statusEl.classList.add("is-error");
+                });
+            }
+
+            drop.addEventListener("click", function () {
+              input.click();
+            });
+            drop.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                input.click();
+              }
+            });
+            input.addEventListener("change", function () {
+              if (input.files && input.files[0]) handleFile(input.files[0]);
+            });
+            ["dragover", "dragenter"].forEach(function (evtName) {
+              drop.addEventListener(evtName, function (event) {
+                event.preventDefault();
+                drop.classList.add("is-dragover");
+              });
+            });
+            ["dragleave", "drop"].forEach(function (evtName) {
+              drop.addEventListener(evtName, function (event) {
+                event.preventDefault();
+                drop.classList.remove("is-dragover");
+              });
+            });
+            drop.addEventListener("drop", function (event) {
+              var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+              if (file) handleFile(file);
+            });
+
+            root._showExistingPreview = showExistingPreview;
+          }
+
+          ["headshot", "fullbody", "video"].forEach(setupUploadSlot);
+
+          function uploadSlotIfNeeded(slot) {
+            var m = state.media[slot];
+            if (m.publicUrl) return Promise.resolve(); // already uploaded / unchanged
+            if (!m.file) return Promise.reject(new Error("missing_file"));
+            if (!storageClient) return Promise.reject(new Error("storage_unavailable"));
+
+            var statusEl = overlay.querySelector('[data-upload-slot="' + slot + '"] [data-upload-status]');
+            statusEl.textContent = "Uploading…";
+            statusEl.className = "upload-status is-uploading";
+
+            return fetch("/api/on", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "upload-url", uid: state.uid, slot: slot, contentType: m.contentType }),
+            })
+              .then(function (r) {
+                return r.json();
+              })
+              .then(function (data) {
+                if (!data.signedUrl) throw new Error("no_signed_url");
+                return storageClient.storage.from(MEDIA_BUCKET).uploadToSignedUrl(data.path, data.token, m.file).then(function () {
+                  m.publicUrl = data.publicUrl;
+                  m.path = data.path;
+                  statusEl.textContent = "Uploaded.";
+                  statusEl.className = "upload-status";
+                });
+              })
+              .catch(function (err) {
+                statusEl.textContent = "Upload failed. Check your connection and try again.";
+                statusEl.className = "upload-status is-error";
+                throw err;
+              });
+          }
+
+          // -------------------- Review + submit --------------------
+          function renderReview() {
+            var reviewEl = overlay.querySelector("[data-wizard-review]");
+            var fields = collectFields();
+            var labels = {
+              name: "Name",
+              email: "Email",
+              phone: "Phone",
+              city: "City",
+              nationality: "Nationality",
+              ageRange: "Age range",
+              gender: "Gender",
+              heightCm: "Height",
+              weightKg: "Weight",
+              languages: "Languages",
+              roleType: "Role type",
+              experienceLevel: "Experience",
+              skills: "Skills",
+              instagramHandle: "Instagram",
+              availability: "Availability",
+            };
+
+            var mediaHtml = '<div class="wizard-review__media">';
+            ["headshot", "fullbody", "video"].forEach(function (slot) {
+              var url = state.media[slot].publicUrl;
+              if (!url) return;
+              mediaHtml += slot === "video" ? '<video src="' + url + '"></video>' : '<img src="' + url + '" alt="" />';
+            });
+            mediaHtml += "</div>";
+
+            var dlHtml = "<dl>";
+            Object.keys(labels).forEach(function (key) {
+              if (fields[key]) dlHtml += "<dt>" + labels[key] + "</dt><dd>" + escapeHtmlClient(fields[key]) + "</dd>";
+            });
+            dlHtml += "</dl>";
+
+            reviewEl.innerHTML = mediaHtml + dlHtml;
+          }
+
+          function escapeHtmlClient(value) {
+            var div = document.createElement("div");
+            div.textContent = value;
+            return div.innerHTML;
+          }
+
+          function submitProfile() {
+            var fields = collectFields();
+            var payload = Object.assign({ type: "talent", uid: state.uid, website: "" }, fields);
+            payload.headshotUrl = state.media.headshot.publicUrl;
+            payload.headshotPath = state.media.headshot.path;
+            payload.fullbodyUrl = state.media.fullbody.publicUrl;
+            payload.fullbodyPath = state.media.fullbody.path;
+            payload.videoUrl = state.media.video.publicUrl;
+            payload.videoPath = state.media.video.path;
+
+            return fetch("/api/on", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            }).then(function (r) {
+              return r.json().then(function (data) {
+                return { ok: r.ok, data: data };
+              });
+            });
+          }
+
+          nextBtn.addEventListener("click", function () {
+            var step = state.step;
+
+            if (step >= 1 && step <= 3) {
+              if (!validateTextStep(step)) return;
+              showStep(step + 1);
+              return;
+            }
+
+            if (step >= 4 && step <= 6) {
+              var slot = ["headshot", "fullbody", "video"][step - 4];
+              if (!state.media[slot].valid && !state.media[slot].publicUrl) {
+                showError("Add a " + overlay.querySelector('[data-upload-slot="' + slot + '"]').getAttribute("data-slot-label") + " that meets the requirements above.");
+                return;
+              }
+              nextBtn.disabled = true;
+              uploadSlotIfNeeded(slot)
+                .then(function () {
+                  nextBtn.disabled = false;
+                  showStep(step + 1);
+                })
+                .catch(function () {
+                  nextBtn.disabled = false;
+                });
+              return;
+            }
+
+            if (step === 7) {
+              nextBtn.disabled = true;
+              submitProfile()
+                .then(function (result) {
+                  nextBtn.disabled = false;
+                  if (!result.ok || !result.data.success) {
+                    throw new Error((result.data && result.data.error) || "submit_failed");
+                  }
+                  state.uid = result.data.uid || state.uid;
+                  overlay.querySelector("[data-uid-value]").textContent = state.uid;
+                  overlay.querySelector("[data-success-heading]").textContent = state.isEdit
+                    ? "Profile updated."
+                    : "Profile saved.";
+                  overlay.querySelector("[data-success-copy]").textContent = state.isEdit
+                    ? "Your changes are live."
+                    : "We verify submissions and add you to the matching pool. Check your inbox for confirmation.";
+                  nav.style.display = "none";
+                  overlay.querySelector("[data-wizard-progress]").style.display = "none";
+                  panels.forEach(function (p) {
+                    p.classList.remove("is-active");
+                  });
+                  successEl.classList.add("is-visible");
+                })
+                .catch(function () {
+                  nextBtn.disabled = false;
+                  showError("Something went wrong saving this. Check your connection and try again.");
+                });
+              return;
+            }
+          });
+
+          backBtn.addEventListener("click", function () {
+            if (state.step > 1) showStep(state.step - 1);
+          });
+
+          overlay.querySelector("[data-wizard-start]").addEventListener("click", function () {
+            clearError();
+            fetch("/api/on", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "reserve-uid" }),
+            })
+              .then(function (r) {
+                return r.json();
+              })
+              .then(function (data) {
+                if (!data.uid) throw new Error("no_uid");
+                state.uid = data.uid;
+                state.isEdit = false;
+                showStep(1);
+              })
+              .catch(function () {
+                showError("Couldn't start a new profile right now. Check your connection and try again.");
+              });
+          });
+
+          overlay.querySelector("[data-wizard-lookup]").addEventListener("click", function () {
+            var input = overlay.querySelector("#talent-uid-lookup");
+            var uid = input.value.trim().toUpperCase();
+            if (!uid) return;
+            clearError();
+
+            fetch("/api/on", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "lookup", uid: uid }),
+            })
+              .then(function (r) {
+                return r.json().then(function (data) {
+                  return { ok: r.ok, data: data };
+                });
+              })
+              .then(function (result) {
+                if (!result.ok || !result.data.profile) throw new Error("not_found");
+                var profile = result.data.profile;
+                state.uid = profile.uid;
+                state.isEdit = true;
+                titleEl.textContent = "Edit your profile";
+                populateFields(profile);
+
+                ["headshot", "fullbody", "video"].forEach(function (slot) {
+                  var url = profile[slot + "_url"];
+                  if (url) {
+                    state.media[slot].publicUrl = url;
+                    state.media[slot].path = profile[slot + "_path"];
+                    var root = overlay.querySelector('[data-upload-slot="' + slot + '"]');
+                    if (root && root._showExistingPreview) root._showExistingPreview(url);
+                  }
+                });
+
+                showStep(1);
+              })
+              .catch(function () {
+                showError("No profile found with that ID. Double-check it and try again.");
+              });
+          });
+
+          overlay.querySelector("[data-uid-copy]").addEventListener("click", function (event) {
+            var uid = overlay.querySelector("[data-uid-value]").textContent;
+            navigator.clipboard.writeText(uid).then(function () {
+              event.target.textContent = "Copied!";
+              setTimeout(function () {
+                event.target.textContent = "Copy";
+              }, 1500);
+            });
+          });
+
+          // Reset to the intro step whenever the modal is (re)opened,
+          // unless a submission just completed and it's about to close.
+          overlay.addEventListener("click", function (event) {
+            if (event.target.closest("[data-open-modal]")) return;
+          });
+          document.querySelectorAll('[data-open-modal="talent-modal"]').forEach(function (trigger) {
+            trigger.addEventListener("click", function () {
+              if (successEl.classList.contains("is-visible")) {
+                // Start completely fresh after a prior submission in this session.
+                successEl.classList.remove("is-visible");
+                overlay.querySelector("[data-wizard-progress]").style.display = "";
+                titleEl.textContent = "Create your profile";
+                state.uid = null;
+                state.isEdit = false;
+                state.media = {
+                  headshot: { file: null, publicUrl: null, path: null, valid: false, contentType: null },
+                  fullbody: { file: null, publicUrl: null, path: null, valid: false, contentType: null },
+                  video: { file: null, publicUrl: null, path: null, valid: false, contentType: null },
+                };
+                overlay.querySelectorAll("[data-field]").forEach(function (el) {
+                  el.value = "";
+                });
+                overlay.querySelectorAll(".upload-drop__preview").forEach(function (el) {
+                  el.innerHTML = "";
+                  el.classList.remove("has-preview");
+                });
+                overlay.querySelectorAll(".upload-drop__prompt").forEach(function (el) {
+                  el.style.display = "";
+                });
+              }
+              showStep(0);
+            });
           });
         }
 
         initScrollReveal();
         initTimecode();
         initModals();
-        initFormSubmission("[data-talent-form]", "talent", [
-          "name",
-          "email",
-          "phone",
-          "roleType",
-          "reelUrl",
-          "portfolioUrl",
-          "availability",
-          "notes",
-        ]);
+        initTalentWizard();
         initFormSubmission("[data-director-form]", "director", [
           "name",
           "email",
