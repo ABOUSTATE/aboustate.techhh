@@ -3,6 +3,7 @@ import { AdminHeader } from "./AdminHeader.jsx";
 import { Dashboard } from "./Dashboard.jsx";
 import { UsersPanel } from "./UsersPanel.jsx";
 import { BriefsPanel } from "./BriefsPanel.jsx";
+import { OnPanel } from "./OnPanel.jsx";
 
 export default function AdminApp() {
   const [authState, setAuthState] = useState("checking"); // checking | out | in
@@ -110,6 +111,7 @@ export default function AdminApp() {
         {tab === "leads" && <Dashboard />}
         {tab === "users" && <UsersPanel />}
         {tab === "briefs" && <BriefsPanel />}
+        {tab === "on" && <OnPanel />}
       </main>
     </div>
   );

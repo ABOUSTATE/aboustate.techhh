@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ON — The Egyptian casting market, refactored | by aboustate.tech</title>
+    <meta
+      name="description"
+      content="ON is an online-first casting platform for talent and directors — verified profiles, an algorithmic match engine, and zero physical callbacks. Built by aboustate.tech."
+    />
+    <meta name="theme-color" content="#011f1a" />
+    <meta name="robots" content="noindex" />
+    <!-- noindex while this lives at /on on the main domain during
+         development; remove once it's promoted to its own
+         on.aboustate.tech subdomain and is ready to be indexed. -->
+
+    <!--
+      ============================================================
+      STRUCTURE NOTE (for splitting this file later):
+      1. <style> is organized top-to-bottom as:
+         Tokens -> Reset -> Base -> Layout utilities -> Components
+         -> Section: Nav -> Section: Hero -> Section: Process
+         -> Section: Engine -> Section: CTA band -> Section: Footer
+         -> Modal -> Motion / keyframes -> Responsive
+      2. <body> is split into <header>, <main> (four <section>s with
+         id anchors), <footer>, and two <dialog>-style modal forms.
+      3. <script> at the bottom has four independent, uncoupled
+         features (scroll-reveal, timecode ticker, modal controller,
+         form submission) — each guarded so it can be lifted into
+         its own file untouched. Form submission posts to the real
+         API routes at /api/on/talent-signup and /api/on/director-brief
+         (see D:\aboustate.tech\api\on\*.js) — those need to ship in
+         the same Vercel deployment as this file for it to work.
+      ============================================================
+    -->
+
+    <style>
+      /* ==========================================================
+         TOKENS
+         Pulled directly from the aboustate.tech design system
+         (D:\Aboustate Design System\tokens\*.css) so ON inherits the
+         exact same palette, type scale, spacing, and motion curves
+         as the parent site. Do not hand-edit hex values here — if a
+         token is missing, add it to the design system first, then
+         mirror it down to this file and the main site's
+         tailwind.config.js.
+         ========================================================== */
+      :root {
+        /* Color primitives */
+        --green-950: #011f1a;
+        --green-900: #02362f;
+        --green-700: #1b4943;
+        --green-500: #4c706a;
+        --green-300: #7e9792;
+        --green-100: #d5dbd7;
+        --mint-700: #65826b;
+        --mint-500: #90b495;
+        --mint-300: #bacfbb;
+        --mint-100: #e5eae2;
+        --beige-700: #898780;
+        --beige-500: #c3bcb3;
+        --beige-300: #dfdad4;
+        --beige-100: #f2efeb;
+        --black: #020c0a;
+        --white: #faf8f5;
+
+        /* ON runs dark-mode-first (unlike the parent site's light
+           marketing page) — so semantic surfaces are remapped onto
+           the inverse scale by default. */
+        --surface-page: var(--green-950);
+        --surface-card: var(--green-900);
+        --surface-sunken: var(--black);
+        --surface-raised: var(--green-700);
+        --text-primary: var(--beige-100);
+        --text-secondary: var(--mint-300);
+        --text-tertiary: var(--green-300);
+        --text-on-accent: var(--green-950);
+        --accent: var(--mint-500);
+        --accent-strong: var(--mint-300);
+        --border-subtle: var(--green-700);
+        --border-strong: var(--mint-700);
+        --focus-ring: var(--mint-500);
+        --danger: var(--mint-300);
+
+        /* Typography */
+        --font-display: "Funnel Display", ui-sans-serif, system-ui, sans-serif;
+        --font-body: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+        --font-mono: "IBM Plex Mono", "SF Mono", ui-monospace, Menlo, monospace;
+        --size-display-xl: clamp(3rem, 7vw, 6rem);
+        --size-display-l: clamp(2.5rem, 5vw, 4rem);
+        --size-h1: clamp(2rem, 3.5vw, 3rem);
+        --size-h2: 1.75rem;
+        --size-h3: 1.375rem;
+        --size-body-l: 1.125rem;
+        --size-body: 1rem;
+        --size-small: 0.875rem;
+        --size-micro: 0.75rem;
+        --lh-tight: 1.02;
+        --lh-heading: 1.12;
+        --lh-body: 1.6;
+        --ls-tight: -0.02em;
+        --ls-mono: 0.08em;
+        --weight-regular: 400;
+        --weight-medium: 500;
+        --weight-semibold: 600;
+        --weight-bold: 700;
+        --weight-extrabold: 800;
+
+        /* Spacing / radii */
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 24px;
+        --space-6: 32px;
+        --space-7: 48px;
+        --space-8: 64px;
+        --space-9: 96px;
+        --space-10: 128px;
+        --radius-xs: 2px;
+        --radius-sm: 4px;
+        --radius-md: 6px;
+        --radius-lg: 10px;
+        --radius-pill: 999px;
+        --container-max: 1280px;
+
+        /* Motion */
+        --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-out: cubic-bezier(0, 0, 0.2, 1);
+        --duration-fast: 120ms;
+        --duration-base: 200ms;
+        --duration-slow: 400ms;
+        --shadow-md: 0 4px 16px rgba(1, 31, 26, 0.32);
+        --shadow-lg: 0 24px 64px rgba(1, 31, 26, 0.44);
+        --glow-accent: 0 0 0 1px rgba(144, 180, 149, 0.35), 0 0 32px rgba(144, 180, 149, 0.18);
+      }
+
+      /* ==========================================================
+         FONT LOADING — same local files as the parent site.
+         ========================================================== */
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap");
+      @font-face {
+        font-family: "DM Sans";
+        src: url("/assets/fonts/DMSans-Variable.ttf") format("truetype-variations");
+        font-weight: 100 1000;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Funnel Display";
+        src: url("/assets/fonts/FunnelDisplay-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Funnel Display";
+        src: url("/assets/fonts/FunnelDisplay-SemiBold.ttf") format("truetype");
+        font-weight: 600;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Funnel Display";
+        src: url("/assets/fonts/FunnelDisplay-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Funnel Display";
+        src: url("/assets/fonts/FunnelDisplay-ExtraBold.ttf") format("truetype");
+        font-weight: 800;
+        font-display: swap;
+      }
+
+      /* ==========================================================
+         RESET
+         ========================================================== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--surface-page);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        font-size: var(--size-body);
+        line-height: var(--lh-body);
+        -webkit-font-smoothing: antialiased;
+      }
+      body.modal-open {
+        overflow: hidden;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+
+      /* ==========================================================
+         LAYOUT UTILITIES
+         ========================================================== */
+      .container {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: 0 var(--space-5);
+      }
+      @media (min-width: 640px) {
+        .container {
+          padding: 0 var(--space-6);
+        }
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        text-transform: uppercase;
+        letter-spacing: var(--ls-mono);
+        color: var(--accent);
+      }
+
+      /* ==========================================================
+         COMPONENTS
+         ========================================================== */
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: var(--radius-pill);
+        background: var(--accent);
+        box-shadow: 0 0 0 3px rgba(144, 180, 149, 0.18);
+        flex-shrink: 0;
+      }
+      .dot--pulse {
+        animation: pulse 2.2s var(--ease-standard) infinite;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+        padding: var(--space-4) var(--space-6);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-body);
+        font-size: var(--size-small);
+        font-weight: var(--weight-semibold);
+        border: 1px solid transparent;
+        transition: transform var(--duration-base) var(--ease-out),
+          box-shadow var(--duration-base) var(--ease-out), background-color var(--duration-base) var(--ease-out),
+          border-color var(--duration-base) var(--ease-out);
+        white-space: nowrap;
+      }
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .btn:active {
+        transform: translateY(0);
+      }
+      .btn--primary {
+        background: var(--accent);
+        color: var(--text-on-accent);
+      }
+      .btn--primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: var(--glow-accent);
+        background: var(--accent-strong);
+      }
+      .btn--ghost {
+        background: transparent;
+        border-color: var(--border-strong);
+        color: var(--text-primary);
+      }
+      .btn--ghost:hover:not(:disabled) {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn--full {
+        width: 100%;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--border-subtle);
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        letter-spacing: var(--ls-mono);
+        color: var(--text-tertiary);
+        transition: border-color var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+      }
+      a.badge:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      [data-reveal] {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out);
+      }
+      [data-reveal].is-visible {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* ==========================================================
+         NAV
+         ========================================================== */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgba(1, 31, 26, 0.86);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .nav__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 72px;
+      }
+      .nav__brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+      .nav__logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.375rem;
+        letter-spacing: var(--ls-tight);
+        color: var(--text-primary);
+        background: none;
+        border: none;
+        padding: 0;
+      }
+      .nav__logo .dot {
+        width: 10px;
+        height: 10px;
+      }
+      .nav__links {
+        display: none;
+        align-items: center;
+        gap: var(--space-6);
+        font-size: var(--size-small);
+        color: var(--text-secondary);
+      }
+      .nav__links a {
+        transition: color var(--duration-base) var(--ease-out);
+      }
+      .nav__links a:hover {
+        color: var(--accent);
+      }
+      .nav__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+      .nav__actions .btn {
+        padding: var(--space-2) var(--space-4);
+      }
+      @media (min-width: 860px) {
+        .nav__links {
+          display: flex;
+        }
+      }
+
+      /* ==========================================================
+         HERO
+         ========================================================== */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: var(--space-9) 0 var(--space-8);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(144, 180, 149, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(144, 180, 149, 0.05) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(ellipse 80% 60% at 70% 20%, black, transparent);
+        pointer-events: none;
+      }
+      .hero__grid {
+        position: relative;
+        display: grid;
+        gap: var(--space-8);
+        align-items: center;
+      }
+      @media (min-width: 960px) {
+        .hero__grid {
+          grid-template-columns: 1.15fr 0.85fr;
+        }
+      }
+      .hero__eyebrow {
+        margin-bottom: var(--space-4);
+      }
+      .hero h1 {
+        margin: 0 0 var(--space-5);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: var(--size-display-xl);
+        line-height: var(--lh-tight);
+        letter-spacing: var(--ls-tight);
+        max-width: 15ch;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .hero p {
+        margin: 0 0 var(--space-7);
+        max-width: 46ch;
+        font-size: var(--size-body-l);
+        color: var(--text-secondary);
+      }
+      .hero__ctas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+      }
+
+      .slate {
+        position: relative;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(160deg, var(--surface-card), var(--surface-sunken));
+        padding: var(--space-6);
+        box-shadow: var(--shadow-lg);
+      }
+      .slate__row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+        padding-bottom: var(--space-4);
+        margin-bottom: var(--space-4);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .slate__rec {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        color: var(--accent);
+      }
+      .slate__timecode {
+        font-variant-numeric: tabular-nums;
+      }
+      .slate__field {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--space-3) 0;
+        font-size: var(--size-small);
+        border-bottom: 1px dashed var(--border-subtle);
+      }
+      .slate__field:last-child {
+        border-bottom: none;
+      }
+      .slate__label {
+        color: var(--text-tertiary);
+      }
+      .slate__value {
+        color: var(--text-primary);
+        font-weight: var(--weight-medium);
+      }
+      .slate__status {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+      }
+
+      /* ==========================================================
+         SECTION HEADERS
+         ========================================================== */
+      .section {
+        padding: var(--space-9) 0;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .section__head {
+        max-width: 640px;
+        margin-bottom: var(--space-8);
+      }
+      .section__head h2 {
+        margin: var(--space-3) 0 var(--space-4);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--size-h1);
+        line-height: var(--lh-heading);
+        letter-spacing: var(--ls-tight);
+      }
+      .section__head p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: var(--size-body-l);
+      }
+
+      /* ==========================================================
+         PROCESS
+         ========================================================== */
+      .process__grid {
+        display: grid;
+        gap: var(--space-6);
+        position: relative;
+      }
+      @media (min-width: 780px) {
+        .process__grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .process__grid::before {
+          content: "";
+          position: absolute;
+          top: 46px;
+          left: calc(100% / 6);
+          right: calc(100% / 6);
+          height: 1px;
+          background: repeating-linear-gradient(
+            90deg,
+            var(--border-strong) 0,
+            var(--border-strong) 6px,
+            transparent 6px,
+            transparent 14px
+          );
+        }
+      }
+      .step {
+        position: relative;
+        background: var(--surface-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+        transition: border-color var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out);
+      }
+      .step:hover {
+        border-color: var(--border-strong);
+        transform: translateY(-4px);
+      }
+      .step__index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin-bottom: var(--space-5);
+        border-radius: var(--radius-pill);
+        background: var(--surface-sunken);
+        border: 1px solid var(--border-strong);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: var(--size-small);
+        font-weight: var(--weight-medium);
+        position: relative;
+        z-index: 1;
+      }
+      .step h3 {
+        margin: 0 0 var(--space-2);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--size-h3);
+      }
+      .step p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: var(--size-small);
+      }
+
+      /* ==========================================================
+         THE ENGINE
+         ========================================================== */
+      .engine {
+        background: var(--surface-sunken);
+      }
+      .engine__grid {
+        display: grid;
+        gap: var(--space-8);
+        align-items: center;
+      }
+      @media (min-width: 960px) {
+        .engine__grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .engine__copy h2 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--size-h1);
+        line-height: var(--lh-heading);
+        letter-spacing: var(--ls-tight);
+        margin: var(--space-3) 0 var(--space-5);
+      }
+      .engine__copy p {
+        color: var(--text-secondary);
+        margin: 0 0 var(--space-5);
+      }
+      .engine__copy p:last-of-type {
+        margin-bottom: 0;
+      }
+      .engine__link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-top: var(--space-5);
+        font-family: var(--font-mono);
+        font-size: var(--size-small);
+        color: var(--accent);
+        transition: gap var(--duration-base) var(--ease-out);
+      }
+      .engine__link:hover {
+        gap: var(--space-3);
+      }
+
+      .pipeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .pipeline__node {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        padding: var(--space-5);
+        background: var(--surface-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+      }
+      .pipeline__node-icon {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: var(--radius-sm);
+        background: var(--surface-sunken);
+        border: 1px solid var(--border-strong);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+      }
+      .pipeline__node-label {
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+        margin-bottom: 2px;
+      }
+      .pipeline__node-value {
+        font-size: var(--size-small);
+        color: var(--text-primary);
+        font-weight: var(--weight-medium);
+      }
+      .pipeline__connector {
+        width: 1px;
+        height: var(--space-5);
+        margin-left: 35px;
+        background: repeating-linear-gradient(
+          180deg,
+          var(--border-strong) 0,
+          var(--border-strong) 4px,
+          transparent 4px,
+          transparent 9px
+        );
+      }
+
+      /* ==========================================================
+         CTA BAND
+         ========================================================== */
+      .cta-band {
+        padding: var(--space-9) 0;
+        text-align: center;
+      }
+      .cta-band h2 {
+        margin: 0 0 var(--space-3);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: var(--size-display-l);
+        letter-spacing: var(--ls-tight);
+      }
+      .cta-band h2 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .cta-band p {
+        margin: 0 auto var(--space-7);
+        max-width: 46ch;
+        color: var(--text-secondary);
+        font-size: var(--size-body-l);
+      }
+      .cta-band__ctas {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+      }
+
+      /* ==========================================================
+         FOOTER
+         ========================================================== */
+      footer {
+        padding: var(--space-8) 0 var(--space-6);
+        background: var(--black);
+      }
+      .footer__top {
+        display: grid;
+        gap: var(--space-7);
+        padding-bottom: var(--space-7);
+        margin-bottom: var(--space-6);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      @media (min-width: 720px) {
+        .footer__top {
+          grid-template-columns: 1.3fr repeat(3, 1fr);
+        }
+      }
+      .footer__brand .nav__logo {
+        margin-bottom: var(--space-3);
+      }
+      .footer__brand p {
+        color: var(--text-tertiary);
+        font-size: var(--size-small);
+        max-width: 32ch;
+        margin: 0 0 var(--space-4);
+      }
+      .footer__col h4 {
+        margin: 0 0 var(--space-4);
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+      }
+      .footer__col ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+      .footer__col a,
+      .footer__col button {
+        font-size: var(--size-small);
+        color: var(--text-secondary);
+        transition: color var(--duration-base) var(--ease-out);
+        background: none;
+        border: none;
+        padding: 0;
+        text-align: left;
+      }
+      .footer__col a:hover,
+      .footer__col button:hover {
+        color: var(--accent);
+      }
+      .footer__bottom {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        align-items: center;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: var(--size-micro);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+      }
+
+      /* ==========================================================
+         MODAL (talent signup / director brief forms)
+         ========================================================== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        overflow-y: auto;
+        padding: var(--space-6) var(--space-4);
+        background: rgba(1, 8, 7, 0.72);
+        backdrop-filter: blur(4px);
+      }
+      .modal-overlay.is-open {
+        display: flex;
+      }
+      .modal {
+        width: 100%;
+        max-width: 560px;
+        margin: auto;
+        background: var(--surface-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        padding: var(--space-7);
+        animation: modal-in var(--duration-base) var(--ease-out) both;
+      }
+      @keyframes modal-in {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .modal__head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: var(--space-6);
+      }
+      .modal__head h2 {
+        margin: var(--space-2) 0 0;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--size-h2);
+        letter-spacing: var(--ls-tight);
+      }
+      .modal__close {
+        background: none;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        line-height: 1;
+        transition: border-color var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+      }
+      .modal__close:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .field {
+        margin-bottom: var(--space-5);
+      }
+      .field label {
+        display: block;
+        margin-bottom: var(--space-2);
+        font-size: var(--size-small);
+        font-weight: var(--weight-semibold);
+        color: var(--text-primary);
+      }
+      .field .hint {
+        display: block;
+        margin-top: var(--space-1);
+        font-size: var(--size-micro);
+        color: var(--text-tertiary);
+      }
+      .field input,
+      .field select,
+      .field textarea {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        background: var(--surface-sunken);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font: inherit;
+        font-size: var(--size-small);
+        outline: none;
+        transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+      }
+      .field input::placeholder,
+      .field textarea::placeholder {
+        color: var(--text-tertiary);
+      }
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: var(--focus-ring);
+        box-shadow: 0 0 0 3px rgba(144, 180, 149, 0.18);
+      }
+      .field textarea {
+        resize: vertical;
+        min-height: 96px;
+      }
+      .field-row {
+        display: grid;
+        gap: var(--space-4);
+      }
+      @media (min-width: 480px) {
+        .field-row {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      /* Honeypot — hidden from sighted users and keyboard tab order,
+         but present in the DOM for bots that auto-fill every field. */
+      .field--hp {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      .form-error {
+        display: none;
+        margin-bottom: var(--space-5);
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        background: rgba(144, 180, 149, 0.08);
+        color: var(--text-secondary);
+        font-size: var(--size-small);
+      }
+      .form-error.is-visible {
+        display: block;
+      }
+
+      .modal__success {
+        display: none;
+        text-align: center;
+        padding: var(--space-6) 0;
+      }
+      .modal__success.is-visible {
+        display: block;
+      }
+      .modal__success-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto var(--space-5);
+        border-radius: var(--radius-pill);
+        background: rgba(144, 180, 149, 0.14);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal__success h3 {
+        margin: 0 0 var(--space-3);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--size-h3);
+      }
+      .modal__success p {
+        margin: 0 auto;
+        max-width: 38ch;
+        color: var(--text-secondary);
+        font-size: var(--size-small);
+      }
+      .modal__body.is-hidden,
+      .modal__form.is-hidden {
+        display: none;
+      }
+
+      /* ==========================================================
+         MOTION
+         ========================================================== */
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 3px rgba(144, 180, 149, 0.18);
+        }
+        50% {
+          box-shadow: 0 0 0 7px rgba(144, 180, 149, 0.06);
+        }
+      }
+      @keyframes fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .hero__eyebrow,
+      .hero h1,
+      .hero p,
+      .hero__ctas {
+        animation: fade-up var(--duration-slow) var(--ease-out) both;
+      }
+      .hero h1 {
+        animation-delay: 60ms;
+      }
+      .hero p {
+        animation-delay: 120ms;
+      }
+      .hero__ctas {
+        animation-delay: 180ms;
+      }
+      .slate {
+        animation: fade-up var(--duration-slow) var(--ease-out) 220ms both;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .dot--pulse,
+        .hero__eyebrow,
+        .hero h1,
+        .hero p,
+        .hero__ctas,
+        .slate,
+        .modal {
+          animation: none !important;
+        }
+        [data-reveal] {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .btn:hover,
+        .step:hover {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ============================================================
+         NAV
+         ============================================================ -->
+    <header class="nav">
+      <div class="container nav__inner">
+        <div class="nav__brand">
+          <button class="nav__logo" type="button" data-scroll-top aria-label="ON home">
+            <span class="dot dot--pulse" aria-hidden="true"></span>
+            ON
+          </button>
+          <a class="badge" href="https://www.aboustate.tech" target="_blank" rel="noopener">
+            by aboustate.tech
+          </a>
+        </div>
+        <nav class="nav__links" aria-label="Primary">
+          <a href="#how-it-works">How it works</a>
+          <a href="#the-engine">The engine</a>
+          <a href="https://www.aboustate.tech" target="_blank" rel="noopener">Main site ↗</a>
+        </nav>
+        <div class="nav__actions">
+          <button type="button" class="btn btn--ghost" data-open-modal="talent-modal">I am Talent</button>
+          <button type="button" class="btn btn--primary" data-open-modal="director-modal">I am a Director</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- ============================================================
+           HERO
+           ============================================================ -->
+      <section class="hero">
+        <div class="container hero__grid">
+          <div>
+            <div class="eyebrow hero__eyebrow">
+              <span class="dot dot--pulse" aria-hidden="true"></span>
+              Online casting network — Egypt
+            </div>
+            <h1>The Egyptian casting market, <em>refactored</em>.</h1>
+            <p>
+              ON replaces the callback line and the folder of headshots with a single verified pipeline.
+              Talent builds one profile, directors brief once, and the match happens online — no physical
+              casting rooms required to get started.
+            </p>
+            <div class="hero__ctas">
+              <button type="button" class="btn btn--primary" data-open-modal="talent-modal">I am Talent</button>
+              <button type="button" class="btn btn--ghost" data-open-modal="director-modal">I am a Director</button>
+            </div>
+          </div>
+
+          <div class="slate" data-reveal>
+            <div class="slate__row">
+              <span class="slate__rec"><span class="dot dot--pulse" aria-hidden="true"></span> ON AIR</span>
+              <span class="slate__timecode" id="timecode">00:00:00:00</span>
+            </div>
+            <div class="slate__field">
+              <span class="slate__label">Production</span>
+              <span class="slate__value">Feature — Untitled 04</span>
+            </div>
+            <div class="slate__field">
+              <span class="slate__label">Role</span>
+              <span class="slate__value">Lead, F, 25–32</span>
+            </div>
+            <div class="slate__field">
+              <span class="slate__label">Submissions</span>
+              <span class="slate__value">148 verified</span>
+            </div>
+            <div class="slate__field">
+              <span class="slate__label">Callback stage</span>
+              <span class="slate__status"><span class="dot" aria-hidden="true"></span> Online — round 2</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           HOW IT WORKS
+           ============================================================ -->
+      <section class="section" id="how-it-works">
+        <div class="container">
+          <div class="section__head" data-reveal>
+            <div class="eyebrow">Process</div>
+            <h2>Three steps. Zero physical callbacks to start.</h2>
+            <p>
+              Traditional casting runs on waiting rooms and paper sign-in sheets. ON runs the same process as
+              a data pipeline — every step logged, versioned, and visible to both sides.
+            </p>
+          </div>
+
+          <div class="process__grid">
+            <div class="step" data-reveal>
+              <div class="step__index">01</div>
+              <h3>Create a verified profile</h3>
+              <p>
+                One canonical record per person — reel, stats, availability, and history — verified once and
+                reused for every brief after that. No re-submitting the same headshot to twenty inboxes.
+              </p>
+            </div>
+            <div class="step" data-reveal>
+              <div class="step__index">02</div>
+              <h3>Get matched, not buried</h3>
+              <p>
+                Directors post a brief; the engine routes it against verified talent that actually fits —
+                role, range, availability — instead of an open call flooding one inbox.
+              </p>
+            </div>
+            <div class="step" data-reveal>
+              <div class="step__index">03</div>
+              <h3>Confirm and shoot</h3>
+              <p>
+                Self-tapes, scheduling, and booking confirmation happen inside the platform. The first time
+                anyone needs to be in a physical room is the shoot itself.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           THE ENGINE (Synergy with aboustate.tech)
+           ============================================================ -->
+      <section class="section engine" id="the-engine">
+        <div class="container engine__grid">
+          <div class="engine__copy" data-reveal>
+            <div class="eyebrow">The engine</div>
+            <h2>Built on the same pipeline discipline as our post-production work.</h2>
+            <p>
+              aboustate.tech runs media production and post on one strict pipeline — every asset versioned,
+              every handoff logged, nothing lost between departments. ON is that same infrastructure pointed
+              at a different asset type: people.
+            </p>
+            <p>
+              A submission moves through the system the way a shot moves through an edit bay — timestamped,
+              routed, and never sitting in an inbox someone forgot to open.
+            </p>
+            <a class="engine__link" href="https://www.aboustate.tech" target="_blank" rel="noopener">
+              See the studio this is built by ↗
+            </a>
+          </div>
+
+          <div class="pipeline" data-reveal>
+            <div class="pipeline__node">
+              <div class="pipeline__node-icon" aria-hidden="true">DB</div>
+              <div>
+                <div class="pipeline__node-label">Input</div>
+                <div class="pipeline__node-value">Verified talent database</div>
+              </div>
+            </div>
+            <div class="pipeline__connector" aria-hidden="true"></div>
+            <div class="pipeline__node">
+              <div class="pipeline__node-icon" aria-hidden="true">→</div>
+              <div>
+                <div class="pipeline__node-label">Process</div>
+                <div class="pipeline__node-value">Match engine — role, range, availability</div>
+              </div>
+            </div>
+            <div class="pipeline__connector" aria-hidden="true"></div>
+            <div class="pipeline__node">
+              <div class="pipeline__node-icon" aria-hidden="true">OUT</div>
+              <div>
+                <div class="pipeline__node-label">Output</div>
+                <div class="pipeline__node-value">Confirmed booking, production-ready</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           CTA BAND
+           ============================================================ -->
+      <section class="cta-band">
+        <div class="container">
+          <div data-reveal>
+            <h2>Ready to go <em>on</em>?</h2>
+            <p>Whichever side of the table you sit on, the first profile or brief takes minutes to set up.</p>
+            <div class="cta-band__ctas">
+              <button type="button" class="btn btn--primary" data-open-modal="talent-modal">I am Talent</button>
+              <button type="button" class="btn btn--ghost" data-open-modal="director-modal">I am a Director</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+      <div class="container">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <button class="nav__logo" type="button" data-scroll-top aria-label="ON home">
+              <span class="dot" aria-hidden="true"></span>
+              ON
+            </button>
+            <p>
+              An online-first casting network for the Egyptian market. Part of the aboustate.tech network —
+              built on the same infrastructure that runs our production pipeline.
+            </p>
+            <a class="badge" href="https://www.aboustate.tech" target="_blank" rel="noopener">
+              by aboustate.tech
+            </a>
+          </div>
+          <div class="footer__col">
+            <h4>For talent</h4>
+            <ul>
+              <li><button type="button" data-open-modal="talent-modal">Create a profile</button></li>
+              <li><a href="#how-it-works">How matching works</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <h4>For directors</h4>
+            <ul>
+              <li><button type="button" data-open-modal="director-modal">Post a brief</button></li>
+              <li><a href="#the-engine">The match engine</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <h4>Network</h4>
+            <ul>
+              <li><a href="https://www.aboustate.tech" target="_blank" rel="noopener">← Back to aboustate.tech</a></li>
+              <li><a href="mailto:on@aboustate.tech">on@aboustate.tech</a></li>
+              <li><a href="https://www.aboustate.tech/brief" target="_blank" rel="noopener">Project brief</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <span>ON · a product of aboustate.tech · © 2026</span>
+          <span>Cairo, Egypt</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ============================================================
+         MODAL — I am Talent
+         ============================================================ -->
+    <div class="modal-overlay" id="talent-modal" data-modal-overlay aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="talent-modal-heading">
+        <div class="modal__head">
+          <div>
+            <div class="eyebrow">For talent</div>
+            <h2 id="talent-modal-heading">Create your profile</h2>
+          </div>
+          <button type="button" class="modal__close" data-close-modal aria-label="Close">✕</button>
+        </div>
+
+        <div class="modal__body">
+          <div class="form-error" data-form-error></div>
+
+          <form class="modal__form" data-talent-form novalidate>
+            <div class="field field-row">
+              <div>
+                <label for="talent-name">Full name *</label>
+                <input id="talent-name" name="name" type="text" required autocomplete="name" />
+              </div>
+              <div>
+                <label for="talent-email">Email *</label>
+                <input id="talent-email" name="email" type="email" required autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="field field-row">
+              <div>
+                <label for="talent-phone">Phone</label>
+                <input id="talent-phone" name="phone" type="tel" autocomplete="tel" />
+              </div>
+              <div>
+                <label for="talent-role-type">Role type</label>
+                <select id="talent-role-type" name="roleType">
+                  <option value="">Select</option>
+                  <option>Actor</option>
+                  <option>Model</option>
+                  <option>Voice talent</option>
+                  <option>Extra / background</option>
+                  <option>Presenter</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field field-row">
+              <div>
+                <label for="talent-reel">Reel URL</label>
+                <input id="talent-reel" name="reelUrl" type="url" placeholder="https://" />
+              </div>
+              <div>
+                <label for="talent-portfolio">Portfolio URL</label>
+                <input id="talent-portfolio" name="portfolioUrl" type="url" placeholder="https://" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="talent-availability">Availability</label>
+              <input id="talent-availability" name="availability" type="text" placeholder="e.g. Weekdays, from March" />
+            </div>
+
+            <div class="field">
+              <label for="talent-notes">Anything else</label>
+              <textarea id="talent-notes" name="notes" placeholder="Height, range, languages, special skills…"></textarea>
+            </div>
+
+            <!-- Honeypot — real users never see or fill this -->
+            <div class="field field--hp" aria-hidden="true">
+              <label for="talent-website">Website</label>
+              <input id="talent-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full" data-submit-btn>
+              Submit profile
+            </button>
+          </form>
+
+          <div class="modal__success" data-success>
+            <div class="modal__success-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12.5L10 17.5L19 7.5" stroke="#90b495" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <h3>Profile received.</h3>
+            <p>We verify submissions and add you to the matching pool. Check your inbox for confirmation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL — I am a Director
+         ============================================================ -->
+    <div class="modal-overlay" id="director-modal" data-modal-overlay aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="director-modal-heading">
+        <div class="modal__head">
+          <div>
+            <div class="eyebrow">For directors</div>
+            <h2 id="director-modal-heading">Post a brief</h2>
+          </div>
+          <button type="button" class="modal__close" data-close-modal aria-label="Close">✕</button>
+        </div>
+
+        <div class="modal__body">
+          <div class="form-error" data-form-error></div>
+
+          <form class="modal__form" data-director-form novalidate>
+            <div class="field field-row">
+              <div>
+                <label for="director-name">Full name *</label>
+                <input id="director-name" name="name" type="text" required autocomplete="name" />
+              </div>
+              <div>
+                <label for="director-email">Email *</label>
+                <input id="director-email" name="email" type="email" required autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="field field-row">
+              <div>
+                <label for="director-company">Company / production house</label>
+                <input id="director-company" name="company" type="text" autocomplete="organization" />
+              </div>
+              <div>
+                <label for="director-production">Production name</label>
+                <input id="director-production" name="productionName" type="text" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="director-role">Role needed *</label>
+              <input id="director-role" name="roleNeeded" type="text" required placeholder="e.g. Lead, F, 25–32" />
+            </div>
+
+            <div class="field">
+              <label for="director-brief">Brief *</label>
+              <textarea id="director-brief" name="briefDescription" required placeholder="Project, character, tone, shoot dates…"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="director-timeline">Timeline</label>
+              <input id="director-timeline" name="timeline" type="text" placeholder="e.g. Casting closes in 2 weeks" />
+            </div>
+
+            <!-- Honeypot — real users never see or fill this -->
+            <div class="field field--hp" aria-hidden="true">
+              <label for="director-website">Website</label>
+              <input id="director-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full" data-submit-btn>
+              Submit brief
+            </button>
+          </form>
+
+          <div class="modal__success" data-success>
+            <div class="modal__success-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12.5L10 17.5L19 7.5" stroke="#90b495" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <h3>Brief received.</h3>
+            <p>Your brief is routing through the match engine. We'll follow up by email within one business day.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ------------------------------------------------------------
+           1. Scroll-reveal for [data-reveal] elements.
+           ------------------------------------------------------------ */
+        function initScrollReveal() {
+          var targets = document.querySelectorAll("[data-reveal]");
+          if (!targets.length) return;
+
+          if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+            targets.forEach(function (el) {
+              el.classList.add("is-visible");
+            });
+            return;
+          }
+
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("is-visible");
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+          );
+
+          targets.forEach(function (el) {
+            observer.observe(el);
+          });
+        }
+
+        /* ------------------------------------------------------------
+           2. Decorative hero timecode ticker.
+           ------------------------------------------------------------ */
+        function initTimecode() {
+          var el = document.getElementById("timecode");
+          if (!el) return;
+
+          if (prefersReducedMotion) {
+            el.textContent = "00:00:12:04";
+            return;
+          }
+
+          var frames = 0;
+          function pad(n) {
+            return String(n).padStart(2, "0");
+          }
+          function tick() {
+            frames += 1;
+            var totalSeconds = Math.floor(frames / 24);
+            var ff = frames % 24;
+            var hh = Math.floor(totalSeconds / 3600);
+            var mm = Math.floor((totalSeconds % 3600) / 60);
+            var ss = totalSeconds % 60;
+            el.textContent = pad(hh) + ":" + pad(mm) + ":" + pad(ss) + ":" + pad(ff);
+          }
+          setInterval(tick, 1000 / 24);
+        }
+
+        /* ------------------------------------------------------------
+           3. Modal controller — open/close, focus trap basics,
+              Escape-to-close, click-outside-to-close, scroll lock.
+           ------------------------------------------------------------ */
+        var activeModal = null;
+        var lastFocusedEl = null;
+
+        function openModal(id) {
+          var overlay = document.getElementById(id);
+          if (!overlay) return;
+          lastFocusedEl = document.activeElement;
+          overlay.classList.add("is-open");
+          overlay.setAttribute("aria-hidden", "false");
+          document.body.classList.add("modal-open");
+          activeModal = overlay;
+
+          var firstField = overlay.querySelector("input, textarea, select");
+          if (firstField) firstField.focus();
+        }
+
+        function closeModal(overlay) {
+          if (!overlay) return;
+          overlay.classList.remove("is-open");
+          overlay.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("modal-open");
+          if (activeModal === overlay) activeModal = null;
+          if (lastFocusedEl && typeof lastFocusedEl.focus === "function") {
+            lastFocusedEl.focus();
+          }
+        }
+
+        function initModals() {
+          document.querySelectorAll("[data-open-modal]").forEach(function (trigger) {
+            trigger.addEventListener("click", function () {
+              openModal(trigger.getAttribute("data-open-modal"));
+            });
+          });
+
+          document.querySelectorAll("[data-close-modal]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              closeModal(btn.closest("[data-modal-overlay]"));
+            });
+          });
+
+          document.querySelectorAll("[data-modal-overlay]").forEach(function (overlay) {
+            overlay.addEventListener("click", function (event) {
+              if (event.target === overlay) closeModal(overlay);
+            });
+          });
+
+          document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && activeModal) {
+              closeModal(activeModal);
+            }
+          });
+
+          document.querySelectorAll("[data-scroll-top]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+            });
+          });
+        }
+
+        /* ------------------------------------------------------------
+           4. Form submission — posts to the real API routes.
+              /api/on/talent-signup and /api/on/director-brief must be
+              deployed alongside this file (same Vercel project) for
+              these to succeed; see D:\aboustate.tech\api\on\*.js.
+           ------------------------------------------------------------ */
+        function initFormSubmission(formSelector, endpoint, fieldNames) {
+          var form = document.querySelector(formSelector);
+          if (!form) return;
+
+          var overlay = form.closest("[data-modal-overlay]");
+          var errorEl = overlay.querySelector("[data-form-error]");
+          var successEl = overlay.querySelector("[data-success]");
+          var submitBtn = form.querySelector("[data-submit-btn]");
+
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            errorEl.classList.remove("is-visible");
+            errorEl.textContent = "";
+
+            var formData = new FormData(form);
+            var payload = {};
+            fieldNames.forEach(function (name) {
+              payload[name] = (formData.get(name) || "").toString().trim();
+            });
+            payload.website = (formData.get("website") || "").toString();
+
+            // Minimal required-field check — mirrors server-side validation
+            // so users get instant feedback instead of a round trip.
+            var requiredOk = form.checkValidity();
+            if (!requiredOk) {
+              errorEl.textContent = "Please fill in the required fields (marked with *).";
+              errorEl.classList.add("is-visible");
+              var firstInvalid = form.querySelector(":invalid");
+              if (firstInvalid) firstInvalid.focus();
+              return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting…";
+
+            fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            })
+              .then(function (response) {
+                return response.json().then(function (data) {
+                  return { ok: response.ok, data: data };
+                });
+              })
+              .then(function (result) {
+                if (!result.ok || !result.data.success) {
+                  throw new Error((result.data && result.data.error) || "submit_failed");
+                }
+                form.classList.add("is-hidden");
+                successEl.classList.add("is-visible");
+              })
+              .catch(function () {
+                errorEl.textContent = "Something went wrong sending this. Check your connection and try again.";
+                errorEl.classList.add("is-visible");
+              })
+              .finally(function () {
+                submitBtn.disabled = false;
+                submitBtn.textContent = form === document.querySelector("[data-talent-form]")
+                  ? "Submit profile"
+                  : "Submit brief";
+              });
+          });
+        }
+
+        initScrollReveal();
+        initTimecode();
+        initModals();
+        initFormSubmission("[data-talent-form]", "/api/on/talent-signup", [
+          "name",
+          "email",
+          "phone",
+          "roleType",
+          "reelUrl",
+          "portfolioUrl",
+          "availability",
+          "notes",
+        ]);
+        initFormSubmission("[data-director-form]", "/api/on/director-brief", [
+          "name",
+          "email",
+          "company",
+          "productionName",
+          "roleNeeded",
+          "briefDescription",
+          "timeline",
+        ]);
+      })();
+    </script>
+  </body>
+</html>

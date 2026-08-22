@@ -14,6 +14,7 @@ export function AdminHeader({ activeTab, onTabChange, onLogout }) {
               { key: "leads", label: "Orders" },
               { key: "users", label: "Users" },
               { key: "briefs", label: "Briefs" },
+              { key: "on", label: "ON" },
             ].map((tab) => (
               <button
                 key={tab.key}
