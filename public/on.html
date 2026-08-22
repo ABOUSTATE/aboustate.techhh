@@ -28,9 +28,9 @@
          features (scroll-reveal, timecode ticker, modal controller,
          form submission) — each guarded so it can be lifted into
          its own file untouched. Form submission posts to the real
-         API routes at /api/on/talent-signup and /api/on/director-brief
-         (see D:\aboustate.tech\api\on\*.js) — those need to ship in
-         the same Vercel deployment as this file for it to work.
+         API route at /api/on (see D:\aboustate.tech\api\on.js,
+         dispatched by a "type" field — talent vs director) — it
+         needs to ship in the same Vercel deployment as this file.
       ============================================================
     -->
 
@@ -1578,14 +1578,18 @@
         }
 
         /* ------------------------------------------------------------
-           4. Form submission — posts to the real API routes.
-              /api/on/talent-signup and /api/on/director-brief must be
-              deployed alongside this file (same Vercel project) for
-              these to succeed; see D:\aboustate.tech\api\on\*.js.
+           4. Form submission — posts to the real API route.
+              /api/on must be deployed alongside this file (same
+              Vercel project) for these to succeed; see
+              D:\aboustate.tech\api\on.js. Both forms hit the same
+              consolidated endpoint (Vercel's Hobby plan caps
+              serverless functions at 12 per deployment) and are
+              told apart by a "type" field in the payload.
            ------------------------------------------------------------ */
-        function initFormSubmission(formSelector, endpoint, fieldNames) {
+        function initFormSubmission(formSelector, submissionType, fieldNames) {
           var form = document.querySelector(formSelector);
           if (!form) return;
+          var endpoint = "/api/on";
 
           var overlay = form.closest("[data-modal-overlay]");
           var errorEl = overlay.querySelector("[data-form-error]");
@@ -1598,7 +1602,7 @@
             errorEl.textContent = "";
 
             var formData = new FormData(form);
-            var payload = {};
+            var payload = { type: submissionType };
             fieldNames.forEach(function (name) {
               payload[name] = (formData.get(name) || "").toString().trim();
             });
@@ -1651,7 +1655,7 @@
         initScrollReveal();
         initTimecode();
         initModals();
-        initFormSubmission("[data-talent-form]", "/api/on/talent-signup", [
+        initFormSubmission("[data-talent-form]", "talent", [
           "name",
           "email",
           "phone",
@@ -1661,7 +1665,7 @@
           "availability",
           "notes",
         ]);
-        initFormSubmission("[data-director-form]", "/api/on/director-brief", [
+        initFormSubmission("[data-director-form]", "director", [
           "name",
           "email",
           "company",

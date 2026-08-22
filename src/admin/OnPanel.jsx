@@ -17,7 +17,7 @@ export function OnPanel() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/admin/on-submissions");
+      const response = await fetch("/api/on");
       const data = await response.json();
       if (data.error) throw new Error(data.error);
       setTalent(data.talent || []);
@@ -33,7 +33,7 @@ export function OnPanel() {
     const setList = table === "on_talent_signups" ? setTalent : setDirectors;
     setList((prev) => prev.map((row) => (row.id === id ? { ...row, status } : row)));
     try {
-      await fetch("/api/admin/on-submissions", {
+      await fetch("/api/on", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ table, id, status }),
