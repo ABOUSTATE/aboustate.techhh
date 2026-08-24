@@ -1,10 +1,5 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "on.aboustate.tech" }],
-      "destination": "/on.html"
-    },
     { "source": "/on", "destination": "/on.html" },
     { "source": "/on/", "destination": "/on.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
