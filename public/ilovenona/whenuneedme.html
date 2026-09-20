@@ -320,22 +320,6 @@
   }
   .worry-confirm.show{opacity:1;}
 
-  /* reassurance */
-  .reassure-text{
-    font-family:'Playfair Display',serif;
-    font-style:italic;
-    font-weight:600;
-    font-size:22px;
-    line-height:1.4;
-    min-height:110px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-bottom:22px;
-    color:var(--cream);
-    transition:opacity .3s ease;
-  }
-
   /* call/text */
   .contact-note{color:var(--cream-dim);font-size:13px;margin-bottom:22px;}
 
@@ -428,7 +412,6 @@
     <button class="menu-tile" data-panel="ground"><span class="icon">✦</span><span class="label">Ground yourself</span><span class="hint">5-4-3-2-1</span></button>
     <button class="menu-tile" data-panel="hold"><span class="icon">♥</span><span class="label">Hold my hand</span><span class="hint">even from here</span></button>
     <button class="menu-tile" data-panel="worry"><span class="icon">〰</span><span class="label">Let it go</span><span class="hint">say it, release it</span></button>
-    <button class="menu-tile" data-panel="reassure"><span class="icon">✧</span><span class="label">Tell me something true</span><span class="hint">about you</span></button>
     <button class="menu-tile" data-panel="contact"><span class="icon">☏</span><span class="label">Reach me</span><span class="hint">for real, right now</span></button>
     <button class="menu-tile" data-panel="fidget"><span class="icon">◎</span><span class="label">Just fidget</span><span class="hint">no message, just this</span></button>
     <button class="menu-tile" data-panel="true"><span class="icon">◈</span><span class="label">Things that are true</span><span class="hint">to read slowly</span></button>
@@ -484,15 +467,6 @@
     <button class="close-panel" data-close>close</button>
   </section>
 
-  <!-- REASSURE -->
-  <section class="panel" id="panel-reassure" hidden>
-    <div class="panel-eyebrow mono">something true</div>
-    <h2>About you, specifically.</h2>
-    <div class="reassure-text" id="reassureText">Tap below.</div>
-    <button class="big-btn" id="reassureBtn">Tell me something true</button>
-    <button class="close-panel" data-close>close</button>
-  </section>
-
   <!-- CONTACT -->
   <section class="panel" id="panel-contact" hidden>
     <div class="panel-eyebrow mono">reach me</div>
@@ -500,7 +474,7 @@
     <p class="contact-note">One tap. I will pick up, or I will call you back the second I see it.</p>
     <div class="btn-row">
       <a class="big-btn" id="callLink" href="#">Call me</a>
-      <a class="big-btn ghost" id="textLink" href="#">Text me</a>
+      <a class="big-btn ghost" id="textLink" href="#" target="_blank" rel="noopener">WhatsApp me</a>
     </div>
     <button class="close-panel" data-close>close</button>
   </section>
@@ -543,7 +517,7 @@
   "use strict";
 
   // ---------- CONFIG — fill in before sharing ----------
-  var MOSTAFA_PHONE = "+201501538408"; // TODO: confirm this is the right number to reach Mostafa on
+  var MOSTAFA_PHONE = "+201002221670";
 
   // ---------- sound engine (procedural, shared pattern with the film page) ----------
   var audioCtx = null;
@@ -832,38 +806,9 @@
     setTimeout(function(){ worryConfirm.classList.remove('show'); }, 4000);
   });
 
-  // ---------- REASSURANCE ----------
-  var TRUE_THINGS = [
-    "You've never once let a room down that was counting on you.",
-    "You make people feel understood in three languages. That's not small.",
-    "The thing you're scared of is the thing you're already good at.",
-    "You're allowed to be nervous about something you're still going to do well.",
-    "Nobody in that room today will work as hard as you, and nobody will notice — that's the skill.",
-    "You are the calmest person in most rooms, even when you don't feel calm inside.",
-    "Being new at something has never once stopped you before.",
-    "You have never needed to be fearless. Just willing. And you always are.",
-    "Whatever happens today, it does not change how good you are at your job.",
-    "You are loved exactly as you are today — not as a better version of today."
-  ];
-  var reassureText = document.getElementById('reassureText');
-  var reassureBtn = document.getElementById('reassureBtn');
-  var lastIndex = -1;
-  reassureBtn.addEventListener('click', function(){
-    var i;
-    do { i = Math.floor(Math.random()*TRUE_THINGS.length); } while(i === lastIndex && TRUE_THINGS.length > 1);
-    lastIndex = i;
-    reassureText.style.opacity = 0;
-    playSound('chime');
-    if(navigator.vibrate) navigator.vibrate(10);
-    setTimeout(function(){
-      reassureText.textContent = TRUE_THINGS[i];
-      reassureText.style.opacity = 1;
-    }, 200);
-  });
-
   // ---------- CONTACT ----------
   document.getElementById('callLink').href = 'tel:' + MOSTAFA_PHONE;
-  document.getElementById('textLink').href = 'sms:' + MOSTAFA_PHONE;
+  document.getElementById('textLink').href = 'https://wa.me/' + MOSTAFA_PHONE.replace(/\D/g, '');
   document.getElementById('callLink').addEventListener('click', function(){ if(navigator.vibrate) navigator.vibrate(10); });
   document.getElementById('textLink').addEventListener('click', function(){ if(navigator.vibrate) navigator.vibrate(10); });
 
