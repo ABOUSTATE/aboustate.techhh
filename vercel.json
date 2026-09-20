@@ -2,6 +2,8 @@
   "rewrites": [
     { "source": "/on", "destination": "/on.html" },
     { "source": "/on/", "destination": "/on.html" },
+    { "source": "/ilovenona", "destination": "/ilovenona.html" },
+    { "source": "/ilovenona/", "destination": "/ilovenona.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
