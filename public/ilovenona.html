@@ -43,7 +43,7 @@
     -webkit-touch-callout:none;
   }
 
-  .slate, .frame-face, .action-btn, .hold-btn{
+  .slate, .frame-face, .action-btn, .hold-btn, .sound-toggle{
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
@@ -313,13 +313,45 @@
 
   /* ---------- HOLD MY HAND ---------- */
 
+  .sound-toggle{
+    position:fixed;
+    top:calc(14px + env(safe-area-inset-top, 0px));
+    right:14px;
+    z-index:20;
+    background:rgba(36,26,23,.7);
+    backdrop-filter:blur(4px);
+    border:1px solid var(--line);
+    color:var(--cream-dim);
+    border-radius:999px;
+    width:34px;height:34px;
+    font-size:14px;
+    line-height:1;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:opacity .2s ease;
+  }
+  .sound-toggle.off{opacity:.45;}
+
   .hold-wrap{
+    position:relative;
     margin-top:56px;
     display:flex;
     flex-direction:column;
     align-items:center;
     gap:16px;
   }
+  .hold-glow{
+    position:absolute;
+    inset:-50px -70px;
+    border-radius:50%;
+    background:radial-gradient(ellipse at center, rgba(157,51,73,.4), transparent 70%);
+    opacity:0;
+    pointer-events:none;
+    z-index:0;
+    transition:opacity .8s ease;
+  }
+  .hold-wrap.active .hold-glow{opacity:1;}
+  .hold-lead, .hold-btn, .hold-hint, .hold-msg{position:relative;z-index:1;}
   .hold-lead{
     color:var(--cream-dim);
     font-size:14px;
@@ -447,6 +479,7 @@
 
 <div class="grain"></div>
 <div class="vignette"></div>
+<button class="sound-toggle mono" id="soundToggle" aria-label="Toggle sound">♪</button>
 
 <main>
 
@@ -549,7 +582,8 @@
 
       <button class="action-btn" id="actionBtn">Call Action</button>
 
-      <div class="hold-wrap">
+      <div class="hold-wrap" id="holdWrap">
+        <div class="hold-glow"></div>
         <p class="hold-lead">I can't be there in person today. So —</p>
         <button class="hold-btn" id="holdBtn" aria-label="Press and hold for comfort">Hold my hand</button>
         <p class="hold-hint mono">press and hold</p>
@@ -611,18 +645,101 @@
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
   }
 
+  // ---------- sound engine (procedural, no audio files) ----------
+  var audioCtx = null;
+  var soundOn = true;
+  try{ soundOn = localStorage.getItem('nadeen-sound') !== 'off'; }catch(e){}
+
+  function ensureAudio(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function tone(ctx, freq, duration, type, gain, delay){
+    delay = delay||0;
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = type||'sine';
+    o.frequency.value = freq;
+    o.connect(g); g.connect(ctx.destination);
+    var t0 = ctx.currentTime + delay;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain, t0+0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+duration);
+    o.start(t0); o.stop(t0+duration+0.02);
+  }
+
+  function playSound(name){
+    if(!soundOn) return;
+    var ctx = ensureAudio();
+    if(!ctx) return;
+    if(name === 'clap'){
+      var bufferSize = Math.floor(ctx.sampleRate * 0.045);
+      var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      var data = buffer.getChannelData(0);
+      for(var i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1) * (1 - i/bufferSize); }
+      var noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      var filter = ctx.createBiquadFilter();
+      filter.type = 'highpass'; filter.frequency.value = 1000;
+      var g = ctx.createGain(); g.gain.value = 0.55;
+      noise.connect(filter); filter.connect(g); g.connect(ctx.destination);
+      noise.start();
+    } else if(name === 'flip'){
+      tone(ctx, 640, 0.07, 'sine', 0.14, 0);
+      tone(ctx, 900, 0.05, 'sine', 0.08, 0.025);
+    } else if(name === 'action'){
+      var o = ctx.createOscillator();
+      var g2 = ctx.createGain();
+      o.type = 'triangle';
+      var t0 = ctx.currentTime;
+      o.frequency.setValueAtTime(300, t0);
+      o.frequency.exponentialRampToValueAtTime(1100, t0+0.4);
+      g2.gain.setValueAtTime(0.001, t0);
+      g2.gain.exponentialRampToValueAtTime(0.14, t0+0.05);
+      g2.gain.exponentialRampToValueAtTime(0.0001, t0+0.5);
+      o.connect(g2); g2.connect(ctx.destination);
+      o.start(t0); o.stop(t0+0.55);
+    } else if(name === 'heartbeat'){
+      tone(ctx, 85, 0.11, 'sine', 0.22, 0);
+      tone(ctx, 65, 0.13, 'sine', 0.16, 0.13);
+    }
+  }
+
+  var soundToggle = document.getElementById('soundToggle');
+  function updateSoundToggleUI(){
+    soundToggle.textContent = soundOn ? '♪' : '♪̸';
+    soundToggle.classList.toggle('off', !soundOn);
+  }
+  updateSoundToggleUI();
+  soundToggle.addEventListener('click', function(){
+    soundOn = !soundOn;
+    try{ localStorage.setItem('nadeen-sound', soundOn ? 'on' : 'off'); }catch(e){}
+    updateSoundToggleUI();
+    if(soundOn) ensureAudio();
+  });
+
   applyState();
 
-  // Slate tap -> reveal film
+  // Slate tap -> always clickable: replays the clap and takes you to scene 1
   var slate = document.getElementById('slate');
+  var film = document.getElementById('film');
   function clapIt(){
-    if(state.intro) return;
+    slate.classList.remove('clapped');
+    void slate.offsetWidth; // restart the CSS animation every tap
     slate.classList.add('clapped');
-    state.intro = true;
-    save();
+    playSound('clap');
+    if(navigator.vibrate) navigator.vibrate(15);
+    if(!state.intro){
+      state.intro = true;
+      save();
+    }
     setTimeout(function(){
-      document.getElementById('film').hidden = false;
-      document.getElementById('film').scrollIntoView({behavior:'smooth', block:'start'});
+      film.hidden = false;
+      film.scrollIntoView({behavior:'smooth', block:'start'});
     }, 180);
   }
   slate.addEventListener('click', clapIt);
@@ -634,6 +751,8 @@
       var i = Number(frame.getAttribute('data-i'));
       frame.classList.toggle('flipped');
       state.flipped[i] = frame.classList.contains('flipped');
+      playSound('flip');
+      if(navigator.vibrate) navigator.vibrate(10);
       save();
     });
   });
@@ -665,6 +784,8 @@
         setTimeout(function(){ el.remove(); }, dur+50);
       })(i);
     }
+    playSound('action');
+    if(navigator.vibrate) navigator.vibrate([15,40,15,40,25]);
     if(!state.action){
       state.action = true;
       actionBtn.textContent = 'Cut.';
@@ -673,10 +794,15 @@
     }
   });
 
-  // Hold my hand — press and hold for a slow, staged comfort message
+  // Hold my hand — press and hold for a slow, staged comfort message,
+  // with a synced heartbeat: visual pulse + soft tone + haptic buzz.
   var holdBtn = document.getElementById('holdBtn');
   var holdMsg = document.getElementById('holdMsg');
+  var holdWrap = document.getElementById('holdWrap');
   var holdTimers = [];
+  var heartbeatInterval = null;
+  var hapticInterval = null;
+  var HEARTBEAT_MS = 1100;
 
   function clearHoldTimers(){
     holdTimers.forEach(function(t){ clearTimeout(t); });
@@ -686,6 +812,7 @@
   function startHold(e){
     if(e.cancelable) e.preventDefault();
     holdBtn.classList.add('holding');
+    if(holdWrap) holdWrap.classList.add('active');
     clearHoldTimers();
     holdTimers.push(setTimeout(function(){
       holdMsg.textContent = "I'm right here.";
@@ -694,6 +821,15 @@
     holdTimers.push(setTimeout(function(){
       holdMsg.textContent = "for as long as you need.";
     }, 2200));
+
+    playSound('heartbeat');
+    heartbeatInterval = setInterval(function(){ playSound('heartbeat'); }, HEARTBEAT_MS);
+
+    if(navigator.vibrate){
+      navigator.vibrate([25,90,15]);
+      hapticInterval = setInterval(function(){ navigator.vibrate([25,90,15]); }, HEARTBEAT_MS);
+    }
+
     if(!state.heldBefore){
       state.heldBefore = true;
       holdBtn.classList.add('held-before');
@@ -706,7 +842,12 @@
     clearHoldTimers();
     holdTimers.push(setTimeout(function(){
       holdMsg.classList.remove('show');
+      if(holdWrap) holdWrap.classList.remove('active');
     }, 900));
+
+    if(heartbeatInterval){ clearInterval(heartbeatInterval); heartbeatInterval = null; }
+    if(hapticInterval){ clearInterval(hapticInterval); hapticInterval = null; }
+    if(navigator.vibrate) navigator.vibrate(0);
   }
 
   holdBtn.addEventListener('pointerdown', startHold);
