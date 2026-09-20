@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow" />
+<title>When you need me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,900;1,500;1,600&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  [hidden]{display:none !important;}
+
+  :root{
+    padding-top:env(safe-area-inset-top, 0px);
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+    --ground:#181110;
+    --ground-2:#241a17;
+    --ground-3:#2e211d;
+    --wine:#9c3349;
+    --wine-deep:#5c1f2c;
+    --wine-dim:#6e2230;
+    --wine-light:#d98a95;
+    --cream:#f4ead9;
+    --cream-dim:#c9b8a8;
+    --line:rgba(244,234,217,.14);
+    --shadow:0 20px 60px rgba(0,0,0,.45);
+  }
+
+  body{
+    background:var(--ground);
+    color:var(--cream);
+    font-family:'Work Sans',ui-sans-serif,system-ui,sans-serif;
+    padding-left:20px;
+    padding-right:20px;
+    overflow-x:hidden;
+    -webkit-touch-callout:none;
+  }
+
+  .grain{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:5;
+    opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  main{
+    position:relative;
+    z-index:1;
+    max-width:520px;
+    margin:0 auto;
+    padding-block:56px 80px;
+  }
+
+  h1,h2,h3{
+    font-family:'Playfair Display',Georgia,serif;
+    text-wrap:balance;
+    margin:0;
+  }
+  p{margin:0;line-height:1.65;}
+  .mono{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  .sound-toggle{
+    position:fixed;
+    top:calc(14px + env(safe-area-inset-top, 0px));
+    right:14px;
+    z-index:20;
+    background:rgba(36,26,23,.7);
+    backdrop-filter:blur(4px);
+    border:1px solid var(--line);
+    color:var(--cream-dim);
+    border-radius:999px;
+    width:34px;height:34px;
+    font-size:14px;
+    line-height:1;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    transition:opacity .2s ease;
+  }
+  .sound-toggle.off{opacity:.45;}
+
+  /* ---------- HEADER ---------- */
+
+  header{
+    text-align:center;
+    margin-bottom:44px;
+  }
+  .eyebrow{
+    font-size:11px;
+    color:var(--wine-light);
+    margin-bottom:14px;
+  }
+  header h1{
+    font-size:clamp(36px,10vw,48px);
+    font-weight:700;
+    font-style:italic;
+    color:var(--cream);
+    margin-bottom:12px;
+  }
+  header p{
+    color:var(--cream-dim);
+    font-size:15px;
+    max-width:36ch;
+    margin-inline:auto;
+  }
+
+  /* ---------- MENU ---------- */
+
+  .menu{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .menu-tile{
+    background:var(--ground-2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px 14px;
+    text-align:left;
+    color:var(--cream);
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .menu-tile:active{transform:scale(.98);}
+  .menu-tile.active{
+    background:var(--wine-dim);
+    border-color:var(--wine-light);
+  }
+  .menu-tile .icon{font-size:20px;display:block;margin-bottom:8px;}
+  .menu-tile .label{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:15px;
+    display:block;
+    margin-bottom:3px;
+  }
+  .menu-tile .hint{font-size:11px;color:var(--cream-dim);}
+
+  /* ---------- PANEL ---------- */
+
+  .panel{
+    margin-top:28px;
+    padding-top:32px;
+    border-top:1px solid var(--line);
+    text-align:center;
+  }
+  .panel-eyebrow{
+    font-size:11px;
+    color:var(--wine-light);
+    margin-bottom:10px;
+  }
+  .panel h2{
+    font-size:26px;
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  .panel > p.lede{
+    color:var(--cream-dim);
+    font-size:15px;
+    max-width:38ch;
+    margin-inline:auto;
+    margin-bottom:28px;
+  }
+
+  /* breathing */
+  .breath-circle{
+    width:150px;height:150px;
+    margin:0 auto 22px;
+    border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, var(--wine-light), var(--wine) 55%, var(--wine-deep) 100%);
+    box-shadow:0 0 50px rgba(157,51,73,.35);
+    transform:scale(.7);
+    transition:transform 4s ease-in-out;
+  }
+  .breath-phase{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:20px;
+    margin-bottom:24px;
+    min-height:26px;
+  }
+
+  /* grounding */
+  .ground-dots{
+    display:flex;justify-content:center;gap:8px;margin-bottom:22px;
+  }
+  .ground-dots span{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--line);
+  }
+  .ground-dots span.done{background:var(--wine-light);}
+  .ground-number{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:900;
+    font-size:56px;
+    color:var(--wine-light);
+    line-height:1;
+    margin-bottom:8px;
+  }
+  .ground-prompt{font-size:19px;margin-bottom:28px;max-width:32ch;margin-inline:auto;}
+
+  /* shared big action button */
+  .big-btn{
+    background:var(--wine);
+    color:var(--cream);
+    border:none;
+    border-radius:2px;
+    padding:16px 34px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    font-weight:500;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    transition:transform .15s ease, background .15s ease, opacity .2s ease;
+  }
+  .big-btn:active{transform:scale(.96);}
+  .big-btn.ghost{background:transparent;border:1px solid var(--line);color:var(--cream-dim);}
+  .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+  /* hold my hand (shared component) */
+  .hold-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .hold-glow{
+    position:absolute;inset:-50px -70px;border-radius:50%;
+    background:radial-gradient(ellipse at center, rgba(157,51,73,.4), transparent 70%);
+    opacity:0;pointer-events:none;z-index:0;transition:opacity .8s ease;
+  }
+  .hold-wrap.active .hold-glow{opacity:1;}
+  .hold-btn{
+    position:relative;z-index:1;
+    background:var(--wine-deep);
+    border:1px solid var(--wine-light);
+    color:var(--cream);
+    border-radius:999px;
+    padding:20px 44px;
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:18px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:none;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    transition:background .3s ease;
+  }
+  .hold-btn::before,.hold-btn::after{
+    content:'';position:absolute;inset:0;border-radius:999px;
+    border:1.5px solid var(--wine-light);opacity:0;pointer-events:none;
+  }
+  .hold-btn.holding{background:var(--wine);animation:heartbeat 1.1s ease-in-out infinite;}
+  .hold-btn.holding::before{animation:pulseRing 1.3s ease-out infinite;}
+  .hold-btn.holding::after{animation:pulseRing 1.3s ease-out infinite;animation-delay:.65s;}
+  .hold-btn.held-before{border-color:var(--wine-light);box-shadow:0 0 0 1px var(--wine-light) inset;}
+  @keyframes heartbeat{0%,100%{transform:scale(1);}22%{transform:scale(1.045);}38%{transform:scale(1);}52%{transform:scale(1.03);}68%{transform:scale(1);}}
+  @keyframes pulseRing{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.85);opacity:0;}}
+  .hold-hint{font-size:9px;color:var(--cream-dim);opacity:.6;position:relative;z-index:1;}
+  .hold-msg{
+    position:relative;z-index:1;
+    min-height:22px;font-size:15px;font-style:italic;
+    font-family:'Playfair Display',serif;color:var(--wine-light);
+    opacity:0;transition:opacity .5s ease;
+  }
+  .hold-msg.show{opacity:1;}
+
+  /* worry release */
+  .worry-box{position:relative;}
+  .worry-input{
+    width:100%;
+    min-height:110px;
+    background:var(--ground-2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    color:var(--cream);
+    font-family:'Work Sans',sans-serif;
+    font-size:15px;
+    padding:14px;
+    resize:none;
+    margin-bottom:6px;
+  }
+  .worry-input:focus{outline:none;border-color:var(--wine-light);}
+  .worry-privacy{
+    font-size:11px;color:var(--cream-dim);opacity:.65;
+    margin-bottom:20px;
+  }
+  .worry-ghost{
+    position:absolute;
+    left:14px;right:14px;top:14px;
+    text-align:left;
+    color:var(--cream-dim);
+    font-size:15px;
+    pointer-events:none;
+    white-space:pre-wrap;
+  }
+  .worry-confirm{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    color:var(--wine-light);
+    font-size:16px;
+    opacity:0;
+    transition:opacity .6s ease;
+    min-height:24px;
+    margin-top:16px;
+  }
+  .worry-confirm.show{opacity:1;}
+
+  /* reassurance */
+  .reassure-text{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:22px;
+    line-height:1.4;
+    min-height:110px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:22px;
+    color:var(--cream);
+    transition:opacity .3s ease;
+  }
+
+  /* call/text */
+  .contact-note{color:var(--cream-dim);font-size:13px;margin-bottom:22px;}
+
+  /* fidget orb */
+  .fidget-zone{
+    position:relative;
+    height:220px;
+    margin-bottom:8px;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .fidget-orb{
+    width:96px;height:96px;
+    border-radius:50%;
+    background:radial-gradient(circle at 38% 32%, var(--wine-light), var(--wine) 60%, var(--wine-deep) 100%);
+    box-shadow:0 0 40px rgba(157,51,73,.3);
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    transition:transform .15s ease;
+  }
+  .fidget-orb:active{transform:scale(.92);}
+  .fidget-ripple{
+    position:absolute;
+    border:1.5px solid var(--wine-light);
+    border-radius:50%;
+    pointer-events:none;
+    opacity:.7;
+  }
+  .fidget-count{font-size:11px;color:var(--cream-dim);opacity:.55;}
+
+  /* true things */
+  .true-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    text-align:left;
+  }
+  .true-item{
+    padding:16px 18px;
+    background:var(--ground-2);
+    border-left:2px solid var(--wine);
+    border-radius:2px;
+    font-size:15px;
+    color:var(--cream-dim);
+  }
+  .true-item strong{color:var(--cream);font-weight:600;}
+
+  .close-panel{
+    margin-top:32px;
+    font-size:12px;
+    color:var(--cream-dim);
+    background:none;
+    border:none;
+    text-decoration:underline;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  footer{
+    margin-top:56px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+    text-align:center;
+    font-size:11px;
+    color:var(--cream-dim);
+    opacity:.6;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<button class="sound-toggle mono" id="soundToggle" aria-label="Toggle sound">♪</button>
+
+<main>
+
+  <header>
+    <div class="eyebrow mono">for when things feel like too much</div>
+    <h1>I'm here.</h1>
+    <p>Pick whatever you need right now. There's no wrong one, and no one's watching you choose.</p>
+  </header>
+
+  <div class="menu" id="menu">
+    <button class="menu-tile" data-panel="breathe"><span class="icon">◍</span><span class="label">Breathe</span><span class="hint">a slow, paced breath</span></button>
+    <button class="menu-tile" data-panel="ground"><span class="icon">✦</span><span class="label">Ground yourself</span><span class="hint">5-4-3-2-1</span></button>
+    <button class="menu-tile" data-panel="hold"><span class="icon">♥</span><span class="label">Hold my hand</span><span class="hint">even from here</span></button>
+    <button class="menu-tile" data-panel="worry"><span class="icon">〰</span><span class="label">Let it go</span><span class="hint">say it, release it</span></button>
+    <button class="menu-tile" data-panel="reassure"><span class="icon">✧</span><span class="label">Tell me something true</span><span class="hint">about you</span></button>
+    <button class="menu-tile" data-panel="contact"><span class="icon">☏</span><span class="label">Reach me</span><span class="hint">for real, right now</span></button>
+    <button class="menu-tile" data-panel="fidget"><span class="icon">◎</span><span class="label">Just fidget</span><span class="hint">no message, just this</span></button>
+    <button class="menu-tile" data-panel="true"><span class="icon">◈</span><span class="label">Things that are true</span><span class="hint">to read slowly</span></button>
+  </div>
+
+  <!-- BREATHE -->
+  <section class="panel" id="panel-breathe" hidden>
+    <div class="panel-eyebrow mono">breathing</div>
+    <h2>Let's slow down together.</h2>
+    <p class="lede">Box breathing — four counts in, four held, four out, four held. Tap begin and follow the circle.</p>
+    <div class="breath-circle" id="breathCircle"></div>
+    <div class="breath-phase" id="breathPhase">&nbsp;</div>
+    <button class="big-btn" id="breathToggle">Begin</button>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <!-- GROUND -->
+  <section class="panel" id="panel-ground" hidden>
+    <div class="panel-eyebrow mono">grounding · 5-4-3-2-1</div>
+    <h2>Come back into the room.</h2>
+    <div class="ground-dots" id="groundDots"></div>
+    <div class="ground-number" id="groundNumber">5</div>
+    <div class="ground-prompt" id="groundPrompt">Name five things you can see around you right now.</div>
+    <button class="big-btn" id="groundNext">Done — next</button>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <!-- HOLD -->
+  <section class="panel" id="panel-hold" hidden>
+    <div class="panel-eyebrow mono">hold my hand</div>
+    <h2>I can't be there. So —</h2>
+    <p class="lede">Press and hold.</p>
+    <div class="hold-wrap" id="holdWrap">
+      <div class="hold-glow"></div>
+      <button class="hold-btn" id="holdBtn" aria-label="Press and hold for comfort">Hold my hand</button>
+      <p class="hold-hint mono">press and hold</p>
+      <p class="hold-msg" id="holdMsg" aria-live="polite"></p>
+    </div>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <!-- WORRY -->
+  <section class="panel" id="panel-worry" hidden>
+    <div class="panel-eyebrow mono">let it go</div>
+    <h2>Say it. Then let it go.</h2>
+    <p class="lede">Type whatever's sitting heavy on you. Nothing here is saved, sent, or seen by anyone — not even me. It exists only until you release it.</p>
+    <div class="worry-box">
+      <textarea class="worry-input" id="worryInput" placeholder="What's weighing on you right now?"></textarea>
+    </div>
+    <div class="worry-privacy">private — disappears the moment you let it go</div>
+    <button class="big-btn" id="worryRelease">Let it go</button>
+    <div class="worry-confirm" id="worryConfirm">It's out of your head now. That's enough for this moment.</div>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <!-- REASSURE -->
+  <section class="panel" id="panel-reassure" hidden>
+    <div class="panel-eyebrow mono">something true</div>
+    <h2>About you, specifically.</h2>
+    <div class="reassure-text" id="reassureText">Tap below.</div>
+    <button class="big-btn" id="reassureBtn">Tell me something true</button>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="panel" id="panel-contact" hidden>
+    <div class="panel-eyebrow mono">reach me</div>
+    <h2>If you need me for real —</h2>
+    <p class="contact-note">One tap. I will pick up, or I will call you back the second I see it.</p>
+    <div class="btn-row">
+      <a class="big-btn" id="callLink" href="#">Call me</a>
+      <a class="big-btn ghost" id="textLink" href="#">Text me</a>
+    </div>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <!-- FIDGET -->
+  <section class="panel" id="panel-fidget" hidden>
+    <div class="panel-eyebrow mono">just fidget</div>
+    <h2>No message here. Just this.</h2>
+    <p class="lede">Tap it as many times as you want.</p>
+    <div class="fidget-zone" id="fidgetZone">
+      <div class="fidget-orb" id="fidgetOrb"></div>
+    </div>
+    <div class="fidget-count" id="fidgetCount"></div>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <!-- TRUE THINGS -->
+  <section class="panel" id="panel-true" hidden>
+    <div class="panel-eyebrow mono">things that are true</div>
+    <h2>Read these slowly.</h2>
+    <div class="true-list">
+      <div class="true-item">This feeling is real, but it is <strong>not permanent</strong>. It will move through you and pass.</div>
+      <div class="true-item">You are <strong>safe</strong> right now, in this exact moment, reading this.</div>
+      <div class="true-item">You have translated for people your entire career and <strong>never once failed them</strong>.</div>
+      <div class="true-item">You have survived <strong>every single hard day</strong> you've ever had. All of them, no exceptions.</div>
+      <div class="true-item">Being anxious does not mean something is wrong with you. It means <strong>you care</strong>.</div>
+      <div class="true-item">It is okay to not have this figured out yet. <strong>You don't owe anyone certainty.</strong></div>
+      <div class="true-item">You are allowed to take up space, ask for help, and <strong>not be okay</strong> sometimes.</div>
+      <div class="true-item">Mostafa loves you, plainly, without conditions — <strong>on your hardest days too</strong>.</div>
+    </div>
+    <button class="close-panel" data-close>close</button>
+  </section>
+
+  <footer>made by mostafa, for nadeen — for whenever this is needed</footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- CONFIG — fill in before sharing ----------
+  var MOSTAFA_PHONE = "+201501538408"; // TODO: confirm this is the right number to reach Mostafa on
+
+  // ---------- sound engine (procedural, shared pattern with the film page) ----------
+  var audioCtx = null;
+  var soundOn = true;
+  try{ soundOn = localStorage.getItem('nadeen-sound') !== 'off'; }catch(e){}
+
+  function ensureAudio(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function tone(ctx, freq, duration, type, gain, delay){
+    delay = delay||0;
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type||'sine'; o.frequency.value = freq;
+    o.connect(g); g.connect(ctx.destination);
+    var t0 = ctx.currentTime + delay;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain, t0+0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+duration);
+    o.start(t0); o.stop(t0+duration+0.02);
+  }
+  function playSound(name){
+    if(!soundOn) return;
+    var ctx = ensureAudio();
+    if(!ctx) return;
+    if(name === 'tap'){
+      tone(ctx, 520, 0.06, 'sine', 0.12, 0);
+    } else if(name === 'select'){
+      tone(ctx, 640, 0.07, 'sine', 0.14, 0);
+      tone(ctx, 900, 0.05, 'sine', 0.08, 0.025);
+    } else if(name === 'heartbeat'){
+      tone(ctx, 85, 0.11, 'sine', 0.22, 0);
+      tone(ctx, 65, 0.13, 'sine', 0.16, 0.13);
+    } else if(name === 'release'){
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine';
+      var t0 = ctx.currentTime;
+      o.frequency.setValueAtTime(500, t0);
+      o.frequency.exponentialRampToValueAtTime(140, t0+1.1);
+      g.gain.setValueAtTime(0.001, t0);
+      g.gain.exponentialRampToValueAtTime(0.13, t0+0.05);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+1.2);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0+1.25);
+    } else if(name === 'chime'){
+      tone(ctx, 780, 0.4, 'sine', 0.09, 0);
+      tone(ctx, 990, 0.5, 'sine', 0.06, 0.06);
+    }
+  }
+
+  var soundToggle = document.getElementById('soundToggle');
+  function updateSoundToggleUI(){
+    soundToggle.textContent = soundOn ? '♪' : '♪̸';
+    soundToggle.classList.toggle('off', !soundOn);
+  }
+  updateSoundToggleUI();
+  soundToggle.addEventListener('click', function(){
+    soundOn = !soundOn;
+    try{ localStorage.setItem('nadeen-sound', soundOn ? 'on' : 'off'); }catch(e){}
+    updateSoundToggleUI();
+    if(soundOn) ensureAudio();
+  });
+
+  // ---------- menu / panel switching ----------
+  var tiles = document.querySelectorAll('.menu-tile');
+  var panels = document.querySelectorAll('.panel');
+  var openPanelId = null;
+
+  function closeAll(){
+    panels.forEach(function(p){ p.hidden = true; });
+    tiles.forEach(function(t){ t.classList.remove('active'); });
+    openPanelId = null;
+    stopBreathing();
+  }
+
+  function openPanel(name){
+    if(openPanelId === name){ closeAll(); return; }
+    closeAll();
+    var panel = document.getElementById('panel-'+name);
+    var tile = document.querySelector('.menu-tile[data-panel="'+name+'"]');
+    if(panel){ panel.hidden = false; panel.scrollIntoView({behavior:'smooth', block:'start'}); }
+    if(tile) tile.classList.add('active');
+    openPanelId = name;
+    playSound('select');
+    if(navigator.vibrate) navigator.vibrate(10);
+  }
+
+  tiles.forEach(function(tile){
+    tile.addEventListener('click', function(){ openPanel(tile.getAttribute('data-panel')); });
+  });
+  document.querySelectorAll('[data-close]').forEach(function(btn){
+    btn.addEventListener('click', closeAll);
+  });
+
+  // ---------- BREATHE ----------
+  var breathCircle = document.getElementById('breathCircle');
+  var breathPhase = document.getElementById('breathPhase');
+  var breathToggle = document.getElementById('breathToggle');
+  var breathing = false;
+  var breathTimer = null;
+  var PHASES = [
+    { label:'Breathe in…', scale:1 },
+    { label:'Hold.', scale:1 },
+    { label:'Breathe out…', scale:.7 },
+    { label:'Hold.', scale:.7 }
+  ];
+  var phaseIndex = 0;
+
+  function stepBreath(){
+    var phase = PHASES[phaseIndex % PHASES.length];
+    breathPhase.textContent = phase.label;
+    breathCircle.style.transform = 'scale('+phase.scale+')';
+    playSound('tap');
+    if(navigator.vibrate) navigator.vibrate(12);
+    phaseIndex++;
+  }
+
+  function startBreathing(){
+    breathing = true;
+    breathToggle.textContent = 'Stop';
+    phaseIndex = 0;
+    stepBreath();
+    breathTimer = setInterval(stepBreath, 4000);
+  }
+  function stopBreathing(){
+    breathing = false;
+    if(breathTimer){ clearInterval(breathTimer); breathTimer = null; }
+    breathToggle.textContent = 'Begin';
+    breathPhase.textContent = ' ';
+    breathCircle.style.transform = 'scale(.7)';
+  }
+  breathToggle.addEventListener('click', function(){
+    if(breathing) stopBreathing(); else startBreathing();
+  });
+
+  // ---------- GROUND (5-4-3-2-1) ----------
+  var GROUND_STEPS = [
+    { n:5, prompt:'Name five things you can see around you right now.' },
+    { n:4, prompt:'Name four things you can touch or feel from where you are.' },
+    { n:3, prompt:'Name three things you can hear right now.' },
+    { n:2, prompt:'Name two things you can smell — or two smells you like.' },
+    { n:1, prompt:'Name one thing you can taste, or one thing you\'re grateful for.' }
+  ];
+  var groundStep = 0;
+  var groundDots = document.getElementById('groundDots');
+  var groundNumber = document.getElementById('groundNumber');
+  var groundPrompt = document.getElementById('groundPrompt');
+  var groundNext = document.getElementById('groundNext');
+
+  GROUND_STEPS.forEach(function(){
+    var dot = document.createElement('span');
+    groundDots.appendChild(dot);
+  });
+
+  function renderGround(){
+    var step = GROUND_STEPS[groundStep];
+    groundNumber.textContent = step.n;
+    groundPrompt.textContent = step.prompt;
+    Array.from(groundDots.children).forEach(function(d,i){
+      d.classList.toggle('done', i < groundStep);
+    });
+    groundNext.textContent = groundStep === GROUND_STEPS.length-1 ? 'Done' : 'Done — next';
+  }
+  renderGround();
+
+  var groundCompleted = false;
+  groundNext.addEventListener('click', function(){
+    playSound('tap');
+    if(navigator.vibrate) navigator.vibrate(10);
+    if(groundCompleted){
+      groundCompleted = false;
+      groundStep = 0;
+      renderGround();
+      return;
+    }
+    if(groundStep < GROUND_STEPS.length-1){
+      groundStep++;
+      renderGround();
+    } else {
+      Array.from(groundDots.children).forEach(function(d){ d.classList.add('done'); });
+      groundPrompt.textContent = "That's the whole exercise. However you feel right now is okay.";
+      groundNumber.textContent = '✓';
+      groundNext.textContent = 'Start over';
+      playSound('chime');
+      groundCompleted = true;
+    }
+  });
+
+  // ---------- HOLD MY HAND ----------
+  var state = { heldBefore: false };
+  try{
+    var stored = localStorage.getItem('nadeen-held-before');
+    if(stored === 'true') state.heldBefore = true;
+  }catch(e){}
+
+  var holdBtn = document.getElementById('holdBtn');
+  var holdMsg = document.getElementById('holdMsg');
+  var holdWrap = document.getElementById('holdWrap');
+  var holdTimers = [];
+  var heartbeatInterval = null;
+  var hapticInterval = null;
+  var HEARTBEAT_MS = 1100;
+
+  if(state.heldBefore) holdBtn.classList.add('held-before');
+
+  function clearHoldTimers(){
+    holdTimers.forEach(function(t){ clearTimeout(t); });
+    holdTimers = [];
+  }
+  function startHold(e){
+    if(e.cancelable) e.preventDefault();
+    holdBtn.classList.add('holding');
+    holdWrap.classList.add('active');
+    clearHoldTimers();
+    holdTimers.push(setTimeout(function(){
+      holdMsg.textContent = "I'm right here.";
+      holdMsg.classList.add('show');
+    }, 500));
+    holdTimers.push(setTimeout(function(){
+      holdMsg.textContent = "for as long as you need.";
+    }, 2200));
+
+    playSound('heartbeat');
+    heartbeatInterval = setInterval(function(){ playSound('heartbeat'); }, HEARTBEAT_MS);
+    if(navigator.vibrate){
+      navigator.vibrate([25,90,15]);
+      hapticInterval = setInterval(function(){ navigator.vibrate([25,90,15]); }, HEARTBEAT_MS);
+    }
+    if(!state.heldBefore){
+      state.heldBefore = true;
+      holdBtn.classList.add('held-before');
+      try{ localStorage.setItem('nadeen-held-before', 'true'); }catch(e){}
+    }
+  }
+  function endHold(){
+    holdBtn.classList.remove('holding');
+    clearHoldTimers();
+    holdTimers.push(setTimeout(function(){
+      holdMsg.classList.remove('show');
+      holdWrap.classList.remove('active');
+    }, 900));
+    if(heartbeatInterval){ clearInterval(heartbeatInterval); heartbeatInterval = null; }
+    if(hapticInterval){ clearInterval(hapticInterval); hapticInterval = null; }
+    if(navigator.vibrate) navigator.vibrate(0);
+  }
+  holdBtn.addEventListener('pointerdown', startHold);
+  holdBtn.addEventListener('pointerup', endHold);
+  holdBtn.addEventListener('pointercancel', endHold);
+  holdBtn.addEventListener('pointerleave', endHold);
+  holdBtn.addEventListener('keydown', function(e){
+    if((e.key==='Enter'||e.key===' ') && !holdBtn.classList.contains('holding')) startHold(e);
+  });
+  holdBtn.addEventListener('keyup', function(e){
+    if(e.key==='Enter'||e.key===' ') endHold();
+  });
+
+  // ---------- WORRY RELEASE ----------
+  var worryInput = document.getElementById('worryInput');
+  var worryRelease = document.getElementById('worryRelease');
+  var worryConfirm = document.getElementById('worryConfirm');
+
+  worryRelease.addEventListener('click', function(){
+    var text = worryInput.value.trim();
+    if(!text) return;
+    var ghost = document.createElement('div');
+    ghost.className = 'worry-ghost mono';
+    ghost.style.fontFamily = "'Work Sans', sans-serif";
+    ghost.style.textTransform = 'none';
+    ghost.style.letterSpacing = 'normal';
+    ghost.textContent = text;
+    worryInput.parentElement.appendChild(ghost);
+    worryInput.value = '';
+
+    ghost.animate([
+      { transform:'translateY(0)', opacity:1, filter:'blur(0px)' },
+      { transform:'translateY(-40px)', opacity:0, filter:'blur(6px)' }
+    ], { duration:1400, easing:'ease-out' });
+    setTimeout(function(){ ghost.remove(); }, 1450);
+
+    playSound('release');
+    if(navigator.vibrate) navigator.vibrate([10,50,10,50,20]);
+    worryConfirm.classList.add('show');
+    setTimeout(function(){ worryConfirm.classList.remove('show'); }, 4000);
+  });
+
+  // ---------- REASSURANCE ----------
+  var TRUE_THINGS = [
+    "You've never once let a room down that was counting on you.",
+    "You make people feel understood in three languages. That's not small.",
+    "The thing you're scared of is the thing you're already good at.",
+    "You're allowed to be nervous about something you're still going to do well.",
+    "Nobody in that room today will work as hard as you, and nobody will notice — that's the skill.",
+    "You are the calmest person in most rooms, even when you don't feel calm inside.",
+    "Being new at something has never once stopped you before.",
+    "You have never needed to be fearless. Just willing. And you always are.",
+    "Whatever happens today, it does not change how good you are at your job.",
+    "You are loved exactly as you are today — not as a better version of today."
+  ];
+  var reassureText = document.getElementById('reassureText');
+  var reassureBtn = document.getElementById('reassureBtn');
+  var lastIndex = -1;
+  reassureBtn.addEventListener('click', function(){
+    var i;
+    do { i = Math.floor(Math.random()*TRUE_THINGS.length); } while(i === lastIndex && TRUE_THINGS.length > 1);
+    lastIndex = i;
+    reassureText.style.opacity = 0;
+    playSound('chime');
+    if(navigator.vibrate) navigator.vibrate(10);
+    setTimeout(function(){
+      reassureText.textContent = TRUE_THINGS[i];
+      reassureText.style.opacity = 1;
+    }, 200);
+  });
+
+  // ---------- CONTACT ----------
+  document.getElementById('callLink').href = 'tel:' + MOSTAFA_PHONE;
+  document.getElementById('textLink').href = 'sms:' + MOSTAFA_PHONE;
+  document.getElementById('callLink').addEventListener('click', function(){ if(navigator.vibrate) navigator.vibrate(10); });
+  document.getElementById('textLink').addEventListener('click', function(){ if(navigator.vibrate) navigator.vibrate(10); });
+
+  // ---------- FIDGET ORB ----------
+  var fidgetZone = document.getElementById('fidgetZone');
+  var fidgetOrb = document.getElementById('fidgetOrb');
+  var fidgetCount = document.getElementById('fidgetCount');
+  var taps = 0;
+  fidgetOrb.addEventListener('click', function(e){
+    taps++;
+    fidgetCount.textContent = taps > 3 ? (taps + ' taps') : '';
+    playSound('tap');
+    if(navigator.vibrate) navigator.vibrate(8);
+    var rect = fidgetZone.getBoundingClientRect();
+    var ripple = document.createElement('div');
+    ripple.className = 'fidget-ripple';
+    var size = 96;
+    ripple.style.width = size+'px';
+    ripple.style.height = size+'px';
+    ripple.style.left = (rect.width/2 - size/2)+'px';
+    ripple.style.top = (rect.height/2 - size/2)+'px';
+    fidgetZone.appendChild(ripple);
+    ripple.animate([
+      { transform:'scale(1)', opacity:.7 },
+      { transform:'scale(2.4)', opacity:0 }
+    ], { duration:900, easing:'ease-out' });
+    setTimeout(function(){ ripple.remove(); }, 950);
+  });
+
+})();
+</script>
+</body>
+</html>

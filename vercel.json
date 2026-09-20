@@ -4,6 +4,8 @@
     { "source": "/on/", "destination": "/on.html" },
     { "source": "/ilovenona", "destination": "/ilovenona.html" },
     { "source": "/ilovenona/", "destination": "/ilovenona.html" },
+    { "source": "/ilovenona/whenuneedme", "destination": "/ilovenona/whenuneedme.html" },
+    { "source": "/ilovenona/whenuneedme/", "destination": "/ilovenona/whenuneedme.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
