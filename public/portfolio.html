@@ -9,12 +9,12 @@
     <meta property="og:description" content="Editor, director & cinematographer. Films, reels, 3D, motion, design and voice-over." />
     <meta property="og:url" content="https://portfolio.aboustate.tech/" />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#011f1a" />
+    <meta name="theme-color" content="#02362f" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <style>
       :root {
         /* mirrors src/globals.css tokens */
@@ -35,483 +35,302 @@
         --black: #020c0a;
         --white: #faf8f5;
 
+        --surface-page: var(--beige-100);
+        --surface-card: var(--white);
+        --surface-inverse: var(--green-900);
+        --surface-sunken: var(--beige-300);
+        --text-primary: var(--green-950);
+        --text-secondary: var(--green-500);
+        --text-on-inverse: var(--beige-100);
+        --text-on-inverse-muted: var(--mint-300);
+        --text-accent: var(--mint-700);
+        --accent: var(--mint-500);
+        --border-subtle: var(--beige-500);
+        --border-on-inverse: var(--green-700);
+
         --font-display: "Funnel Display", ui-sans-serif, system-ui, sans-serif;
         --font-body: "DM Sans", ui-sans-serif, system-ui, sans-serif;
         --font-mono: "IBM Plex Mono", "SF Mono", ui-monospace, Menlo, monospace;
+        --size-display-xl: clamp(3.5rem, 6vw, 6.5rem);
+        --size-h1: clamp(2rem, 3vw, 3rem);
+        --size-h2: 1.75rem;
+        --size-h3: 1.375rem;
+        --size-body-l: 1.125rem;
+        --size-small: 0.875rem;
+        --size-micro: 0.75rem;
         --ls-tight: -0.02em;
         --ls-mono: 0.08em;
 
         --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
-        --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px; --space-10: 128px;
-        --radius-xs: 2px; --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px; --radius-pill: 999px;
+        --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
+        --radius-sm: 4px; --radius-md: 6px; --radius-pill: 999px;
         --container-max: 1280px;
-        --gutter: var(--space-6);
-        --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-        --ease-out: cubic-bezier(0, 0, 0.2, 1);
-        --duration-fast: 120ms; --duration-base: 200ms; --duration-slow: 400ms;
+        --shadow-sm: 0 1px 2px rgba(2, 12, 10, 0.08);
+        --shadow-md: 0 4px 16px rgba(2, 12, 10, 0.1);
         --shadow-lg: 0 16px 48px rgba(2, 12, 10, 0.16);
-        --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+        --ease-out: cubic-bezier(0, 0, 0.2, 1);
       }
 
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-      body {
-        margin: 0;
-        background: var(--green-950);
-        color: var(--beige-100);
-        font-family: var(--font-body);
-        font-size: 16px;
-        line-height: 1.55;
-        -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
-      }
+      body { margin: 0; background: var(--surface-page); color: var(--text-primary); font-family: var(--font-body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
       body.is-locked { overflow: hidden; }
       img, video, iframe { display: block; max-width: 100%; }
       a { color: inherit; }
-      button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-      :focus-visible { outline: 2px solid var(--mint-500); outline-offset: 3px; }
-      ::selection { background: var(--mint-500); color: var(--green-950); }
-
-      .wrap { width: 100%; max-width: var(--container-max); margin: 0 auto; padding: 0 var(--gutter); }
-      .mono { font-family: var(--font-mono); letter-spacing: var(--ls-mono); text-transform: uppercase; font-size: 12px; }
-      .muted { color: var(--green-300); }
-      .accent { color: var(--mint-500); }
+      button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+      :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
       [hidden] { display: none !important; }
 
-      /* ---------------- nav + timeline ---------------- */
-      .nav {
-        position: fixed; inset: 0 0 auto 0; z-index: 40;
-        background: rgba(1, 31, 26, 0.72);
-        backdrop-filter: blur(14px) saturate(140%);
-        -webkit-backdrop-filter: blur(14px) saturate(140%);
-        border-bottom: 1px solid rgba(27, 73, 67, 0.7);
-      }
-      .nav__row { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: var(--space-5); }
-      .logo { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; }
-      .logo__crop { width: 112px; height: 28px; overflow: hidden; flex-shrink: 0; }
-      .logo__crop img { width: 140px; max-width: none; margin: -56px 0 0 -14px; }
-      .logo__tag { padding-left: var(--space-3); border-left: 1px solid var(--green-700); color: var(--mint-500); }
-      .nav__links { display: flex; gap: var(--space-5); list-style: none; margin: 0; padding: 0; }
-      .nav__links a { text-decoration: none; color: var(--green-300); transition: color var(--duration-base) var(--ease-standard); }
-      .nav__links a:hover, .nav__links a.is-active { color: var(--beige-100); }
-      .nav__cta {
-        display: inline-flex; align-items: center; gap: var(--space-2);
-        padding: 9px 16px; border-radius: var(--radius-pill);
-        background: var(--mint-500); color: var(--green-950);
-        font-weight: 600; font-size: 14px; text-decoration: none;
-        transition: background var(--duration-base) var(--ease-standard);
-      }
-      .nav__cta:hover { background: var(--mint-300); }
+      .wrap { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--space-5); }
+      .eyebrow { font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-secondary); margin: 0 0 var(--space-2); }
+      .h2 { font-family: var(--font-display); font-weight: 700; font-size: var(--size-h1); line-height: 1.12; letter-spacing: var(--ls-tight); margin: 0; }
 
-      /* NLE-style section timeline: one clip per section, playhead = scroll position */
-      .timeline { position: relative; height: 22px; display: flex; gap: 2px; padding: 0 0 6px; }
-      .timeline__clip {
-        position: relative; flex: 1 1 0; min-width: 0;
-        border-radius: var(--radius-xs);
-        background: var(--green-900);
-        border: 1px solid var(--green-700);
-        color: var(--green-300);
-        font-family: var(--font-mono); font-size: 9.5px; letter-spacing: var(--ls-mono); text-transform: uppercase;
-        text-align: left; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        transition: background var(--duration-base), color var(--duration-base), border-color var(--duration-base);
-      }
-      .timeline__clip:hover { color: var(--beige-100); border-color: var(--green-500); }
-      .timeline__clip.is-active { background: var(--green-700); color: var(--beige-100); border-color: var(--mint-700); }
-      .timeline__head {
-        position: absolute; top: -3px; bottom: 3px; width: 2px; margin-left: -1px;
-        background: var(--mint-500); pointer-events: none; left: 0;
-        box-shadow: 0 0 10px rgba(144, 180, 149, 0.6);
-      }
-      .timeline__head::before {
-        content: ""; position: absolute; top: -2px; left: -4px;
-        border: 5px solid transparent; border-top: 6px solid var(--mint-500);
-      }
-
-      /* ---------------- hero ---------------- */
-      .hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 140px 0 80px; overflow: hidden; isolation: isolate; }
-      .hero::before {
-        content: ""; position: absolute; inset: 0; z-index: -2;
-        background-image: url("/assets/patterns/dot-grid-dark.svg");
-        background-size: 24px 24px;
-        -webkit-mask-image: radial-gradient(ellipse 70% 60% at 70% 45%, #000 0%, transparent 75%);
-                mask-image: radial-gradient(ellipse 70% 60% at 70% 45%, #000 0%, transparent 75%);
-        opacity: 0.6;
-      }
-      .hero::after {
-        content: ""; position: absolute; z-index: -1; width: 70vw; height: 70vw; right: -20vw; top: -20vw;
-        background: radial-gradient(circle, rgba(144, 180, 149, 0.16), transparent 60%);
-        pointer-events: none;
-      }
-      .hero__loop { position: absolute; inset: 0; z-index: -3; width: 100%; height: 100%; object-fit: cover; opacity: 0.22; filter: saturate(0.6); }
-      .hero__grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: var(--space-8); align-items: center; }
-      .eyebrow { display: inline-flex; align-items: center; gap: var(--space-3); color: var(--mint-500); margin: 0 0 var(--space-5); }
-      .rec { width: 8px; height: 8px; border-radius: 50%; background: var(--mint-500); box-shadow: 0 0 0 4px rgba(144, 180, 149, 0.18); animation: pulse 1.6s var(--ease-standard) infinite; }
-      @keyframes pulse { 50% { opacity: 0.35; } }
-      .hero__name {
-        font-family: var(--font-display); font-weight: 300;
-        font-size: clamp(3.5rem, 8.4vw, 8rem); line-height: 0.92; letter-spacing: -0.035em;
-        margin: 0 0 var(--space-5);
-      }
-      .hero__name strong { display: block; font-weight: 800; color: var(--white); }
-      .hero__headline { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.25rem, 2vw, 1.6rem); line-height: 1.25; margin: 0 0 var(--space-3); color: var(--beige-100); }
-      .hero__intro { max-width: 46ch; color: var(--green-300); font-size: 17px; margin: 0 0 var(--space-6); }
-      .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-      .btn {
-        display: inline-flex; align-items: center; gap: var(--space-2);
-        padding: 13px 22px; border-radius: var(--radius-pill);
-        font-weight: 600; font-size: 15px; text-decoration: none;
-        border: 1px solid var(--green-700);
-        transition: background var(--duration-base) var(--ease-standard), border-color var(--duration-base), transform var(--duration-base);
-      }
-      .btn:hover { border-color: var(--mint-500); transform: translateY(-1px); }
-      .btn--primary { background: var(--beige-100); color: var(--green-950); border-color: var(--beige-100); }
-      .btn--primary:hover { background: var(--white); }
-      .btn svg { width: 16px; height: 16px; }
-
-      /* viewer: a monitor showing the current film slate + live timecode */
-      .viewer { position: relative; }
-      .viewer__frame {
-        position: relative; aspect-ratio: 16 / 10; border-radius: var(--radius-lg); overflow: hidden;
-        background: var(--black); border: 1px solid var(--green-700);
-        box-shadow: 0 40px 120px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(144, 180, 149, 0.06);
-      }
-      .viewer__screen { position: absolute; inset: 11% 0; background: linear-gradient(135deg, var(--green-900), var(--green-950) 60%, var(--black)); overflow: hidden; }
-      .viewer__screen::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); mix-blend-mode: screen; opacity: 0.7; animation: grain 0.6s steps(3) infinite; }
-      @keyframes grain { 33% { transform: translate(-3%, 2%); } 66% { transform: translate(2%, -3%); } }
-      .viewer__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity var(--duration-slow); }
-      .viewer__slate { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: var(--space-5); z-index: 1; }
-      .viewer__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(2rem, 4.6vw, 4rem); letter-spacing: -0.03em; line-height: 1; margin: 0 0 var(--space-2); transition: opacity var(--duration-slow), transform var(--duration-slow) var(--ease-out); }
-      .viewer__sub { color: var(--mint-300); transition: opacity var(--duration-slow); }
-      .viewer__slate.is-swapping .viewer__title, .viewer__slate.is-swapping .viewer__sub { opacity: 0; transform: translateY(6px); }
-      .viewer__hud { position: absolute; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 var(--space-4); height: 11%; font-family: var(--font-mono); font-size: 11px; letter-spacing: var(--ls-mono); color: var(--green-300); }
-      .viewer__hud--top { top: 0; }
-      .viewer__hud span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .viewer__hud span + span { margin-left: var(--space-4); }
-      .scope__value { white-space: nowrap; }
-      .viewer__hud--bottom { bottom: 0; }
-      .viewer__tc { color: var(--beige-100); font-variant-numeric: tabular-nums; }
-      .viewer__corner { position: absolute; width: 18px; height: 18px; border-color: var(--mint-500); border-style: solid; opacity: 0.8; z-index: 2; }
-      .viewer__corner--tl { top: calc(11% + 10px); left: 10px; border-width: 1px 0 0 1px; }
-      .viewer__corner--tr { top: calc(11% + 10px); right: 10px; border-width: 1px 1px 0 0; }
-      .viewer__corner--bl { bottom: calc(11% + 10px); left: 10px; border-width: 0 0 1px 1px; }
-      .viewer__corner--br { bottom: calc(11% + 10px); right: 10px; border-width: 0 1px 1px 0; }
-      .viewer__scopes { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-top: var(--space-3); }
-      .scope { border: 1px solid var(--green-700); border-radius: var(--radius-md); padding: 10px 12px; background: rgba(2, 54, 47, 0.45); }
-      .scope__label { color: var(--green-300); font-size: 10px; }
-      .scope__value { font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.1; margin-top: 2px; }
-
-      .ticker { border-top: 1px solid var(--green-700); border-bottom: 1px solid var(--green-700); overflow: hidden; background: var(--green-900); }
-      .ticker__track { display: flex; gap: var(--space-7); width: max-content; padding: 14px 0; animation: ticker 38s linear infinite; }
-      .ticker__item { display: inline-flex; align-items: center; gap: var(--space-7); font-family: var(--font-display); font-weight: 500; font-size: 20px; white-space: nowrap; color: var(--mint-300); }
-      .ticker__item::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mint-500); }
-      @keyframes ticker { to { transform: translateX(-50%); } }
-
-      /* ---------------- sections ---------------- */
-      .section { padding: var(--space-10) 0; position: relative; scroll-margin-top: 90px; }
-      .section--alt { background: var(--green-900); }
-      .section--light { background: var(--beige-100); color: var(--green-950); }
-      .section__head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-6); margin-bottom: var(--space-7); flex-wrap: wrap; }
-      .section__num { color: var(--mint-500); margin: 0 0 var(--space-3); }
-      .section--light .section__num { color: var(--mint-700); }
-      .section__title { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.25rem, 4.4vw, 4rem); line-height: 1; letter-spacing: var(--ls-tight); margin: 0; }
-      .section__lede { max-width: 44ch; color: var(--green-300); margin: 0; }
-      .section--light .section__lede { color: var(--green-500); }
+      .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 600; font-size: var(--size-small); text-decoration: none; border: 1px solid transparent; transition: background 150ms, border-color 150ms, color 150ms, box-shadow 150ms; white-space: nowrap; }
+      .btn--accent { background: var(--accent); color: var(--green-950); box-shadow: var(--shadow-sm); }
+      .btn--accent:hover { background: var(--mint-700); }
+      .btn--ghost-inverse { border-color: var(--border-on-inverse); color: var(--text-on-inverse); }
+      .btn--ghost-inverse:hover { border-color: var(--accent); color: var(--accent); }
+      .btn--ghost { border-color: var(--border-subtle); color: var(--text-primary); background: var(--surface-card); }
+      .btn--ghost:hover { border-color: var(--accent); color: var(--text-accent); }
+      .btn svg { width: 14px; height: 14px; }
 
       .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-      .chip {
-        padding: 7px 14px; border-radius: var(--radius-pill); border: 1px solid var(--green-700);
-        color: var(--green-300); font-size: 13px; font-weight: 500;
-        transition: all var(--duration-base) var(--ease-standard);
-      }
-      .chip:hover { color: var(--beige-100); border-color: var(--green-500); }
-      .chip[aria-pressed="true"] { background: var(--beige-100); color: var(--green-950); border-color: var(--beige-100); }
+      .chip { padding: 7px 16px; border-radius: var(--radius-pill); border: 1px solid var(--border-subtle); background: var(--surface-card); color: var(--text-secondary); font-size: var(--size-small); font-weight: 500; transition: border-color 150ms, color 150ms, background 150ms; }
+      .chip:hover { border-color: var(--accent); color: var(--text-accent); }
+      .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--green-950); }
+      .pill { display: inline-block; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--mint-100); border: 1px solid var(--mint-300); color: var(--green-900); font-size: 12px; font-weight: 500; }
+      .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 
-      /* film cards */
-      .films { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
-      .film:not(.film--featured) .film__body { padding: var(--space-5); }
-      .film:not(.film--featured) .film__media { aspect-ratio: 4 / 3; }
-      .film__highlight { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); color: var(--mint-300); font-size: 13px; font-weight: 500; }
-      .film__highlight::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mint-500); }
+      /* ---------- nav ---------- */
+      .nav { position: sticky; top: 0; z-index: 40; background: rgba(2, 54, 47, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-on-inverse); }
+      .nav__row { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); }
+      .wordmark { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: var(--ls-tight); color: var(--text-on-inverse); text-decoration: none; white-space: nowrap; }
+      .wordmark span { color: var(--accent); }
+      .wordmark small { font-family: var(--font-mono); font-weight: 400; font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-on-inverse-muted); margin-left: var(--space-3); }
+      .nav__links { display: flex; align-items: center; gap: var(--space-6); list-style: none; margin: 0; padding: 0; }
+      .nav__links a { font-size: var(--size-small); color: var(--text-on-inverse-muted); text-decoration: none; transition: color 150ms; }
+      .nav__links a:hover, .nav__links a.is-active { color: var(--text-on-inverse); }
+      .nav .btn { padding: 8px 16px; }
+
+      /* ---------- hero ---------- */
+      .hero { position: relative; overflow: hidden; background: var(--surface-inverse); color: var(--text-on-inverse); padding: var(--space-9) 0; }
+      .hero__glow { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 300ms; background: radial-gradient(360px circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(144, 180, 149, 0.14), transparent 70%); }
+      .hero:hover .hero__glow { opacity: 1; }
+      .hero__loop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.18; }
+      .hero .wrap { position: relative; }
+      .hero .eyebrow { color: var(--accent); margin-bottom: var(--space-4); }
+      .hero__name { font-family: var(--font-display); font-weight: 800; font-size: var(--size-display-xl); line-height: 1.02; letter-spacing: var(--ls-tight); margin: 0; max-width: 14ch; }
+      .hero__headline { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.4rem, 2.4vw, 2rem); line-height: 1.2; margin: var(--space-4) 0 0; color: var(--text-on-inverse); }
+      .hero__intro { max-width: 560px; margin: var(--space-4) 0 0; font-size: var(--size-body-l); color: var(--text-on-inverse-muted); }
+      .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-6); }
+      .hero__facts { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--border-on-inverse); font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-on-inverse-muted); }
+      .hero__facts strong { color: var(--text-on-inverse); font-weight: 500; }
+
+      /* ---------- sections ---------- */
+      .section { padding: var(--space-9) 0; scroll-margin-top: 64px; }
+      .section + .section { border-top: 1px solid var(--beige-300); }
+      .section__head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-5); flex-wrap: wrap; margin-bottom: var(--space-6); }
+      .section__lede { margin: var(--space-3) 0 0; max-width: 52ch; color: var(--text-secondary); }
+
+      /* ---------- cards ---------- */
+      .card { display: flex; flex-direction: column; width: 100%; overflow: hidden; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: var(--surface-card); transition: box-shadow 150ms, border-color 150ms; }
+      .card:hover { box-shadow: var(--shadow-md); border-color: var(--mint-300); }
+      .media { position: relative; overflow: hidden; background: var(--surface-inverse); aspect-ratio: 16 / 9; }
+      .media img, .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease-out); }
+      .card:hover .media img { transform: scale(1.03); }
+      .media__empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--mint-300); }
+      .media__empty svg { width: 34px; height: 34px; opacity: 0.8; }
+      .media__play { position: absolute; left: var(--space-4); bottom: var(--space-4); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--green-950); box-shadow: var(--shadow-md); transition: transform 150ms; }
+      .card:hover .media__play { transform: scale(1.08); }
+      .media__play svg { width: 14px; height: 14px; margin-left: 2px; }
+      .draft { position: absolute; top: var(--space-3); left: var(--space-3); z-index: 2; padding: 3px 8px; border-radius: var(--radius-sm); background: var(--beige-100); color: var(--green-950); font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--ls-mono); }
+      .card__body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+      .card__kicker { font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-accent); }
+      .card__title { font-family: var(--font-display); font-weight: 600; font-size: var(--size-h3); line-height: 1.15; letter-spacing: var(--ls-tight); margin: 0; }
+      .card__text { margin: 0; font-size: var(--size-small); color: var(--text-secondary); }
+
+      /* films */
+      .films { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+      .films .card--featured { grid-column: 1 / -1; display: grid; grid-template-columns: 1.6fr 1fr; }
+      .card--featured .media { aspect-ratio: auto; min-height: 380px; }
+      .card--featured .card__body { padding: var(--space-6); justify-content: center; gap: var(--space-3); }
+      .card--featured .card__title { font-size: clamp(2rem, 3.4vw, 3rem); font-weight: 700; }
+      .card--featured .card__text { font-size: 1rem; }
+      .card--featured .btn { align-self: flex-start; margin-top: var(--space-3); }
+      .badge-hero { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 2; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--accent); color: var(--green-950); font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--ls-mono); }
 
       /* reels dashboard */
-      .reels-top { display: grid; grid-template-columns: auto 1fr; gap: var(--space-5); margin-bottom: var(--space-5); }
-      .reels-hero { display: grid; grid-template-columns: repeat(2, minmax(0, 300px)); gap: var(--space-4); }
-      .reel { position: relative; display: block; width: 100%; text-align: left; aspect-ratio: 9 / 16; border-radius: var(--radius-lg); overflow: hidden; background: var(--black); border: 1px solid var(--green-700); transition: border-color var(--duration-base), transform var(--duration-slow) var(--ease-out); }
-      .reel:hover { border-color: var(--mint-700); transform: translateY(-3px); }
-      .reel--landscape { aspect-ratio: 16 / 9; }
-      .reel img, .reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-      .reel__cap { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-4); background: linear-gradient(180deg, transparent, rgba(2, 12, 10, 0.9)); }
-      .reel__cat { color: var(--mint-300); font-size: 10px; }
-      .reel__title { font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 1.2; margin: 2px 0 0; }
-      .reel--hero .reel__title { font-size: 22px; }
-      .reel__badge { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 2; padding: 4px 8px; border-radius: var(--radius-pill); background: var(--mint-500); color: var(--green-950); font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--ls-mono); }
-      .reel .draft-badge { top: var(--space-3); left: var(--space-3); }
-      .reel__play { position: absolute; top: 50%; left: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; display: grid; place-items: center; background: rgba(242, 239, 235, 0.14); border: 1px solid rgba(242, 239, 235, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: opacity var(--duration-base); }
-      .reel:hover .reel__play, .reel--hero .reel__play { opacity: 1; }
-      .reel:hover .reel__play { background: var(--mint-500); color: var(--green-950); }
-      .reel__play svg { width: 18px; height: 18px; }
-      .dash { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-6); border: 1px solid var(--green-700); border-radius: var(--radius-lg); background: rgba(2, 54, 47, 0.35); }
-      .dash__label { color: var(--green-300); font-size: 11px; margin: 0; }
+      .reels-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 1.1fr; gap: var(--space-4); margin-bottom: var(--space-4); }
+      .reels-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-4); }
+      .card--reel .media { aspect-ratio: 9 / 16; }
+      .card--reel.is-landscape { grid-column: span 2; }
+      .card--reel.is-landscape .media { aspect-ratio: 16 / 9; }
+      .reels-grid .card__body { padding: var(--space-3) var(--space-4) var(--space-4); gap: 2px; }
+      .reels-grid .card__title { font-size: 15px; }
+      .reels-grid .media__play { width: 32px; height: 32px; left: var(--space-3); bottom: var(--space-3); }
+      .dash { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-6); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: var(--surface-card); }
       .dash__stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
-      .dash__stat { padding: var(--space-4); border-radius: var(--radius-md); background: var(--green-950); border: 1px solid var(--green-700); }
-      .dash__num { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; margin-top: 6px; }
-      .dash__bars { display: grid; gap: var(--space-2); }
-      .dash__bar { display: grid; grid-template-columns: 70px 1fr 28px; align-items: center; gap: var(--space-3); font-size: 13px; }
-      .dash__track { height: 6px; border-radius: 3px; background: var(--green-900); overflow: hidden; }
-      .dash__fill { height: 100%; border-radius: 3px; background: var(--mint-500); }
-      .dash__count { color: var(--green-300); font-family: var(--font-mono); font-size: 12px; text-align: right; }
+      .dash__stat { padding: var(--space-4); border-radius: var(--radius-md); background: var(--surface-page); }
+      .dash__num { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; margin-top: var(--space-2); }
+      .dash__bars { display: grid; gap: var(--space-3); }
+      .dash__bar { display: grid; grid-template-columns: 72px 1fr 24px; align-items: center; gap: var(--space-3); font-size: var(--size-small); }
+      .dash__track { height: 6px; border-radius: 3px; background: var(--surface-sunken); overflow: hidden; }
+      .dash__fill { height: 100%; border-radius: 3px; background: var(--accent); }
+      .dash__count { text-align: right; font-family: var(--font-mono); font-size: var(--size-micro); color: var(--text-secondary); }
       .dash .chips { margin-top: auto; }
-      .reels-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-3); }
-      .reels-grid .reel--landscape { grid-column: span 2; aspect-ratio: auto; }
 
-      /* graphic design masonry */
+      .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
       .masonry { columns: 3; column-gap: var(--space-4); }
-      .masonry .tile { display: block; width: 100%; aspect-ratio: auto; margin-bottom: var(--space-4); break-inside: avoid; }
-      .masonry .tile img { position: static; width: 100%; height: auto; }
-      .masonry .tile .tile__empty { position: relative; }
-      .masonry .tile__cap { opacity: 0; transition: opacity var(--duration-base); }
-      .masonry .tile:hover .tile__cap, .masonry .tile:focus-visible .tile__cap { opacity: 1; }
-      .masonry .draft-badge ~ .tile__cap { opacity: 1; }
-      .film { position: relative; text-align: left; display: block; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: var(--black); border: 1px solid var(--green-700); transition: border-color var(--duration-base), transform var(--duration-slow) var(--ease-out); }
-      .film:hover { border-color: var(--mint-700); transform: translateY(-3px); }
-      .film--featured { grid-column: 1 / -1; }
-      .film__media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
-      .film--featured .film__media { aspect-ratio: 2.39 / 1; }
-      .film__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out), filter var(--duration-slow); filter: saturate(0.85); }
-      .film:hover .film__media img { transform: scale(1.04); filter: saturate(1); }
-      .film__shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(2, 12, 10, 0.92)); }
-      .film__body { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-6); display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-5); }
-      .film__kicker { color: var(--mint-300); margin-bottom: var(--space-2); }
-      .film__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1; letter-spacing: -0.025em; margin: 0; }
-      .film--featured .film__title { font-size: clamp(2.5rem, 6vw, 5.5rem); }
-      .film__roles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-3); }
-      .film__play {
-        flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%;
-        display: grid; place-items: center;
-        background: rgba(242, 239, 235, 0.12); border: 1px solid rgba(242, 239, 235, 0.3);
-        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        transition: background var(--duration-base), transform var(--duration-base);
-      }
-      .film:hover .film__play { background: var(--mint-500); color: var(--green-950); transform: scale(1.06); }
-      .film__play svg { width: 20px; height: 20px; }
-      .pill { padding: 4px 10px; border-radius: var(--radius-pill); background: rgba(144, 180, 149, 0.14); border: 1px solid rgba(144, 180, 149, 0.28); color: var(--mint-300); font-size: 12px; font-weight: 500; white-space: nowrap; }
-      .draft-badge { position: absolute; top: var(--space-4); left: var(--space-4); z-index: 2; padding: 4px 8px; border-radius: var(--radius-sm); background: var(--beige-100); color: var(--green-950); font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--ls-mono); }
-
-      /* generated poster when no still exists: letterboxed title card */
-      .genposter { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: radial-gradient(ellipse at 30% 20%, var(--green-700), var(--green-950) 60%, var(--black)); }
-      .genposter::before { content: ""; position: absolute; inset: 0; background-image: url("/assets/patterns/hairline-grid.svg"); background-size: 28px 28px; opacity: 0.25; }
-      .genposter::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); opacity: 0.6; }
-      .genposter__word { position: relative; font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 18vw, 16rem); line-height: 0.8; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1px rgba(144, 180, 149, 0.28); white-space: nowrap; transform: translateY(-8%); }
-      .film:not(.film--featured) .genposter__word { font-size: clamp(4rem, 10vw, 8rem); }
-
-      /* tiles for 3D / motion */
-      .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
-      .tile { position: relative; text-align: left; border-radius: var(--radius-lg); overflow: hidden; background: var(--black); border: 1px solid var(--green-700); aspect-ratio: 4 / 5; transition: border-color var(--duration-base); }
-      .tile--wide { aspect-ratio: 16 / 10; }
-      .tile--video { aspect-ratio: 16 / 9; }
-      .tiles--two { grid-template-columns: repeat(2, 1fr); }
-      .tile:hover { border-color: var(--mint-700); }
-      .tile img, .tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); }
-      .tile:hover img { transform: scale(1.04); }
-      .tile__cap { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-5); background: linear-gradient(180deg, transparent, rgba(2, 12, 10, 0.88)); }
-      .tile__title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; }
-      .tile__note { color: var(--green-300); font-size: 13px; margin-top: 2px; }
-      .tile__empty { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, var(--green-700), var(--green-950) 70%); }
-      .tile__empty::before { content: ""; position: absolute; inset: 0; background-image: url("/assets/patterns/dot-grid-dark.svg"); background-size: 24px 24px; opacity: 0.5; }
-      .tile__empty svg { position: relative; width: 44%; height: auto; opacity: 0.55; }
+      .masonry .card { margin-bottom: var(--space-4); break-inside: avoid; }
+      .masonry .media { aspect-ratio: auto; }
+      .masonry .media img { position: static; height: auto; }
 
       /* voice-over */
       .vo { display: grid; gap: var(--space-3); }
-      .vo__row { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-5); padding: var(--space-4) var(--space-5); border: 1px solid var(--beige-500); border-radius: var(--radius-lg); background: var(--white); }
-      .vo__row.is-playing { border-color: var(--mint-700); box-shadow: 0 0 0 3px rgba(144, 180, 149, 0.25); }
-      .vo__btn { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--green-900); color: var(--beige-100); transition: background var(--duration-base); }
-      .vo__btn:hover { background: var(--green-700); }
-      .vo__btn:disabled { background: var(--beige-300); color: var(--beige-700); cursor: not-allowed; }
-      .vo__btn svg { width: 18px; height: 18px; }
+      .vo__row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-5); padding: var(--space-4) var(--space-5); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-card); }
+      .vo__row.is-playing { border-color: var(--accent); box-shadow: 0 0 0 3px var(--mint-100); }
+      .vo__btn { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--green-950); transition: background 150ms; }
+      .vo__btn:hover { background: var(--mint-700); }
+      .vo__btn:disabled { background: var(--surface-sunken); color: var(--beige-700); cursor: not-allowed; }
+      .vo__btn svg { width: 16px; height: 16px; }
       .vo__main { min-width: 0; }
-      .vo__title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; }
-      .vo__meta { color: var(--green-500); font-size: 13px; }
-      .vo__wave { position: relative; display: flex; align-items: center; gap: 2px; height: 34px; margin-top: var(--space-2); cursor: pointer; }
-      .vo__wave span { flex: 1 1 0; min-width: 1px; border-radius: 1px; background: var(--beige-500); transition: background var(--duration-fast); }
+      .vo__title { font-family: var(--font-display); font-weight: 600; font-size: 18px; margin: 0; }
+      .vo__meta { font-size: 13px; color: var(--text-secondary); }
+      .vo__wave { display: flex; align-items: center; gap: 2px; height: 30px; margin-top: var(--space-2); cursor: pointer; }
+      .vo__wave span { flex: 1 1 0; min-width: 1px; border-radius: 1px; background: var(--beige-500); }
       .vo__wave span.is-on { background: var(--mint-700); }
-      .vo__time { font-family: var(--font-mono); font-size: 12px; color: var(--green-500); font-variant-numeric: tabular-nums; }
+      .vo__time { font-family: var(--font-mono); font-size: var(--size-micro); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 
       /* about */
-      .about { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-9); align-items: start; }
-      .about__portrait { position: sticky; top: 110px; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); overflow: hidden; background: var(--green-900); }
+      .about { display: grid; grid-template-columns: 1fr 1.4fr; gap: var(--space-8); align-items: start; }
+      .about__portrait { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius-md); overflow: hidden; background: var(--surface-inverse); }
       .about__portrait img { width: 100%; height: 100%; object-fit: cover; }
-      .about__mono { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: var(--space-6); background: radial-gradient(ellipse at 20% 10%, var(--green-700), var(--green-950) 70%); color: var(--beige-100); }
-      .about__mono::before { content: ""; position: absolute; inset: 0; background-image: url("/assets/patterns/hairline-grid.svg"); background-size: 28px 28px; opacity: 0.3; }
-      .about__initials { position: relative; font-family: var(--font-display); font-weight: 800; font-size: clamp(6rem, 14vw, 12rem); line-height: 0.85; letter-spacing: -0.06em; }
-      .about__initials span { color: var(--mint-500); }
-      .about__body p { font-size: 19px; line-height: 1.6; margin: 0 0 var(--space-5); color: var(--green-950); }
-      .about__body p:first-child { font-family: var(--font-display); font-size: clamp(1.4rem, 2.2vw, 1.85rem); line-height: 1.3; font-weight: 500; letter-spacing: -0.01em; }
-      .disciplines { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin-top: var(--space-7); border-top: 1px solid var(--beige-500); }
-      .discipline { padding: var(--space-5) var(--space-5) var(--space-5) 0; border-bottom: 1px solid var(--beige-500); }
-      .discipline:nth-child(odd) { border-right: 1px solid var(--beige-500); }
-      .discipline:nth-child(even) { padding-left: var(--space-5); }
-      .discipline__label { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0 0 4px; }
-      .discipline__detail { color: var(--green-500); font-size: 14px; margin: 0; }
-      .tools { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-6); }
-      .tools .pill { background: var(--mint-100); border-color: var(--mint-300); color: var(--green-900); }
+      .about__initials { position: absolute; inset: auto var(--space-6) var(--space-6); font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 11vw, 9rem); line-height: 0.85; letter-spacing: -0.04em; color: var(--text-on-inverse); }
+      .about__initials span { color: var(--accent); }
+      .about__loc { position: absolute; top: var(--space-6); left: var(--space-6); font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-on-inverse-muted); }
+      .about__body p { margin: 0 0 var(--space-4); font-size: var(--size-body-l); color: var(--text-secondary); }
+      .about__body p:first-child { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.3rem, 2vw, 1.6rem); line-height: 1.35; color: var(--text-primary); }
+      .disciplines { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-top: var(--space-6); }
+      .discipline { padding: var(--space-4) var(--space-5); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-card); }
+      .discipline h3 { font-family: var(--font-display); font-weight: 600; font-size: 17px; margin: 0 0 2px; }
+      .discipline p { margin: 0; font-size: var(--size-small); color: var(--text-secondary); }
+      .tools { margin-top: var(--space-5); }
 
-      /* contact */
-      .contact { padding: var(--space-10) 0 var(--space-8); position: relative; overflow: hidden; }
-      .contact::before { content: ""; position: absolute; inset: 0; background-image: url("/assets/patterns/dot-grid-dark.svg"); background-size: 24px 24px; -webkit-mask-image: radial-gradient(ellipse at 50% 100%, #000, transparent 70%); mask-image: radial-gradient(ellipse at 50% 100%, #000, transparent 70%); opacity: 0.6; }
-      .contact__inner { position: relative; }
-      .contact__title { font-family: var(--font-display); font-weight: 300; font-size: clamp(3rem, 8vw, 7.5rem); line-height: 0.95; letter-spacing: -0.04em; margin: 0 0 var(--space-7); }
-      .contact__title strong { font-weight: 800; }
-      .contact__email { display: inline-flex; align-items: center; gap: var(--space-4); font-family: var(--font-display); font-weight: 600; font-size: clamp(1.4rem, 3.2vw, 2.6rem); text-decoration: none; border-bottom: 2px solid var(--mint-500); padding-bottom: 6px; transition: color var(--duration-base), gap var(--duration-base); }
-      .contact__email:hover { color: var(--mint-300); gap: var(--space-5); }
-      .contact__email svg { width: 0.8em; height: 0.8em; }
-      .contact__links { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: var(--space-7); }
-      .contact__links a { text-decoration: none; color: var(--green-300); transition: color var(--duration-base); }
-      .contact__links a:hover { color: var(--beige-100); }
-      .foot { border-top: 1px solid var(--green-700); padding: var(--space-5) 0; color: var(--green-300); }
-      .foot .wrap { display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+      /* contact + footer */
+      .contact { background: var(--surface-inverse); color: var(--text-on-inverse); padding: var(--space-9) 0; scroll-margin-top: 64px; }
+      .contact .eyebrow { color: var(--accent); }
+      .contact__title { font-family: var(--font-display); font-weight: 800; font-size: var(--size-display-xl); line-height: 1.02; letter-spacing: var(--ls-tight); margin: 0 0 var(--space-6); }
+      .contact__title span { color: var(--accent); }
+      .contact__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+      .contact__links { display: flex; flex-wrap: wrap; gap: var(--space-6); margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--border-on-inverse); }
+      .contact__links a { font-size: var(--size-small); color: var(--text-on-inverse-muted); text-decoration: none; }
+      .contact__links a:hover { color: var(--accent); }
+      .foot { background: var(--green-950); color: var(--green-300); font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; padding: var(--space-5) 0; }
+      .foot .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
 
-      /* ---------------- modal ---------------- */
-      .modal { position: fixed; inset: 0; z-index: 80; display: flex; justify-content: center; align-items: flex-start; overflow-y: auto; background: rgba(2, 12, 10, 0.86); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); opacity: 0; transition: opacity var(--duration-slow) var(--ease-standard); padding: var(--space-6) var(--space-4); }
+      /* ---------- modal ---------- */
+      .modal { position: fixed; inset: 0; z-index: 80; display: flex; justify-content: center; align-items: flex-start; overflow-y: auto; padding: var(--space-6) var(--space-4); background: rgba(1, 31, 26, 0.72); opacity: 0; transition: opacity 250ms; }
       .modal.is-open { opacity: 1; }
-      .modal__panel { position: relative; width: 100%; max-width: 1180px; background: var(--green-950); border: 1px solid var(--green-700); border-radius: var(--radius-lg); overflow: hidden; transform: translateY(16px); transition: transform var(--duration-slow) var(--ease-out); box-shadow: var(--shadow-lg); }
+      .modal__panel { position: relative; width: 100%; max-width: 1100px; overflow: hidden; border-radius: var(--radius-md); background: var(--surface-card); box-shadow: var(--shadow-lg); transform: translateY(12px); transition: transform 250ms var(--ease-out); }
       .modal.is-open .modal__panel { transform: none; }
-      .modal__panel:has(.player--vertical) { max-width: 480px; }
-      .modal__close { position: absolute; top: var(--space-4); right: var(--space-4); z-index: 3; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: rgba(2, 12, 10, 0.6); border: 1px solid var(--green-700); }
-      .modal__close:hover { border-color: var(--mint-500); }
-      .modal__close svg { width: 18px; height: 18px; }
+      .modal__panel:has(.player--vertical) { max-width: 460px; }
+      .modal__close { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 3; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-card); border: 1px solid var(--border-subtle); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+      .modal__close:hover { border-color: var(--accent); }
+      .modal__close svg { width: 16px; height: 16px; }
       .player { position: relative; aspect-ratio: 16 / 9; background: var(--black); }
       .player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-      .player--vertical { aspect-ratio: 9 / 16; width: min(100%, calc(82vh * 9 / 16)); margin: 0 auto; }
-      .player--img { aspect-ratio: auto; }
+      .player--vertical { aspect-ratio: 9 / 16; width: min(100%, calc(80vh * 9 / 16)); margin: 0 auto; }
+      .player--img { aspect-ratio: auto; background: var(--surface-page); }
       .player--img img { width: 100%; height: auto; max-height: 82vh; object-fit: contain; margin: 0 auto; }
-      .player__locked { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); text-align: center; padding: var(--space-6); z-index: 1; }
-      .player__locked p { margin: 0; }
-      .player__locked .btn { margin-top: var(--space-3); }
+      .player__locked { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-6); text-align: center; background: var(--surface-inverse); color: var(--text-on-inverse); }
+      .player__locked .eyebrow { color: var(--accent); margin: 0; }
+      .player__locked h3 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.3rem, 2.6vw, 2rem); max-width: 22ch; }
       .detail { display: grid; grid-template-columns: 1fr 1.25fr; gap: var(--space-8); padding: var(--space-7); }
-      .detail__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.5rem, 5vw, 4.25rem); line-height: 0.95; letter-spacing: -0.03em; margin: var(--space-2) 0 var(--space-4); }
-      .detail__logline { color: var(--mint-300); font-size: 18px; margin: 0 0 var(--space-5); }
-      .facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-5); margin: var(--space-5) 0; padding: var(--space-5) 0; border-top: 1px solid var(--green-700); border-bottom: 1px solid var(--green-700); }
-      .fact__label { color: var(--green-300); font-size: 10.5px; }
-      .fact__value { font-weight: 500; margin-top: 2px; }
-      .my-role__label { color: var(--mint-500); margin: 0 0 var(--space-3); }
-      .credits__group { margin-bottom: var(--space-6); }
-      .credits__group h4 { margin: 0 0 var(--space-3); color: var(--mint-500); font-weight: 500; }
-      .credits__row { display: grid; grid-template-columns: 1fr 1.1fr; gap: var(--space-4); padding: 9px 0; border-bottom: 1px dashed rgba(27, 73, 67, 0.9); font-size: 14px; }
-      .credits__row dt { color: var(--green-300); }
+      .detail__title { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 4vw, 3.25rem); line-height: 1.05; letter-spacing: var(--ls-tight); margin: var(--space-2) 0 var(--space-3); }
+      .detail__logline { margin: 0 0 var(--space-4); font-size: var(--size-body-l); color: var(--text-secondary); }
+      .facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); margin: var(--space-5) 0; padding: var(--space-5) 0; border-top: 1px solid var(--beige-300); border-bottom: 1px solid var(--beige-300); }
+      .facts .eyebrow { margin: 0; }
+      .facts div div:last-child { font-weight: 500; }
+      .credits h4 { margin: 0 0 var(--space-2); font-family: var(--font-mono); font-size: var(--size-micro); font-weight: 400; letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-accent); }
+      .credits dl { margin: 0 0 var(--space-6); }
+      .credits__row { display: grid; grid-template-columns: 1fr 1.1fr; gap: var(--space-4); padding: 8px 0; border-bottom: 1px dashed var(--beige-300); font-size: var(--size-small); }
+      .credits__row dt { color: var(--text-secondary); }
       .credits__row dd { margin: 0; font-weight: 500; }
-      .credits__row.is-me dd { color: var(--mint-300); }
-      .credits__row.is-me dd::before { content: "● "; color: var(--mint-500); font-size: 9px; vertical-align: 2px; }
+      .credits__row.is-me dd { color: var(--text-accent); }
+      .caption { padding: var(--space-5) var(--space-6); }
 
-      /* reveal */
-      .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
+      .reveal { opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
       .reveal.is-in { opacity: 1; transform: none; }
 
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
-        *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
+        *, *::before, *::after { transition-duration: 0.01ms !important; }
         .reveal { opacity: 1; transform: none; }
       }
-
       @media (max-width: 960px) {
-        :root { --gutter: var(--space-4); }
-        .nav__links, .timeline { display: none; }
-        .hero { padding-top: 110px; }
-        .hero__grid, .about, .detail { grid-template-columns: 1fr; gap: var(--space-7); }
-        .films { grid-template-columns: repeat(2, 1fr); }
-        .film--featured .film__media { aspect-ratio: 16 / 9; }
-        .tiles { grid-template-columns: repeat(2, 1fr); }
-        .reels-top { grid-template-columns: 1fr; }
-        .reels-hero { grid-template-columns: repeat(2, 1fr); }
+        .nav__links { display: none; }
+        .films, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+        .films .card--featured { grid-template-columns: 1fr; }
+        .card--featured .media { min-height: 0; aspect-ratio: 16 / 9; }
+        .reels-top { grid-template-columns: 1fr 1fr; }
+        .dash { grid-column: 1 / -1; }
         .reels-grid { grid-template-columns: repeat(3, 1fr); }
         .masonry { columns: 2; }
-        .about__portrait { position: relative; top: 0; max-width: 420px; }
+        .about, .detail { grid-template-columns: 1fr; gap: var(--space-6); }
+        .about__portrait { max-width: 380px; }
         .detail { padding: var(--space-5); }
-        .section { padding: var(--space-9) 0; }
+        .section, .hero, .contact { padding: var(--space-8) 0; }
       }
       @media (max-width: 560px) {
-        .logo__tag { display: none; }
-        .tiles, .films { grid-template-columns: 1fr; }
-        .reels-grid { grid-template-columns: repeat(2, 1fr); }
-        .reels-hero { gap: var(--space-3); }
-        .reel--hero .reel__title { font-size: 17px; }
-        .dash { padding: var(--space-4); }
+        .wrap { padding: 0 var(--space-4); }
+        .wordmark small { display: none; }
+        .films, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        .reels-top { gap: var(--space-3); }
+        .reels-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+        .card--featured .card__body { padding: var(--space-5); }
         .masonry { columns: 1; }
-        .film__body { padding: var(--space-4); }
-        .film__play { width: 46px; height: 46px; }
         .disciplines { grid-template-columns: 1fr; }
-        .discipline:nth-child(odd) { border-right: 0; }
-        .discipline:nth-child(even) { padding-left: 0; }
-        .facts { grid-template-columns: 1fr 1fr; }
-        .credits__row { grid-template-columns: 1fr; gap: 2px; }
+        .hero__actions .btn { flex: 1 1 100%; }
         .vo__row { grid-template-columns: auto 1fr; }
         .vo__time { grid-column: 2; }
-        .viewer__scopes .scope__value { font-size: 16px; }
-        .scope { padding: 8px 10px; }
-        .viewer__hud { font-size: 9.5px; padding: 0 var(--space-3); }
+        .credits__row { grid-template-columns: 1fr; gap: 0; }
       }
     </style>
   </head>
   <body>
-    <header class="nav" id="nav">
-      <div class="wrap">
-        <div class="nav__row">
-          <a class="logo" href="#top" aria-label="Mostafa Aboustate — top">
-            <span class="logo__crop"><img src="/assets/logos/logo-light-transparent.svg" alt="aboustate.tech" width="140" height="140" /></span>
-            <span class="logo__tag mono">Portfolio</span>
-          </a>
-          <ul class="nav__links mono" id="nav-links"></ul>
-          <a class="nav__cta" id="nav-cta" href="#contact">Get in touch</a>
-        </div>
-        <div class="timeline" id="timeline" aria-hidden="true"><div class="timeline__head" id="playhead"></div></div>
+    <header class="nav">
+      <div class="wrap nav__row">
+        <a class="wordmark" href="#top">aboustate<span>.</span>tech<small>Portfolio</small></a>
+        <ul class="nav__links" id="nav-links"></ul>
+        <a class="btn btn--accent" href="#contact">Get in touch</a>
       </div>
     </header>
 
     <main id="top">
-      <section class="hero" aria-label="Introduction">
+      <section class="hero" id="hero">
         <video class="hero__loop" id="hero-loop" muted loop playsinline autoplay hidden></video>
-        <div class="wrap hero__grid">
-          <div>
-            <p class="eyebrow mono"><span class="rec" aria-hidden="true"></span><span id="hero-eyebrow">Selected work</span></p>
-            <h1 class="hero__name" id="hero-name"></h1>
-            <p class="hero__headline" id="hero-headline"></p>
-            <p class="hero__intro" id="hero-intro"></p>
-            <div class="hero__actions">
-              <a class="btn btn--primary" href="#films">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
-                View the films
-              </a>
-              <button class="btn" id="reel-btn" type="button" hidden>Watch showreel</button>
-              <a class="btn" href="#about">About me</a>
-            </div>
+        <div class="hero__glow" aria-hidden="true"></div>
+        <div class="wrap">
+          <p class="eyebrow" id="hero-eyebrow">Portfolio</p>
+          <h1 class="hero__name" id="hero-name"></h1>
+          <p class="hero__headline" id="hero-headline"></p>
+          <p class="hero__intro" id="hero-intro"></p>
+          <div class="hero__actions">
+            <a class="btn btn--accent" href="#films">View the films</a>
+            <button class="btn btn--ghost-inverse" id="reel-btn" type="button" hidden>Watch showreel</button>
+            <a class="btn btn--ghost-inverse" href="#about">About me</a>
           </div>
-
-          <div class="viewer" aria-hidden="true">
-            <div class="viewer__frame">
-              <div class="viewer__hud viewer__hud--top"><span>PROGRAM</span><span id="viewer-clip">V1 · A1–A4</span></div>
-              <div class="viewer__screen">
-                <img class="viewer__poster" id="viewer-poster" alt="" hidden />
-                <div class="viewer__slate" id="viewer-slate">
-                  <p class="viewer__title" id="viewer-title"></p>
-                  <p class="viewer__sub mono" id="viewer-sub"></p>
-                </div>
-              </div>
-              <span class="viewer__corner viewer__corner--tl"></span><span class="viewer__corner viewer__corner--tr"></span>
-              <span class="viewer__corner viewer__corner--bl"></span><span class="viewer__corner viewer__corner--br"></span>
-              <div class="viewer__hud viewer__hud--bottom"><span>24 FPS · 2.39:1</span><span class="viewer__tc" id="timecode">01:00:00:00</span></div>
-            </div>
-            <div class="viewer__scopes" id="scopes"></div>
-          </div>
+          <div class="hero__facts" id="hero-facts"></div>
         </div>
       </section>
-
-      <div class="ticker" aria-hidden="true"><div class="ticker__track" id="ticker"></div></div>
 
       <section class="section" id="films" data-label="Films">
         <div class="wrap">
           <div class="section__head reveal">
             <div>
-              <p class="section__num mono" data-num></p>
-              <h2 class="section__title">Selected films</h2>
+              <p class="eyebrow">Selected films</p>
+              <h2 class="h2">Films I've shot, directed and cut.</h2>
             </div>
             <div class="chips" id="film-filters" role="group" aria-label="Filter films by discipline"></div>
           </div>
@@ -519,19 +338,15 @@
         </div>
       </section>
 
-      <section class="section section--alt" id="reels" data-label="Reels">
+      <section class="section" id="reels" data-label="Reels">
         <div class="wrap">
           <div class="section__head reveal">
             <div>
-              <p class="section__num mono" data-num></p>
-              <h2 class="section__title">Reels</h2>
+              <p class="eyebrow">Reels</p>
+              <h2 class="h2">Short-form, at a glance.</h2>
             </div>
-            <p class="section__lede">Short-form work at a glance. Hover to preview, click to watch.</p>
           </div>
-          <div class="reels-top reveal">
-            <div class="reels-hero" id="reels-hero"></div>
-            <div class="dash" id="reels-dash"></div>
-          </div>
+          <div class="reels-top reveal" id="reels-top"></div>
           <div class="reels-grid" id="reels-grid"></div>
         </div>
       </section>
@@ -540,25 +355,23 @@
         <div class="wrap">
           <div class="section__head reveal">
             <div>
-              <p class="section__num mono" data-num></p>
-              <h2 class="section__title">3D work</h2>
+              <p class="eyebrow">3D</p>
+              <h2 class="h2">Rendered sequences.</h2>
             </div>
-            <p class="section__lede">Modeled, lit and rendered 16:9 sequences.</p>
           </div>
-          <div class="tiles tiles--two" id="three-d-grid"></div>
+          <div class="grid-2" id="three-d-grid"></div>
         </div>
       </section>
 
-      <section class="section section--alt" id="motion" data-label="Motion">
+      <section class="section" id="motion" data-label="Motion">
         <div class="wrap">
           <div class="section__head reveal">
             <div>
-              <p class="section__num mono" data-num></p>
-              <h2 class="section__title">Motion graphics</h2>
+              <p class="eyebrow">Motion graphics</p>
+              <h2 class="h2">Titles, type and packages.</h2>
             </div>
-            <p class="section__lede">Titles, kinetic type and social packages. Hover to preview, click to watch.</p>
           </div>
-          <div class="tiles" id="motion-grid"></div>
+          <div class="grid-3" id="motion-grid"></div>
         </div>
       </section>
 
@@ -566,56 +379,54 @@
         <div class="wrap">
           <div class="section__head reveal">
             <div>
-              <p class="section__num mono" data-num></p>
-              <h2 class="section__title">Graphic design</h2>
+              <p class="eyebrow">Graphic design</p>
+              <h2 class="h2">Posters, identities and campaigns.</h2>
             </div>
-            <p class="section__lede">Posters, identities and campaign visuals.</p>
           </div>
           <div class="masonry" id="graphic-grid"></div>
         </div>
       </section>
 
-      <section class="section section--light" id="voice" data-label="Voice-over">
+      <section class="section" id="voice" data-label="Voice-over">
         <div class="wrap">
           <div class="section__head reveal">
             <div>
-              <p class="section__num mono" data-num></p>
-              <h2 class="section__title">Voice-over</h2>
+              <p class="eyebrow">Voice-over</p>
+              <h2 class="h2">Reads across languages and registers.</h2>
             </div>
-            <p class="section__lede">Reads across languages and registers.</p>
           </div>
           <div class="vo" id="vo-list"></div>
         </div>
       </section>
 
-      <section class="section section--light" id="about" data-label="About" style="border-top: 1px solid var(--beige-500);">
+      <section class="section" id="about" data-label="About">
         <div class="wrap about">
           <div class="about__portrait reveal" id="about-portrait"></div>
           <div class="reveal">
-            <p class="section__num mono" data-num></p>
-            <h2 class="section__title" style="margin-bottom: var(--space-6);">About me</h2>
+            <p class="eyebrow">About me</p>
+            <h2 class="h2" style="margin-bottom: var(--space-5)">Behind the camera, and after it.</h2>
             <div class="about__body" id="about-body"></div>
             <div class="disciplines" id="disciplines"></div>
-            <div class="tools" id="tools"></div>
+            <div class="pills tools" id="tools"></div>
           </div>
-        </div>
-      </section>
-
-      <section class="contact" id="contact" data-label="Contact">
-        <div class="wrap contact__inner reveal">
-          <p class="section__num mono" data-num></p>
-          <h2 class="contact__title">Let's cut<br /><strong>something.</strong></h2>
-          <a class="contact__email" id="contact-email" href="#">
-            <span id="contact-email-text"></span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg>
-          </a>
-          <div class="contact__links mono" id="contact-links"></div>
         </div>
       </section>
     </main>
 
-    <footer class="foot mono">
-      <div class="wrap"><span id="foot-name"></span><span>Post-production by aboustate.tech</span></div>
+    <section class="contact" id="contact" data-label="Contact">
+      <div class="wrap reveal">
+        <p class="eyebrow">Contact</p>
+        <h2 class="contact__title">Let's make<br />something<span>.</span></h2>
+        <div class="contact__row">
+          <a class="btn btn--accent" id="contact-email" href="#"></a>
+          <a class="btn btn--ghost-inverse" id="contact-wa" href="#" target="_blank" rel="noopener" hidden>WhatsApp</a>
+        </div>
+        <div class="contact__links" id="contact-links"></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="wrap"><span id="foot-name"></span><span>aboustate.tech</span></div>
     </footer>
 
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
@@ -636,10 +447,13 @@
         var SHOW_DRAFTS = params.get("drafts") === "1";
         var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        var ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
+        var ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
         var ICON_PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
-        var ICON_CUBE = '<svg viewBox="0 0 24 24" fill="none" stroke="#90b495" stroke-width="0.6"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg>';
-        var ICON_WAVE = '<svg viewBox="0 0 24 24" fill="none" stroke="#90b495" stroke-width="0.6"><path d="M2 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0 2 3 2 3"/><path d="M2 16c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/></svg>';
+        var ICON_FILM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 9h18M3 15h18M7 5v4M12 5v4M17 5v4M7 15v4M12 15v4M17 15v4"/></svg>';
+        var ICON_CUBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg>';
+        var ICON_WAVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0"/></svg>';
+        var ICON_FRAME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M4 15l5-5 4 4 3-3 4 4"/><circle cx="15.5" cy="7.5" r="1.5"/></svg>';
+        var ICON_REEL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 9.5v5l4-2.5z"/></svg>';
 
         function h(tag, attrs, children) {
           var el = document.createElement(tag);
@@ -656,8 +470,11 @@
           (children || []).forEach(function (c) { if (c) el.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
           return el;
         }
-        function visible(list) { return (list || []).filter(function (x) { return SHOW_DRAFTS || !x.draft; }); }
         function $(id) { return document.getElementById(id); }
+        function pad(n) { return String(n).padStart(2, "0"); }
+        function visible(list) { return (list || []).filter(function (x) { return SHOW_DRAFTS || !x.draft; }); }
+        function draftBadge(item) { return item.draft ? h("span", { class: "draft", text: "DRAFT" }) : null; }
+        function emptyArt(icon) { return h("div", { class: "media__empty", html: icon }); }
 
         var films = visible(D.films);
         films.sort(function (a, b) { return (b.featured ? 1 : 0) - (a.featured ? 1 : 0); });
@@ -669,16 +486,15 @@
         var reelItems = visible(D.reels && D.reels.items);
 
         // Hide sections with nothing to show so a half-filled portfolio never looks empty.
-        if (!threeD.length) $("three-d").hidden = true;
-        if (!motion.length) $("motion").hidden = true;
-        if (!graphic.length) $("graphic").hidden = true;
-        if (!voice.length) $("voice").hidden = true;
-        if (!films.length) $("films").hidden = true;
-        if (!heroReels.length && !reelItems.length) $("reels").hidden = true;
+        $("films").hidden = !films.length;
+        $("reels").hidden = !heroReels.length && !reelItems.length;
+        $("three-d").hidden = !threeD.length;
+        $("motion").hidden = !motion.length;
+        $("graphic").hidden = !graphic.length;
+        $("voice").hidden = !voice.length;
 
         /* ---------- hero ---------- */
-        var nameParts = D.name.split(" ");
-        $("hero-name").append(nameParts.slice(0, -1).join(" "), h("strong", { text: nameParts[nameParts.length - 1] }));
+        $("hero-name").textContent = D.name;
         $("hero-headline").textContent = D.headline;
         $("hero-intro").textContent = D.intro;
         $("foot-name").textContent = "© " + new Date().getFullYear() + " " + D.name;
@@ -689,89 +505,82 @@
           document.title = D.name + " — Portfolio for " + forName;
         }
 
-        var tickerWords = D.disciplines.map(function (d) { return d.label; }).concat(films.map(function (f) { return f.year ? f.title + " (" + f.year + ")" : f.title; }));
-        [0, 1].forEach(function () {
-          tickerWords.forEach(function (w) { $("ticker").appendChild(h("span", { class: "ticker__item", text: w })); });
+        var facts = [[pad(films.length), "Films"], [pad(D.disciplines.length), "Disciplines"]];
+        if (D.location) facts.push(["Based in", D.location]);
+        facts.forEach(function (f) { $("hero-facts").appendChild(h("span", {}, [h("strong", { text: f[0] }), " " + f[1]])); });
+
+        var hero = $("hero");
+        hero.addEventListener("mousemove", function (e) {
+          var r = hero.getBoundingClientRect();
+          hero.style.setProperty("--cursor-x", e.clientX - r.left + "px");
+          hero.style.setProperty("--cursor-y", e.clientY - r.top + "px");
         });
-
-        var scopes = [
-          ["Films", String(films.filter(function (f) { return !f.draft; }).length || films.length).padStart(2, "0")],
-          ["Disciplines", String(D.disciplines.length).padStart(2, "0")],
-          ["Pipeline", "Shoot → Mix"],
-        ];
-        scopes.forEach(function (s) {
-          $("scopes").appendChild(h("div", { class: "scope" }, [h("div", { class: "scope__label mono", text: s[0] }), h("div", { class: "scope__value", text: s[1] })]));
-        });
-
-        // Viewer cycles through film slates like a program monitor.
-        var slateIdx = 0;
-        function showSlate(i) {
-          var f = films[i];
-          if (!f) { $("viewer-title").textContent = D.name.split(" ")[0]; $("viewer-sub").textContent = "Editor · Colorist · Sound"; return; }
-          $("viewer-title").textContent = f.title;
-          $("viewer-sub").textContent = [f.format, f.year, f.director ? "Dir. " + f.director : null].filter(Boolean).join(" · ");
-          $("viewer-clip").textContent = "REEL " + String(i + 1).padStart(2, "0") + " · " + (f.tags || []).join(" / ");
-          var p = $("viewer-poster");
-          if (f.poster) { p.src = f.poster; p.hidden = false; } else { p.hidden = true; }
-        }
-        showSlate(0);
-        if (films.length > 1 && !REDUCED) {
-          setInterval(function () {
-            var slate = $("viewer-slate");
-            slate.classList.add("is-swapping");
-            setTimeout(function () {
-              slateIdx = (slateIdx + 1) % films.length;
-              showSlate(slateIdx);
-              slate.classList.remove("is-swapping");
-            }, 400);
-          }, 4200);
-        }
-
-        var tcStart = performance.now();
-        function pad(n) { return String(n).padStart(2, "0"); }
-        function tick(now) {
-          var frames = Math.floor(((now - tcStart) / 1000) * 24);
-          var f = frames % 24, s = Math.floor(frames / 24) % 60, m = Math.floor(frames / 1440) % 60, hr = 1 + Math.floor(frames / 86400);
-          $("timecode").textContent = pad(hr) + ":" + pad(m) + ":" + pad(s) + ":" + pad(f);
-          requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
 
         if (D.reel) {
           if (D.reel.loop && !REDUCED) { var lv = $("hero-loop"); lv.src = D.reel.loop; lv.hidden = false; }
           if (D.reel.video) {
-            var rb = $("reel-btn");
-            rb.hidden = false;
-            rb.addEventListener("click", function () { openModal(h("div", {}, [playerFor(D.reel.video, "Showreel")]), "Showreel"); });
+            $("reel-btn").hidden = false;
+            $("reel-btn").addEventListener("click", function () { openModal(h("div", {}, [playerFor(D.reel.video, "Showreel")])); });
           }
         }
 
-        /* ---------- films ---------- */
-        function genPoster(title) {
-          return h("div", { class: "genposter", "aria-hidden": "true" }, [h("span", { class: "genposter__word", text: title })]);
+        /* ---------- players ---------- */
+        function embedUrl(v) {
+          if (v.type === "youtube") return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(v.id) + "?autoplay=1&rel=0&modestbranding=1";
+          if (v.type === "vimeo") return "https://player.vimeo.com/video/" + encodeURIComponent(v.id) + "?autoplay=1&title=0&byline=0&portrait=0";
+          if (v.type === "drive") return "https://drive.google.com/file/d/" + encodeURIComponent(v.id) + "/preview";
+          if (v.type === "instagram") return "https://www.instagram.com/reel/" + encodeURIComponent(v.id) + "/embed";
+          return null;
         }
 
-        function filmCard(f) {
-          var media = h("div", { class: "film__media" }, [
-            f.poster ? h("img", { src: f.poster, alt: "", loading: "lazy" }) : genPoster(f.title),
-            h("div", { class: "film__shade" }),
-          ]);
-          // Featured card lists every role; smaller cards lead with the one-line highlight instead.
-          var roles = f.featured || !f.highlight
-            ? h("div", { class: "film__roles" }, (f.roles || []).slice(0, f.featured ? 6 : 3).map(function (r) { return h("span", { class: "pill", text: r }); }))
-            : null;
-          var highlight = f.highlight ? h("div", { class: "film__highlight", text: f.highlight }) : null;
-          var card = h("button", { class: "film reveal" + (f.featured ? " film--featured" : ""), type: "button", "data-tags": (f.tags || []).join("|"), "aria-label": "Open " + f.title, onclick: function () { openFilm(f); } }, [
-            f.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
-            media,
-            h("div", { class: "film__body" }, [
-              h("div", {}, [
-                h("div", { class: "film__kicker mono", text: [f.format, f.year, f.director ? "Dir. " + f.director : null].filter(Boolean).join("  ·  ") }),
-                h("h3", { class: "film__title", text: f.title }),
-                highlight,
-                roles,
+        function playerFor(v, title, poster, vertical, lockedLine) {
+          var cls = "player" + (vertical ? " player--vertical" : "");
+          if (!v) {
+            return h("div", { class: cls }, [
+              h("div", { class: "player__locked" }, [
+                h("p", { class: "eyebrow", text: lockedLine ? "Private screener" : "Coming soon" }),
+                h("h3", { text: lockedLine || "Available on request." }),
+                h("a", { class: "btn btn--accent", href: "mailto:" + D.email + "?subject=" + encodeURIComponent("Request — " + title), text: lockedLine ? "Request the screener" : "Ask for it" }),
               ]),
-              h("span", { class: "film__play", html: ICON_PLAY }),
+            ]);
+          }
+          if (v.type === "file") return h("div", { class: cls }, [h("video", { src: v.src, controls: "", autoplay: "", playsinline: "", poster: poster || null })]);
+          return h("div", { class: cls }, [h("iframe", { src: embedUrl(v), title: title, allow: "autoplay; fullscreen; picture-in-picture; encrypted-media", allowfullscreen: "" })]);
+        }
+
+        function captioned(content, item) {
+          return h("div", {}, [content, h("div", { class: "caption" }, [
+            h("p", { class: "card__kicker", text: [item.category, item.client, item.note].filter(Boolean).join(" · ") }),
+            h("h2", { class: "card__title", id: "modal-title", text: item.title }),
+          ])]);
+        }
+
+        // Muted preview that plays on hover; stays on its poster otherwise.
+        function hoverLoop(el, item) {
+          if (!item.loop) return null;
+          var v = h("video", { src: item.loop, muted: "", loop: "", playsinline: "", preload: "metadata", poster: item.poster || null });
+          v.muted = true;
+          el.addEventListener("mouseenter", function () { v.play().catch(function () {}); });
+          el.addEventListener("mouseleave", function () { v.pause(); });
+          return v;
+        }
+
+        /* ---------- films ---------- */
+        function filmCard(f) {
+          var kicker = [f.format, f.year, f.director ? "Dir. " + f.director : null].filter(Boolean).join(" · ");
+          var card = h("button", { class: "card reveal" + (f.featured ? " card--featured" : ""), type: "button", "data-tags": (f.tags || []).join("|"), "aria-label": "Open " + f.title, onclick: function () { openFilm(f); } }, [
+            h("div", { class: "media" }, [
+              draftBadge(f),
+              f.poster ? h("img", { src: f.poster, alt: "", loading: "lazy" }) : emptyArt(ICON_FILM),
+              h("span", { class: "media__play", html: ICON_PLAY }),
+            ]),
+            h("div", { class: "card__body" }, [
+              h("div", { class: "card__kicker", text: kicker }),
+              h("h3", { class: "card__title", text: f.title }),
+              f.highlight ? h("p", { class: "card__text", text: f.highlight }) : null,
+              f.featured && f.logline ? h("p", { class: "card__text", text: f.logline }) : null,
+              f.featured ? h("div", { class: "pills" }, (f.roles || []).map(function (r) { return h("span", { class: "pill", text: r }); })) : null,
+              f.featured ? h("span", { class: "btn btn--accent", text: f.video ? "Watch the film" : "View details" }) : null,
             ]),
           ]);
           return card;
@@ -794,148 +603,69 @@
           });
         }
 
-        function embedUrl(v) {
-          if (v.type === "youtube") return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(v.id) + "?autoplay=1&rel=0&modestbranding=1";
-          if (v.type === "vimeo") return "https://player.vimeo.com/video/" + encodeURIComponent(v.id) + "?autoplay=1&title=0&byline=0&portrait=0";
-          if (v.type === "drive") return "https://drive.google.com/file/d/" + encodeURIComponent(v.id) + "/preview";
-          if (v.type === "instagram") return "https://www.instagram.com/reel/" + encodeURIComponent(v.id) + "/embed";
-          return null;
-        }
-
-        function playerFor(v, title, poster, vertical, lockedLine) {
-          var cls = "player" + (vertical ? " player--vertical" : "");
-          if (!v) {
-            return h("div", { class: cls }, [
-              poster ? h("img", { src: poster, alt: "", style: "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35" }) : genPoster(title),
-              h("div", { class: "player__locked" }, [
-                h("p", { class: "mono accent", text: lockedLine ? "Private screener" : "Coming soon" }),
-                h("p", { style: "font-family:var(--font-display);font-size:clamp(1.4rem,3vw,2.2rem);font-weight:700;max-width:24ch", text: lockedLine || "Available on request." }),
-                h("a", { class: "btn btn--primary", href: "mailto:" + D.email + "?subject=" + encodeURIComponent("Request — " + title), text: lockedLine ? "Request the screener" : "Ask for it" }),
-              ]),
-            ]);
-          }
-          if (v.type === "file") return h("div", { class: cls }, [h("video", { src: v.src, controls: "", autoplay: "", playsinline: "", poster: poster || null })]);
-          return h("div", { class: cls }, [h("iframe", { src: embedUrl(v), title: title, allow: "autoplay; fullscreen; picture-in-picture; encrypted-media", allowfullscreen: "" })]);
-        }
-
         function openFilm(f) {
-          var facts = [["Year", f.year], ["Format", f.format], ["Runtime", f.runtime], ["Genre", f.genre], ["Director", f.director]].filter(function (x) { return x[1]; });
+          var factRows = [["Year", f.year], ["Format", f.format], ["Runtime", f.runtime], ["Genre", f.genre], ["Director", f.director]].filter(function (x) { return x[1]; });
           var me = D.name.toLowerCase();
           var credits = (f.credits || []).map(function (g) {
-            return h("div", { class: "credits__group" }, [
-              h("h4", { class: "mono", text: g.group }),
-              h("dl", { style: "margin:0" }, g.rows.map(function (r) {
+            return h("div", {}, [
+              h("h4", { text: g.group }),
+              h("dl", {}, g.rows.map(function (r) {
                 return h("div", { class: "credits__row" + (r[1].toLowerCase().indexOf(me) >= 0 ? " is-me" : "") }, [h("dt", { text: r[0] }), h("dd", { text: r[1] })]);
               })),
             ]);
           });
-
-          var body = h("div", {}, [
+          openModal(h("div", {}, [
             playerFor(f.video, f.title, f.poster, false, "Full film available on request."),
             h("div", { class: "detail" }, [
               h("div", {}, [
-                h("p", { class: "mono accent", style: "margin:0", text: [f.format, f.year].filter(Boolean).join(" · ") }),
+                h("p", { class: "card__kicker", text: [f.format, f.year].filter(Boolean).join(" · ") }),
                 h("h2", { class: "detail__title", id: "modal-title", text: f.title }),
                 f.logline ? h("p", { class: "detail__logline", text: f.logline }) : null,
-                facts.length ? h("div", { class: "facts" }, facts.map(function (x) {
-                  return h("div", {}, [h("div", { class: "fact__label mono", text: x[0] }), h("div", { class: "fact__value", text: String(x[1]) })]);
+                factRows.length ? h("div", { class: "facts" }, factRows.map(function (x) {
+                  return h("div", {}, [h("div", { class: "eyebrow", text: x[0] }), h("div", { text: String(x[1]) })]);
                 })) : null,
-                h("p", { class: "my-role__label mono", text: "My role" }),
-                h("div", { class: "film__roles" }, (f.roles || []).map(function (r) { return h("span", { class: "pill", text: r }); })),
+                h("p", { class: "eyebrow", text: "My role" }),
+                h("div", { class: "pills" }, (f.roles || []).map(function (r) { return h("span", { class: "pill", text: r }); })),
               ]),
-              h("div", {}, credits.length ? credits : [h("p", { class: "muted", text: "Full credits coming soon." })]),
+              h("div", { class: "credits" }, credits.length ? credits : [h("p", { class: "card__text", text: "Full credits coming soon." })]),
             ]),
-          ]);
-          openModal(body, f.title);
+          ]));
         }
-
-        /* ---------- 3D + motion tiles ---------- */
-        function emptyArt(icon) { return h("div", { class: "tile__empty", html: icon }); }
-
-        var ICON_FRAME = '<svg viewBox="0 0 24 24" fill="none" stroke="#90b495" stroke-width="0.6"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M4 15l5-5 4 4 3-3 4 4"/><circle cx="15.5" cy="7.5" r="1.5"/></svg>';
-        var ICON_REEL = '<svg viewBox="0 0 24 24" fill="none" stroke="#90b495" stroke-width="0.6"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 9.5v5l4-2.5z"/></svg>';
-
-        function captioned(content, item) {
-          return h("div", {}, [content, h("div", { style: "padding:var(--space-5) var(--space-6)" }, [
-            h("h2", { class: "tile__title", id: "modal-title", text: item.title }),
-            h("p", { class: "tile__note", text: [item.category, item.client, item.note].filter(Boolean).join(" · ") }),
-          ])]);
-        }
-
-        // Muted preview that plays on hover (desktop) and stays on its poster otherwise.
-        function hoverLoop(el, item) {
-          if (!item.loop) return null;
-          var v = h("video", { src: item.loop, muted: "", loop: "", playsinline: "", preload: "metadata", poster: item.poster || null });
-          v.muted = true;
-          el.addEventListener("mouseenter", function () { v.play().catch(function () {}); });
-          el.addEventListener("mouseleave", function () { v.pause(); });
-          return v;
-        }
-
-        function videoTile(item, cls, icon) {
-          var tile = h("button", { class: cls + " reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
-            var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
-            if (src) openModal(captioned(playerFor(src, item.title, item.poster), item), item.title);
-          } });
-          var loopVid = hoverLoop(tile, item);
-          [
-            item.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
-            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(icon)),
-            h("div", { class: "tile__cap" }, [h("h3", { class: "tile__title", text: item.title }), item.note ? h("div", { class: "tile__note", text: item.note }) : null]),
-          ].forEach(function (c) { if (c) tile.appendChild(c); });
-          return tile;
-        }
-
-        threeD.forEach(function (item) { $("three-d-grid").appendChild(videoTile(item, "tile tile--video", ICON_CUBE)); });
-        motion.forEach(function (item) { $("motion-grid").appendChild(videoTile(item, "tile tile--wide", ICON_WAVE)); });
-
-        graphic.forEach(function (item) {
-          var ratio = (item.aspect || "4:5").split(":");
-          var tile = h("button", { class: "tile reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
-            if (item.image) openModal(captioned(h("div", { class: "player player--img" }, [h("img", { src: item.image, alt: item.title })]), item), item.title);
-          } }, [
-            item.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
-            item.image
-              ? h("img", { src: item.image, alt: item.title, loading: "lazy" })
-              : h("div", { class: "tile__empty", style: "aspect-ratio:" + ratio[0] + " / " + ratio[1], html: ICON_FRAME }),
-            h("div", { class: "tile__cap" }, [h("h3", { class: "tile__title", text: item.title }), item.note ? h("div", { class: "tile__note", text: item.note }) : null]),
-          ]);
-          $("graphic-grid").appendChild(tile);
-        });
 
         /* ---------- reels dashboard ---------- */
         function reelCard(item, heroIndex) {
           var landscape = item.aspect === "16:9";
-          var el = h("button", {
-            class: "reel" + (heroIndex != null ? " reel--hero" : "") + (landscape ? " reel--landscape" : ""),
+          var card = h("button", {
+            class: "card card--reel" + (landscape ? " is-landscape" : ""),
             type: "button",
-            "data-cat": item.category || "",
+            "data-cat": item.category || "Other",
             "aria-label": "Play " + item.title,
             onclick: function () {
               var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
-              openModal(captioned(playerFor(src, item.title, item.poster, !landscape), item), item.title);
+              openModal(captioned(playerFor(src, item.title, item.poster, !landscape), item));
             },
           });
-          var loopVid = hoverLoop(el, item);
+          var loopVid = hoverLoop(card, item);
           // Hero reels autoplay their loop while on screen; grid reels only on hover.
           if (loopVid && heroIndex != null && !REDUCED && "IntersectionObserver" in window) {
-            new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) loopVid.play().catch(function () {}); else loopVid.pause(); }); }, { threshold: 0.4 }).observe(el);
+            new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) loopVid.play().catch(function () {}); else loopVid.pause(); }); }, { threshold: 0.4 }).observe(card);
           }
-          [
-            item.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
-            heroIndex != null ? h("span", { class: "reel__badge", text: "HERO " + pad(heroIndex + 1) }) : null,
+          card.appendChild(h("div", { class: "media" }, [
+            draftBadge(item),
+            heroIndex != null ? h("span", { class: "badge-hero", text: "HERO " + pad(heroIndex + 1) }) : null,
             loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(ICON_REEL)),
-            h("span", { class: "reel__play", html: ICON_PLAY }),
-            h("div", { class: "reel__cap" }, [
-              h("div", { class: "reel__cat mono", text: [item.category, item.client].filter(Boolean).join(" · ") }),
-              h("p", { class: "reel__title", text: item.title }),
-            ]),
-          ].forEach(function (c) { if (c) el.appendChild(c); });
-          return el;
+            h("span", { class: "media__play", html: ICON_PLAY }),
+          ]));
+          card.appendChild(h("div", { class: "card__body" }, [
+            h("div", { class: "card__kicker", text: [item.category, item.client].filter(Boolean).join(" · ") }),
+            h("h3", { class: "card__title", text: item.title }),
+          ]));
+          return card;
         }
 
         if (!$("reels").hidden) {
-          heroReels.forEach(function (r, i) { $("reels-hero").appendChild(reelCard(r, i)); });
+          var top = $("reels-top");
+          heroReels.forEach(function (r, i) { top.appendChild(reelCard(r, i)); });
           var reelsGrid = $("reels-grid");
           reelItems.forEach(function (r) { reelsGrid.appendChild(reelCard(r)); });
 
@@ -945,19 +675,20 @@
           var catNames = Object.keys(cats).sort(function (a, b) { return cats[b] - cats[a]; });
           var maxCat = Math.max.apply(null, catNames.map(function (c) { return cats[c]; }));
 
-          var dash = $("reels-dash");
-          dash.appendChild(h("p", { class: "dash__label mono", text: "Overview" }));
-          dash.appendChild(h("div", { class: "dash__stats" }, [
-            h("div", { class: "dash__stat" }, [h("div", { class: "dash__label mono", text: "Reels" }), h("div", { class: "dash__num", text: pad(all.length) })]),
-            h("div", { class: "dash__stat" }, [h("div", { class: "dash__label mono", text: "Categories" }), h("div", { class: "dash__num", text: pad(catNames.length) })]),
-          ]));
-          dash.appendChild(h("div", { class: "dash__bars" }, catNames.map(function (c) {
-            return h("div", { class: "dash__bar" }, [
-              h("span", { text: c }),
-              h("div", { class: "dash__track" }, [h("div", { class: "dash__fill", style: "width:" + Math.round((cats[c] / maxCat) * 100) + "%" })]),
-              h("span", { class: "dash__count", text: String(cats[c]) }),
-            ]);
-          })));
+          var dash = h("div", { class: "dash" }, [
+            h("p", { class: "eyebrow", style: "margin:0", text: "Overview" }),
+            h("div", { class: "dash__stats" }, [
+              h("div", { class: "dash__stat" }, [h("div", { class: "eyebrow", style: "margin:0", text: "Reels" }), h("div", { class: "dash__num", text: pad(all.length) })]),
+              h("div", { class: "dash__stat" }, [h("div", { class: "eyebrow", style: "margin:0", text: "Categories" }), h("div", { class: "dash__num", text: pad(catNames.length) })]),
+            ]),
+            h("div", { class: "dash__bars" }, catNames.map(function (c) {
+              return h("div", { class: "dash__bar" }, [
+                h("span", { text: c }),
+                h("div", { class: "dash__track" }, [h("div", { class: "dash__fill", style: "width:" + Math.round((cats[c] / maxCat) * 100) + "%" })]),
+                h("span", { class: "dash__count", text: String(cats[c]) }),
+              ]);
+            })),
+          ]);
           if (catNames.length > 1 && reelItems.length) {
             var chips = h("div", { class: "chips", role: "group", "aria-label": "Filter reels by category" });
             ["All"].concat(catNames).forEach(function (c, i) {
@@ -965,13 +696,51 @@
                 Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute("aria-pressed", "false"); });
                 e.currentTarget.setAttribute("aria-pressed", "true");
                 Array.prototype.forEach.call(reelsGrid.children, function (card) {
-                  card.hidden = c !== "All" && (card.getAttribute("data-cat") || "Other") !== c;
+                  card.hidden = c !== "All" && card.getAttribute("data-cat") !== c;
                 });
               } }));
             });
             dash.appendChild(chips);
           }
+          top.appendChild(dash);
         }
+
+        /* ---------- 3D, motion, graphic ---------- */
+        function videoCard(item, icon) {
+          var card = h("button", { class: "card reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
+            var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
+            if (src) openModal(captioned(playerFor(src, item.title, item.poster), item));
+          } });
+          var loopVid = hoverLoop(card, item);
+          card.appendChild(h("div", { class: "media" }, [
+            draftBadge(item),
+            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(icon)),
+            item.video || item.loop ? h("span", { class: "media__play", html: ICON_PLAY }) : null,
+          ]));
+          card.appendChild(h("div", { class: "card__body" }, [
+            item.note ? h("div", { class: "card__kicker", text: item.note }) : null,
+            h("h3", { class: "card__title", text: item.title }),
+          ]));
+          return card;
+        }
+        threeD.forEach(function (item) { $("three-d-grid").appendChild(videoCard(item, ICON_CUBE)); });
+        motion.forEach(function (item) { $("motion-grid").appendChild(videoCard(item, ICON_WAVE)); });
+
+        graphic.forEach(function (item) {
+          var ratio = (item.aspect || "4:5").split(":");
+          $("graphic-grid").appendChild(h("button", { class: "card reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
+            if (item.image) openModal(captioned(h("div", { class: "player player--img" }, [h("img", { src: item.image, alt: item.title })]), item));
+          } }, [
+            h("div", { class: "media", style: item.image ? null : "aspect-ratio:" + ratio[0] + " / " + ratio[1] }, [
+              draftBadge(item),
+              item.image ? h("img", { src: item.image, alt: item.title, loading: "lazy" }) : emptyArt(ICON_FRAME),
+            ]),
+            h("div", { class: "card__body" }, [
+              item.note ? h("div", { class: "card__kicker", text: item.note }) : null,
+              h("h3", { class: "card__title", text: item.title }),
+            ]),
+          ]));
+        });
 
         /* ---------- voice-over ---------- */
         var BARS = 72;
@@ -981,7 +750,7 @@
           for (var i = 0; i < str.length; i++) s = (s * 31 + str.charCodeAt(i)) >>> 0;
           return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
         }
-        function fmt(t) { if (!isFinite(t)) return "0:00"; return Math.floor(t / 60) + ":" + String(Math.floor(t % 60)).padStart(2, "0"); }
+        function fmt(t) { if (!isFinite(t)) return "0:00"; return Math.floor(t / 60) + ":" + pad(Math.floor(t % 60)); }
 
         voice.forEach(function (item) {
           var rand = seeded(item.title);
@@ -1029,8 +798,13 @@
             if (audio.paused) audio.play(); else audio.pause();
           });
           function seek(ratio) {
-            if (!audio.duration) { audio.addEventListener("loadedmetadata", function once() { audio.removeEventListener("loadedmetadata", once); audio.currentTime = ratio * audio.duration; paint(); }); audio.load(); return; }
-            audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration;
+            ratio = Math.max(0, Math.min(1, ratio));
+            if (!audio.duration) {
+              audio.addEventListener("loadedmetadata", function once() { audio.removeEventListener("loadedmetadata", once); audio.currentTime = ratio * audio.duration; paint(); });
+              audio.load();
+              return;
+            }
+            audio.currentTime = ratio * audio.duration;
             paint();
           }
           wave.addEventListener("click", function (e) { var r = wave.getBoundingClientRect(); seek((e.clientX - r.left) / r.width); });
@@ -1045,60 +819,34 @@
         var portrait = $("about-portrait");
         if (D.portrait) portrait.appendChild(h("img", { src: D.portrait, alt: D.name }));
         else {
-          var initials = nameParts.map(function (p) { return p[0]; }).join("");
-          portrait.appendChild(h("div", { class: "about__mono" }, [
-            h("span", { class: "mono accent", style: "position:relative", text: D.location ? "Based in " + D.location : "Portfolio" }),
-            h("div", { class: "about__initials" }, [initials, h("span", { text: "." })]),
-          ]));
+          if (D.location) portrait.appendChild(h("span", { class: "about__loc", text: "Based in " + D.location }));
+          portrait.appendChild(h("div", { class: "about__initials" }, [D.name.split(" ").map(function (p) { return p[0]; }).join(""), h("span", { text: "." })]));
         }
         D.about.forEach(function (p) { $("about-body").appendChild(h("p", { text: p })); });
         D.disciplines.forEach(function (d) {
-          $("disciplines").appendChild(h("div", { class: "discipline" }, [h("p", { class: "discipline__label", text: d.label }), h("p", { class: "discipline__detail", text: d.detail })]));
+          $("disciplines").appendChild(h("div", { class: "discipline" }, [h("h3", { text: d.label }), h("p", { text: d.detail })]));
         });
         (D.tools || []).forEach(function (t) { $("tools").appendChild(h("span", { class: "pill", text: t })); });
 
         /* ---------- contact ---------- */
         var subject = forName ? "?subject=" + encodeURIComponent("Hello from " + forName) : "";
         $("contact-email").href = "mailto:" + D.email + subject;
-        $("contact-email-text").textContent = D.email;
-        var links = [];
-        if (D.phone) links.push(["WhatsApp", "https://wa.me/" + D.phone.replace(/\D/g, "")]);
-        if (D.links.instagram) links.push(["Instagram", D.links.instagram]);
-        if (D.links.linkedin) links.push(["LinkedIn", D.links.linkedin]);
-        if (D.links.studio) links.push(["aboustate.tech", D.links.studio]);
-        links.forEach(function (l) { $("contact-links").appendChild(h("a", { href: l[1], target: "_blank", rel: "noopener", text: l[0] + " ↗" })); });
-
-        /* ---------- numbering, nav, timeline ---------- */
-        var sections = Array.prototype.filter.call(document.querySelectorAll("section[data-label]"), function (s) { return !s.hidden; });
-        sections.forEach(function (s, i) {
-          var num = s.querySelector("[data-num]");
-          if (num) num.textContent = pad(i + 1) + " — " + s.getAttribute("data-label");
+        $("contact-email").textContent = D.email;
+        if (D.phone) { $("contact-wa").href = "https://wa.me/" + D.phone.replace(/\D/g, ""); $("contact-wa").hidden = false; }
+        [["Instagram", D.links.instagram], ["LinkedIn", D.links.linkedin], ["aboustate.tech", D.links.studio]].forEach(function (l) {
+          if (l[1]) $("contact-links").appendChild(h("a", { href: l[1], target: "_blank", rel: "noopener", text: l[0] + " ↗" }));
         });
-        var timeline = $("timeline");
+
+        /* ---------- nav ---------- */
+        var sections = Array.prototype.filter.call(document.querySelectorAll("section[data-label]"), function (s) { return !s.hidden && s.id !== "contact"; });
         var navLinks = $("nav-links");
-        var clips = [];
-        sections.forEach(function (s) {
-          if (s.id !== "contact") {
-            navLinks.appendChild(h("li", {}, [h("a", { href: "#" + s.id, text: s.getAttribute("data-label") })]));
-          }
-          var clip = h("button", { class: "timeline__clip", type: "button", text: s.getAttribute("data-label"), tabindex: "-1", onclick: function () { s.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth" }); } });
-          timeline.appendChild(clip);
-          clips.push(clip);
-        });
-
+        sections.forEach(function (s) { navLinks.appendChild(h("li", {}, [h("a", { href: "#" + s.id, text: s.getAttribute("data-label") })])); });
         function onScroll() {
-          var max = document.documentElement.scrollHeight - innerHeight;
-          var p = max > 0 ? scrollY / max : 0;
-          $("playhead").style.left = (p * 100).toFixed(2) + "%";
-          var active = -1;
-          sections.forEach(function (s, i) { if (s.getBoundingClientRect().top < innerHeight * 0.4) active = i; });
-          clips.forEach(function (c, i) { c.classList.toggle("is-active", i === active); });
-          Array.prototype.forEach.call(navLinks.querySelectorAll("a"), function (a) {
-            a.classList.toggle("is-active", active >= 0 && a.getAttribute("href") === "#" + sections[active].id);
-          });
+          var active = null;
+          sections.forEach(function (s) { if (s.getBoundingClientRect().top < innerHeight * 0.4) active = s.id; });
+          Array.prototype.forEach.call(navLinks.querySelectorAll("a"), function (a) { a.classList.toggle("is-active", a.getAttribute("href") === "#" + active); });
         }
         addEventListener("scroll", onScroll, { passive: true });
-        addEventListener("resize", onScroll);
         onScroll();
 
         /* ---------- reveal ---------- */
@@ -1114,12 +862,10 @@
         /* ---------- modal ---------- */
         var modal = $("modal");
         var lastFocus = null;
-        function openModal(content, label) {
+        function openModal(content) {
           lastFocus = document.activeElement;
           if (currentVo) currentVo.pause();
-          var mb = $("modal-body");
-          mb.replaceChildren(content);
-          if (!mb.querySelector("#modal-title")) modal.setAttribute("aria-label", label);
+          $("modal-body").replaceChildren(content);
           modal.hidden = false;
           document.body.classList.add("is-locked");
           modal.scrollTop = 0;
@@ -1128,7 +874,7 @@
         function closeModal() {
           modal.classList.remove("is-open");
           document.body.classList.remove("is-locked");
-          setTimeout(function () { modal.hidden = true; $("modal-body").replaceChildren(); }, REDUCED ? 0 : 300);
+          setTimeout(function () { modal.hidden = true; $("modal-body").replaceChildren(); }, REDUCED ? 0 : 250);
           if (lastFocus) lastFocus.focus();
         }
         $("modal-close").addEventListener("click", closeModal);
@@ -1145,12 +891,11 @@
           }
         });
 
-        // Deep link: portfolio.aboustate.tech/#film/spirit opens that film.
+        // Deep links: #film/<slug> opens that film; #<section> scrolls after layout settles.
         var m = location.hash.match(/^#film\/(.+)$/);
         if (m) { var target = films.filter(function (f) { return f.slug === m[1]; })[0]; if (target) openFilm(target); }
         else if (location.hash.length > 1) {
           var anchor = document.getElementById(location.hash.slice(1));
-          // after load, so late font/layout shifts don't leave us short of the target
           if (anchor) addEventListener("load", function () { anchor.scrollIntoView({ behavior: "auto" }); });
         }
       })();
