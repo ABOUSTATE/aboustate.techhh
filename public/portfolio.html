@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mostafa Aboustate — Editor, Colorist & Sound Designer</title>
-    <meta name="description" content="Selected films, 3D, motion graphics and voice-over by Mostafa Aboustate — editor, colorist and sound designer, founder of aboustate.tech." />
+    <title>Mostafa Aboustate — Editor, Director & Cinematographer</title>
+    <meta name="description" content="Films, reels, 3D, motion, graphic design and voice-over by Mostafa Aboustate — editor, director and cinematographer, founder of aboustate.tech." />
     <meta property="og:title" content="Mostafa Aboustate — Portfolio" />
-    <meta property="og:description" content="Editor, colorist & sound designer. Selected films, 3D, motion and voice-over." />
+    <meta property="og:description" content="Editor, director & cinematographer. Films, reels, 3D, motion, design and voice-over." />
     <meta property="og:url" content="https://portfolio.aboustate.tech/" />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#011f1a" />
@@ -227,7 +227,51 @@
       .chip[aria-pressed="true"] { background: var(--beige-100); color: var(--green-950); border-color: var(--beige-100); }
 
       /* film cards */
-      .films { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
+      .films { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+      .film:not(.film--featured) .film__body { padding: var(--space-5); }
+      .film:not(.film--featured) .film__media { aspect-ratio: 4 / 3; }
+      .film__highlight { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); color: var(--mint-300); font-size: 13px; font-weight: 500; }
+      .film__highlight::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mint-500); }
+
+      /* reels dashboard */
+      .reels-top { display: grid; grid-template-columns: auto 1fr; gap: var(--space-5); margin-bottom: var(--space-5); }
+      .reels-hero { display: grid; grid-template-columns: repeat(2, minmax(0, 300px)); gap: var(--space-4); }
+      .reel { position: relative; display: block; width: 100%; text-align: left; aspect-ratio: 9 / 16; border-radius: var(--radius-lg); overflow: hidden; background: var(--black); border: 1px solid var(--green-700); transition: border-color var(--duration-base), transform var(--duration-slow) var(--ease-out); }
+      .reel:hover { border-color: var(--mint-700); transform: translateY(-3px); }
+      .reel--landscape { aspect-ratio: 16 / 9; }
+      .reel img, .reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .reel__cap { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-4); background: linear-gradient(180deg, transparent, rgba(2, 12, 10, 0.9)); }
+      .reel__cat { color: var(--mint-300); font-size: 10px; }
+      .reel__title { font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 1.2; margin: 2px 0 0; }
+      .reel--hero .reel__title { font-size: 22px; }
+      .reel__badge { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 2; padding: 4px 8px; border-radius: var(--radius-pill); background: var(--mint-500); color: var(--green-950); font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--ls-mono); }
+      .reel .draft-badge { top: var(--space-3); left: var(--space-3); }
+      .reel__play { position: absolute; top: 50%; left: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; display: grid; place-items: center; background: rgba(242, 239, 235, 0.14); border: 1px solid rgba(242, 239, 235, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: opacity var(--duration-base); }
+      .reel:hover .reel__play, .reel--hero .reel__play { opacity: 1; }
+      .reel:hover .reel__play { background: var(--mint-500); color: var(--green-950); }
+      .reel__play svg { width: 18px; height: 18px; }
+      .dash { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-6); border: 1px solid var(--green-700); border-radius: var(--radius-lg); background: rgba(2, 54, 47, 0.35); }
+      .dash__label { color: var(--green-300); font-size: 11px; margin: 0; }
+      .dash__stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+      .dash__stat { padding: var(--space-4); border-radius: var(--radius-md); background: var(--green-950); border: 1px solid var(--green-700); }
+      .dash__num { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; margin-top: 6px; }
+      .dash__bars { display: grid; gap: var(--space-2); }
+      .dash__bar { display: grid; grid-template-columns: 70px 1fr 28px; align-items: center; gap: var(--space-3); font-size: 13px; }
+      .dash__track { height: 6px; border-radius: 3px; background: var(--green-900); overflow: hidden; }
+      .dash__fill { height: 100%; border-radius: 3px; background: var(--mint-500); }
+      .dash__count { color: var(--green-300); font-family: var(--font-mono); font-size: 12px; text-align: right; }
+      .dash .chips { margin-top: auto; }
+      .reels-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-3); }
+      .reels-grid .reel--landscape { grid-column: span 2; aspect-ratio: auto; }
+
+      /* graphic design masonry */
+      .masonry { columns: 3; column-gap: var(--space-4); }
+      .masonry .tile { display: block; width: 100%; aspect-ratio: auto; margin-bottom: var(--space-4); break-inside: avoid; }
+      .masonry .tile img { position: static; width: 100%; height: auto; }
+      .masonry .tile .tile__empty { position: relative; }
+      .masonry .tile__cap { opacity: 0; transition: opacity var(--duration-base); }
+      .masonry .tile:hover .tile__cap, .masonry .tile:focus-visible .tile__cap { opacity: 1; }
+      .masonry .draft-badge ~ .tile__cap { opacity: 1; }
       .film { position: relative; text-align: left; display: block; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: var(--black); border: 1px solid var(--green-700); transition: border-color var(--duration-base), transform var(--duration-slow) var(--ease-out); }
       .film:hover { border-color: var(--mint-700); transform: translateY(-3px); }
       .film--featured { grid-column: 1 / -1; }
@@ -256,7 +300,7 @@
       /* generated poster when no still exists: letterboxed title card */
       .genposter { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: radial-gradient(ellipse at 30% 20%, var(--green-700), var(--green-950) 60%, var(--black)); }
       .genposter::before { content: ""; position: absolute; inset: 0; background-image: url("/assets/patterns/hairline-grid.svg"); background-size: 28px 28px; opacity: 0.25; }
-      .genposter::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); opacity: 0.9; mix-blend-mode: screen; }
+      .genposter::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); opacity: 0.6; }
       .genposter__word { position: relative; font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 18vw, 16rem); line-height: 0.8; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1px rgba(144, 180, 149, 0.28); white-space: nowrap; transform: translateY(-8%); }
       .film:not(.film--featured) .genposter__word { font-size: clamp(4rem, 10vw, 8rem); }
 
@@ -264,6 +308,8 @@
       .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
       .tile { position: relative; text-align: left; border-radius: var(--radius-lg); overflow: hidden; background: var(--black); border: 1px solid var(--green-700); aspect-ratio: 4 / 5; transition: border-color var(--duration-base); }
       .tile--wide { aspect-ratio: 16 / 10; }
+      .tile--video { aspect-ratio: 16 / 9; }
+      .tiles--two { grid-template-columns: repeat(2, 1fr); }
       .tile:hover { border-color: var(--mint-700); }
       .tile img, .tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); }
       .tile:hover img { transform: scale(1.04); }
@@ -329,11 +375,13 @@
       .modal.is-open { opacity: 1; }
       .modal__panel { position: relative; width: 100%; max-width: 1180px; background: var(--green-950); border: 1px solid var(--green-700); border-radius: var(--radius-lg); overflow: hidden; transform: translateY(16px); transition: transform var(--duration-slow) var(--ease-out); box-shadow: var(--shadow-lg); }
       .modal.is-open .modal__panel { transform: none; }
+      .modal__panel:has(.player--vertical) { max-width: 480px; }
       .modal__close { position: absolute; top: var(--space-4); right: var(--space-4); z-index: 3; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: rgba(2, 12, 10, 0.6); border: 1px solid var(--green-700); }
       .modal__close:hover { border-color: var(--mint-500); }
       .modal__close svg { width: 18px; height: 18px; }
       .player { position: relative; aspect-ratio: 16 / 9; background: var(--black); }
       .player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+      .player--vertical { aspect-ratio: 9 / 16; width: min(100%, calc(82vh * 9 / 16)); margin: 0 auto; }
       .player--img { aspect-ratio: auto; }
       .player--img img { width: 100%; height: auto; max-height: 82vh; object-fit: contain; margin: 0 auto; }
       .player__locked { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); text-align: center; padding: var(--space-6); z-index: 1; }
@@ -369,16 +417,25 @@
         .nav__links, .timeline { display: none; }
         .hero { padding-top: 110px; }
         .hero__grid, .about, .detail { grid-template-columns: 1fr; gap: var(--space-7); }
-        .films { grid-template-columns: 1fr; }
+        .films { grid-template-columns: repeat(2, 1fr); }
         .film--featured .film__media { aspect-ratio: 16 / 9; }
         .tiles { grid-template-columns: repeat(2, 1fr); }
+        .reels-top { grid-template-columns: 1fr; }
+        .reels-hero { grid-template-columns: repeat(2, 1fr); }
+        .reels-grid { grid-template-columns: repeat(3, 1fr); }
+        .masonry { columns: 2; }
         .about__portrait { position: relative; top: 0; max-width: 420px; }
         .detail { padding: var(--space-5); }
         .section { padding: var(--space-9) 0; }
       }
       @media (max-width: 560px) {
         .logo__tag { display: none; }
-        .tiles { grid-template-columns: 1fr; }
+        .tiles, .films { grid-template-columns: 1fr; }
+        .reels-grid { grid-template-columns: repeat(2, 1fr); }
+        .reels-hero { gap: var(--space-3); }
+        .reel--hero .reel__title { font-size: 17px; }
+        .dash { padding: var(--space-4); }
+        .masonry { columns: 1; }
         .film__body { padding: var(--space-4); }
         .film__play { width: 46px; height: 46px; }
         .disciplines { grid-template-columns: 1fr; }
@@ -462,20 +519,37 @@
         </div>
       </section>
 
-      <section class="section section--alt" id="three-d" data-label="3D">
+      <section class="section section--alt" id="reels" data-label="Reels">
+        <div class="wrap">
+          <div class="section__head reveal">
+            <div>
+              <p class="section__num mono" data-num></p>
+              <h2 class="section__title">Reels</h2>
+            </div>
+            <p class="section__lede">Short-form work at a glance. Hover to preview, click to watch.</p>
+          </div>
+          <div class="reels-top reveal">
+            <div class="reels-hero" id="reels-hero"></div>
+            <div class="dash" id="reels-dash"></div>
+          </div>
+          <div class="reels-grid" id="reels-grid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="three-d" data-label="3D">
         <div class="wrap">
           <div class="section__head reveal">
             <div>
               <p class="section__num mono" data-num></p>
               <h2 class="section__title">3D work</h2>
             </div>
-            <p class="section__lede">Modeling, look-development and rendered sequences.</p>
+            <p class="section__lede">Modeled, lit and rendered 16:9 sequences.</p>
           </div>
-          <div class="tiles" id="three-d-grid"></div>
+          <div class="tiles tiles--two" id="three-d-grid"></div>
         </div>
       </section>
 
-      <section class="section" id="motion" data-label="Motion">
+      <section class="section section--alt" id="motion" data-label="Motion">
         <div class="wrap">
           <div class="section__head reveal">
             <div>
@@ -485,6 +559,19 @@
             <p class="section__lede">Titles, kinetic type and social packages. Hover to preview, click to watch.</p>
           </div>
           <div class="tiles" id="motion-grid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="graphic" data-label="Design">
+        <div class="wrap">
+          <div class="section__head reveal">
+            <div>
+              <p class="section__num mono" data-num></p>
+              <h2 class="section__title">Graphic design</h2>
+            </div>
+            <p class="section__lede">Posters, identities and campaign visuals.</p>
+          </div>
+          <div class="masonry" id="graphic-grid"></div>
         </div>
       </section>
 
@@ -573,15 +660,21 @@
         function $(id) { return document.getElementById(id); }
 
         var films = visible(D.films);
+        films.sort(function (a, b) { return (b.featured ? 1 : 0) - (a.featured ? 1 : 0); });
         var threeD = visible(D.threeD);
         var motion = visible(D.motion);
+        var graphic = visible(D.graphic);
         var voice = visible(D.voiceover);
+        var heroReels = visible(D.reels && D.reels.hero).slice(0, 2);
+        var reelItems = visible(D.reels && D.reels.items);
 
         // Hide sections with nothing to show so a half-filled portfolio never looks empty.
         if (!threeD.length) $("three-d").hidden = true;
         if (!motion.length) $("motion").hidden = true;
+        if (!graphic.length) $("graphic").hidden = true;
         if (!voice.length) $("voice").hidden = true;
         if (!films.length) $("films").hidden = true;
+        if (!heroReels.length && !reelItems.length) $("reels").hidden = true;
 
         /* ---------- hero ---------- */
         var nameParts = D.name.split(" ");
@@ -596,9 +689,7 @@
           document.title = D.name + " — Portfolio for " + forName;
         }
 
-        var allRoles = [];
-        films.forEach(function (f) { (f.roles || []).forEach(function (r) { if (allRoles.indexOf(r) < 0) allRoles.push(r); }); });
-        var tickerWords = D.disciplines.map(function (d) { return d.label; }).concat(films.map(function (f) { return f.title + " (" + f.year + ")"; }));
+        var tickerWords = D.disciplines.map(function (d) { return d.label; }).concat(films.map(function (f) { return f.year ? f.title + " (" + f.year + ")" : f.title; }));
         [0, 1].forEach(function () {
           tickerWords.forEach(function (w) { $("ticker").appendChild(h("span", { class: "ticker__item", text: w })); });
         });
@@ -606,7 +697,7 @@
         var scopes = [
           ["Films", String(films.filter(function (f) { return !f.draft; }).length || films.length).padStart(2, "0")],
           ["Disciplines", String(D.disciplines.length).padStart(2, "0")],
-          ["Pipeline", "Cut → Mix"],
+          ["Pipeline", "Shoot → Mix"],
         ];
         scopes.forEach(function (s) {
           $("scopes").appendChild(h("div", { class: "scope" }, [h("div", { class: "scope__label mono", text: s[0] }), h("div", { class: "scope__value", text: s[1] })]));
@@ -665,7 +756,11 @@
             f.poster ? h("img", { src: f.poster, alt: "", loading: "lazy" }) : genPoster(f.title),
             h("div", { class: "film__shade" }),
           ]);
-          var roles = h("div", { class: "film__roles" }, (f.roles || []).slice(0, f.featured ? 6 : 3).map(function (r) { return h("span", { class: "pill", text: r }); }));
+          // Featured card lists every role; smaller cards lead with the one-line highlight instead.
+          var roles = f.featured || !f.highlight
+            ? h("div", { class: "film__roles" }, (f.roles || []).slice(0, f.featured ? 6 : 3).map(function (r) { return h("span", { class: "pill", text: r }); }))
+            : null;
+          var highlight = f.highlight ? h("div", { class: "film__highlight", text: f.highlight }) : null;
           var card = h("button", { class: "film reveal" + (f.featured ? " film--featured" : ""), type: "button", "data-tags": (f.tags || []).join("|"), "aria-label": "Open " + f.title, onclick: function () { openFilm(f); } }, [
             f.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
             media,
@@ -673,6 +768,7 @@
               h("div", {}, [
                 h("div", { class: "film__kicker mono", text: [f.format, f.year, f.director ? "Dir. " + f.director : null].filter(Boolean).join("  ·  ") }),
                 h("h3", { class: "film__title", text: f.title }),
+                highlight,
                 roles,
               ]),
               h("span", { class: "film__play", html: ICON_PLAY }),
@@ -702,22 +798,24 @@
           if (v.type === "youtube") return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(v.id) + "?autoplay=1&rel=0&modestbranding=1";
           if (v.type === "vimeo") return "https://player.vimeo.com/video/" + encodeURIComponent(v.id) + "?autoplay=1&title=0&byline=0&portrait=0";
           if (v.type === "drive") return "https://drive.google.com/file/d/" + encodeURIComponent(v.id) + "/preview";
+          if (v.type === "instagram") return "https://www.instagram.com/reel/" + encodeURIComponent(v.id) + "/embed";
           return null;
         }
 
-        function playerFor(v, title, poster) {
+        function playerFor(v, title, poster, vertical, lockedLine) {
+          var cls = "player" + (vertical ? " player--vertical" : "");
           if (!v) {
-            return h("div", { class: "player" }, [
+            return h("div", { class: cls }, [
               poster ? h("img", { src: poster, alt: "", style: "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35" }) : genPoster(title),
               h("div", { class: "player__locked" }, [
-                h("p", { class: "mono accent", text: "Private screener" }),
-                h("p", { style: "font-family:var(--font-display);font-size:clamp(1.4rem,3vw,2.2rem);font-weight:700;max-width:24ch", text: "Full film available on request." }),
-                h("a", { class: "btn btn--primary", href: "mailto:" + D.email + "?subject=" + encodeURIComponent("Screener request — " + title), text: "Request the screener" }),
+                h("p", { class: "mono accent", text: lockedLine ? "Private screener" : "Coming soon" }),
+                h("p", { style: "font-family:var(--font-display);font-size:clamp(1.4rem,3vw,2.2rem);font-weight:700;max-width:24ch", text: lockedLine || "Available on request." }),
+                h("a", { class: "btn btn--primary", href: "mailto:" + D.email + "?subject=" + encodeURIComponent("Request — " + title), text: lockedLine ? "Request the screener" : "Ask for it" }),
               ]),
             ]);
           }
-          if (v.type === "file") return h("div", { class: "player" }, [h("video", { src: v.src, controls: "", autoplay: "", playsinline: "", poster: poster || null })]);
-          return h("div", { class: "player" }, [h("iframe", { src: embedUrl(v), title: title, allow: "autoplay; fullscreen; picture-in-picture; encrypted-media", allowfullscreen: "" })]);
+          if (v.type === "file") return h("div", { class: cls }, [h("video", { src: v.src, controls: "", autoplay: "", playsinline: "", poster: poster || null })]);
+          return h("div", { class: cls }, [h("iframe", { src: embedUrl(v), title: title, allow: "autoplay; fullscreen; picture-in-picture; encrypted-media", allowfullscreen: "" })]);
         }
 
         function openFilm(f) {
@@ -733,7 +831,7 @@
           });
 
           var body = h("div", {}, [
-            playerFor(f.video, f.title, f.poster),
+            playerFor(f.video, f.title, f.poster, false, "Full film available on request."),
             h("div", { class: "detail" }, [
               h("div", {}, [
                 h("p", { class: "mono accent", style: "margin:0", text: [f.format, f.year].filter(Boolean).join(" · ") }),
@@ -754,35 +852,126 @@
         /* ---------- 3D + motion tiles ---------- */
         function emptyArt(icon) { return h("div", { class: "tile__empty", html: icon }); }
 
-        threeD.forEach(function (item, i) {
-          var tile = h("button", { class: "tile reveal" + (i % 3 === 1 ? "" : ""), type: "button", "aria-label": "Open " + item.title, onclick: function () {
-            var content = item.video ? playerFor(item.video, item.title) : item.image ? h("div", { class: "player player--img" }, [h("img", { src: item.image, alt: item.title })]) : null;
-            if (content) openModal(h("div", {}, [content, h("div", { style: "padding:var(--space-5) var(--space-6)" }, [h("h2", { class: "tile__title", id: "modal-title", text: item.title }), h("p", { class: "tile__note", text: item.note || "" })])]), item.title);
+        var ICON_FRAME = '<svg viewBox="0 0 24 24" fill="none" stroke="#90b495" stroke-width="0.6"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M4 15l5-5 4 4 3-3 4 4"/><circle cx="15.5" cy="7.5" r="1.5"/></svg>';
+        var ICON_REEL = '<svg viewBox="0 0 24 24" fill="none" stroke="#90b495" stroke-width="0.6"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 9.5v5l4-2.5z"/></svg>';
+
+        function captioned(content, item) {
+          return h("div", {}, [content, h("div", { style: "padding:var(--space-5) var(--space-6)" }, [
+            h("h2", { class: "tile__title", id: "modal-title", text: item.title }),
+            h("p", { class: "tile__note", text: [item.category, item.client, item.note].filter(Boolean).join(" · ") }),
+          ])]);
+        }
+
+        // Muted preview that plays on hover (desktop) and stays on its poster otherwise.
+        function hoverLoop(el, item) {
+          if (!item.loop) return null;
+          var v = h("video", { src: item.loop, muted: "", loop: "", playsinline: "", preload: "metadata", poster: item.poster || null });
+          v.muted = true;
+          el.addEventListener("mouseenter", function () { v.play().catch(function () {}); });
+          el.addEventListener("mouseleave", function () { v.pause(); });
+          return v;
+        }
+
+        function videoTile(item, cls, icon) {
+          var tile = h("button", { class: cls + " reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
+            var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
+            if (src) openModal(captioned(playerFor(src, item.title, item.poster), item), item.title);
+          } });
+          var loopVid = hoverLoop(tile, item);
+          [
+            item.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
+            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(icon)),
+            h("div", { class: "tile__cap" }, [h("h3", { class: "tile__title", text: item.title }), item.note ? h("div", { class: "tile__note", text: item.note }) : null]),
+          ].forEach(function (c) { if (c) tile.appendChild(c); });
+          return tile;
+        }
+
+        threeD.forEach(function (item) { $("three-d-grid").appendChild(videoTile(item, "tile tile--video", ICON_CUBE)); });
+        motion.forEach(function (item) { $("motion-grid").appendChild(videoTile(item, "tile tile--wide", ICON_WAVE)); });
+
+        graphic.forEach(function (item) {
+          var ratio = (item.aspect || "4:5").split(":");
+          var tile = h("button", { class: "tile reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
+            if (item.image) openModal(captioned(h("div", { class: "player player--img" }, [h("img", { src: item.image, alt: item.title })]), item), item.title);
           } }, [
             item.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
-            item.image ? h("img", { src: item.image, alt: "", loading: "lazy" }) : emptyArt(ICON_CUBE),
+            item.image
+              ? h("img", { src: item.image, alt: item.title, loading: "lazy" })
+              : h("div", { class: "tile__empty", style: "aspect-ratio:" + ratio[0] + " / " + ratio[1], html: ICON_FRAME }),
             h("div", { class: "tile__cap" }, [h("h3", { class: "tile__title", text: item.title }), item.note ? h("div", { class: "tile__note", text: item.note }) : null]),
           ]);
-          $("three-d-grid").appendChild(tile);
+          $("graphic-grid").appendChild(tile);
         });
 
-        motion.forEach(function (item) {
-          var loopVid = item.loop ? h("video", { src: item.loop, muted: "", loop: "", playsinline: "", preload: "metadata", poster: item.poster || null }) : null;
-          var tile = h("button", { class: "tile tile--wide reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
-            var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
-            if (src) openModal(h("div", {}, [playerFor(src, item.title, item.poster), h("div", { style: "padding:var(--space-5) var(--space-6)" }, [h("h2", { class: "tile__title", id: "modal-title", text: item.title }), h("p", { class: "tile__note", text: item.note || "" })])]), item.title);
-          } }, [
-            item.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
-            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(ICON_WAVE)),
-            h("div", { class: "tile__cap" }, [h("h3", { class: "tile__title", text: item.title }), item.note ? h("div", { class: "tile__note", text: item.note }) : null]),
-          ]);
-          if (loopVid) {
-            loopVid.muted = true;
-            tile.addEventListener("mouseenter", function () { loopVid.play().catch(function () {}); });
-            tile.addEventListener("mouseleave", function () { loopVid.pause(); });
+        /* ---------- reels dashboard ---------- */
+        function reelCard(item, heroIndex) {
+          var landscape = item.aspect === "16:9";
+          var el = h("button", {
+            class: "reel" + (heroIndex != null ? " reel--hero" : "") + (landscape ? " reel--landscape" : ""),
+            type: "button",
+            "data-cat": item.category || "",
+            "aria-label": "Play " + item.title,
+            onclick: function () {
+              var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
+              openModal(captioned(playerFor(src, item.title, item.poster, !landscape), item), item.title);
+            },
+          });
+          var loopVid = hoverLoop(el, item);
+          // Hero reels autoplay their loop while on screen; grid reels only on hover.
+          if (loopVid && heroIndex != null && !REDUCED && "IntersectionObserver" in window) {
+            new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) loopVid.play().catch(function () {}); else loopVid.pause(); }); }, { threshold: 0.4 }).observe(el);
           }
-          $("motion-grid").appendChild(tile);
-        });
+          [
+            item.draft ? h("span", { class: "draft-badge", text: "DRAFT" }) : null,
+            heroIndex != null ? h("span", { class: "reel__badge", text: "HERO " + pad(heroIndex + 1) }) : null,
+            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(ICON_REEL)),
+            h("span", { class: "reel__play", html: ICON_PLAY }),
+            h("div", { class: "reel__cap" }, [
+              h("div", { class: "reel__cat mono", text: [item.category, item.client].filter(Boolean).join(" · ") }),
+              h("p", { class: "reel__title", text: item.title }),
+            ]),
+          ].forEach(function (c) { if (c) el.appendChild(c); });
+          return el;
+        }
+
+        if (!$("reels").hidden) {
+          heroReels.forEach(function (r, i) { $("reels-hero").appendChild(reelCard(r, i)); });
+          var reelsGrid = $("reels-grid");
+          reelItems.forEach(function (r) { reelsGrid.appendChild(reelCard(r)); });
+
+          var all = heroReels.concat(reelItems);
+          var cats = {};
+          all.forEach(function (r) { var c = r.category || "Other"; cats[c] = (cats[c] || 0) + 1; });
+          var catNames = Object.keys(cats).sort(function (a, b) { return cats[b] - cats[a]; });
+          var maxCat = Math.max.apply(null, catNames.map(function (c) { return cats[c]; }));
+
+          var dash = $("reels-dash");
+          dash.appendChild(h("p", { class: "dash__label mono", text: "Overview" }));
+          dash.appendChild(h("div", { class: "dash__stats" }, [
+            h("div", { class: "dash__stat" }, [h("div", { class: "dash__label mono", text: "Reels" }), h("div", { class: "dash__num", text: pad(all.length) })]),
+            h("div", { class: "dash__stat" }, [h("div", { class: "dash__label mono", text: "Categories" }), h("div", { class: "dash__num", text: pad(catNames.length) })]),
+          ]));
+          dash.appendChild(h("div", { class: "dash__bars" }, catNames.map(function (c) {
+            return h("div", { class: "dash__bar" }, [
+              h("span", { text: c }),
+              h("div", { class: "dash__track" }, [h("div", { class: "dash__fill", style: "width:" + Math.round((cats[c] / maxCat) * 100) + "%" })]),
+              h("span", { class: "dash__count", text: String(cats[c]) }),
+            ]);
+          })));
+          if (catNames.length > 1 && reelItems.length) {
+            var chips = h("div", { class: "chips", role: "group", "aria-label": "Filter reels by category" });
+            ["All"].concat(catNames).forEach(function (c, i) {
+              chips.appendChild(h("button", { class: "chip", type: "button", "aria-pressed": i === 0 ? "true" : "false", text: c, onclick: function (e) {
+                Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute("aria-pressed", "false"); });
+                e.currentTarget.setAttribute("aria-pressed", "true");
+                Array.prototype.forEach.call(reelsGrid.children, function (card) {
+                  card.hidden = c !== "All" && (card.getAttribute("data-cat") || "Other") !== c;
+                });
+              } }));
+            });
+            dash.appendChild(chips);
+          }
+        }
 
         /* ---------- voice-over ---------- */
         var BARS = 72;
