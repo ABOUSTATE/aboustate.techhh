@@ -63,7 +63,7 @@ window.PORTFOLIO = {
       logline: "A documentary on the arabesque woodcraft of Egypt.",
       highlight: "Shot, directed & edited",
       poster: null, // a wide still works best, e.g. "/portfolio/media/arabesque.jpg"
-      video: null,
+      video: { type: "drive", id: "1AjL2wTx0xjBZXVbEl8Y8-q5HiU_CkPAm" },
       roles: ["Director", "Director of Photography", "Editor"],
       tags: ["Direct", "Camera", "Edit"],
       director: "Mostafa Aboustate",
