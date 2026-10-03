@@ -13,6 +13,9 @@ export default function middleware(request) {
   if (host === "on.aboustate.tech" && url.pathname === "/") {
     return rewrite(new URL("/on.html", request.url));
   }
+  if (host === "portfolio.aboustate.tech" && url.pathname === "/") {
+    return rewrite(new URL("/portfolio.html", request.url));
+  }
 }
 
 export const config = {
