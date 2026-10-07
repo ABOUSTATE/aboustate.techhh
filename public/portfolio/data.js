@@ -114,7 +114,7 @@ window.PORTFOLIO = {
       title: "3enwan",
       year: null,
       format: "Short film",
-      runtime: null,
+      runtime: "5 min",
       genre: null,
       logline: null,
       highlight: "Shot & edited in two days",
