@@ -70,8 +70,8 @@ window.PORTFOLIO = {
 
   about: [
     "I'm Mostafa Aboustate, a filmmaker and editor based in Cairo. I direct, shoot and cut — and I usually stay on a film through the grade and the mix, because that's where it actually gets finished.",
-    "I started out on MBC's studio floors in Dubai in 2017, as a 12-year-old intern, and left four years later as a production manager's associate. Since 2021 I've cut and graded campaigns for brands like Vodafone and Edita.",
-    "My favourite work starts behind the camera and ends in the edit suite: a documentary on Egypt's arabesque woodcraft I shot, directed and cut myself, short films turned around in days, and finishing work on other directors' films. I care about the parts nobody should notice — the cut that lands a beat early, the grade that holds a scene together, the room tone under a silence.",
+    "I started out on MBC's studio floors in Dubai in 2017, as a 12-year-old intern, and left four years later as a production manager's associate. Since 2021 I've cut and graded brand campaigns.",
+    "My favourite work starts behind the camera and ends in the edit suite — documentaries, short films, and finishing work on other directors' films. I care about the parts nobody should notice: the cut that lands a beat early, the grade that holds a scene together, the room tone under a silence.",
     "Outside my own films I run aboustate.tech, a post-production studio.",
   ],
 
