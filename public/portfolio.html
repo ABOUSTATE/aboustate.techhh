@@ -215,7 +215,16 @@
       .discipline { padding: var(--space-4) var(--space-5); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-card); }
       .discipline h3 { font-family: var(--font-display); font-weight: 600; font-size: 17px; margin: 0 0 2px; }
       .discipline p { margin: 0; font-size: var(--size-small); color: var(--text-secondary); }
-      .tools { margin-top: var(--space-5); }
+      .tools { margin-top: var(--space-3); }
+      .about__sub { margin: var(--space-7) 0 var(--space-3); }
+      .timeline { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border-subtle); }
+      .timeline li { display: grid; grid-template-columns: 140px 1fr; gap: var(--space-5); padding: var(--space-4) 0; border-bottom: 1px solid var(--border-subtle); }
+      .timeline__years { font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-accent); padding-top: 3px; }
+      .timeline__role { font-family: var(--font-display); font-weight: 600; font-size: 17px; margin: 0; }
+      .timeline__org { font-size: var(--size-small); color: var(--text-primary); margin: 2px 0 4px; }
+      .timeline__detail { font-size: var(--size-small); color: var(--text-secondary); margin: 0; }
+      .clients { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: 0; padding: 0; list-style: none; }
+      .clients li { font-family: var(--font-display); font-weight: 600; font-size: 19px; color: var(--text-primary); }
 
       /* contact + footer */
       .contact { background: var(--surface-inverse); color: var(--text-on-inverse); padding: var(--space-9) 0; scroll-margin-top: 64px; }
@@ -284,6 +293,7 @@
       }
       @media (max-width: 560px) {
         .wrap { padding: 0 var(--space-4); }
+        .timeline li { grid-template-columns: 1fr; gap: var(--space-1); }
         .wordmark small { display: none; }
         .films, .grid-2, .grid-3 { grid-template-columns: 1fr; }
         .reels-top { gap: var(--space-3); }
@@ -407,7 +417,18 @@
             <h2 class="h2" style="margin-bottom: var(--space-5)">Behind the camera, and after it.</h2>
             <div class="about__body" id="about-body"></div>
             <div class="disciplines" id="disciplines"></div>
-            <div class="pills tools" id="tools"></div>
+            <div id="experience-block" hidden>
+              <p class="eyebrow about__sub">Experience</p>
+              <ol class="timeline" id="experience"></ol>
+            </div>
+            <div id="clients-block" hidden>
+              <p class="eyebrow about__sub">Selected clients</p>
+              <ul class="clients" id="clients"></ul>
+            </div>
+            <div id="tools-block" hidden>
+              <p class="eyebrow about__sub">Tools &amp; languages</p>
+              <div class="pills tools" id="tools"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -506,6 +527,7 @@
         }
 
         var facts = [[pad(films.length), "Films"], [pad(D.disciplines.length), "Disciplines"]];
+        if (D.since) facts.push([String(new Date().getFullYear() - D.since) + "+", "Years"]);
         if (D.location) facts.push(["Based in", D.location]);
         facts.forEach(function (f) { $("hero-facts").appendChild(h("span", {}, [h("strong", { text: f[0] }), " " + f[1]])); });
 
@@ -826,7 +848,17 @@
         D.disciplines.forEach(function (d) {
           $("disciplines").appendChild(h("div", { class: "discipline" }, [h("h3", { text: d.label }), h("p", { text: d.detail })]));
         });
-        (D.tools || []).forEach(function (t) { $("tools").appendChild(h("span", { class: "pill", text: t })); });
+        (D.experience || []).forEach(function (e) {
+          $("experience").appendChild(h("li", {}, [
+            h("span", { class: "timeline__years", text: e.years }),
+            h("div", {}, [h("p", { class: "timeline__role", text: e.role }), h("p", { class: "timeline__org", text: e.org }), e.detail ? h("p", { class: "timeline__detail", text: e.detail }) : null]),
+          ]));
+        });
+        $("experience-block").hidden = !(D.experience || []).length;
+        (D.clients || []).forEach(function (c) { $("clients").appendChild(h("li", { text: c })); });
+        $("clients-block").hidden = !(D.clients || []).length;
+        (D.tools || []).concat(D.languages || []).forEach(function (t) { $("tools").appendChild(h("span", { class: "pill", text: t })); });
+        $("tools-block").hidden = !((D.tools || []).length || (D.languages || []).length);
 
         /* ---------- contact ---------- */
         var subject = forName ? "?subject=" + encodeURIComponent("Hello from " + forName) : "";

@@ -19,9 +19,10 @@ window.PORTFOLIO = {
   headline: "Editor, director & cinematographer.",
   intro:
     "I shoot, cut, grade and mix my own films — from the first frame on set to the final mix.",
-  location: "Egypt",
-  email: "studio@aboustate.tech", // swap for a personal address when you have one
-  phone: "+201501538408",
+  location: "Cairo, Egypt",
+  since: 2017,
+  email: "mostafaaboustate@gmail.com",
+  phone: "+201002221670",
   portrait: null, // e.g. "/portfolio/media/portrait.jpg" (4:5)
   // Personal links, shown in Contact in this order. Add your own Instagram / Vimeo / LinkedIn here.
   links: [
@@ -35,17 +36,39 @@ window.PORTFOLIO = {
     { label: "Directing & Camera", detail: "Documentary and narrative — I shoot what I direct." },
     { label: "Editing", detail: "Story-first cutting, from assembly to picture lock." },
     { label: "Color", detail: "Look development and final grade." },
-    { label: "Sound", detail: "Sound design, music curation and the final mix." },
+    { label: "Sound", detail: "Sound design, foley, mixing and mastering." },
     { label: "Finishing & VFX", detail: "Online, clean-up, compositing and end-credit design." },
     { label: "3D", detail: "Modeled, lit and rendered 16:9 sequences." },
     { label: "Motion & VO", detail: "Motion graphics, titles and voice-over." },
     { label: "Graphic design", detail: "Posters, identities and campaign visuals." },
   ],
 
-  tools: [], // e.g. ["DaVinci Resolve", "Premiere Pro", "After Effects", "Blender", "Photoshop"]
+  tools: ["DaVinci Resolve", "Premiere Pro", "After Effects", "Photoshop", "Illustrator", "Pro Tools", "Logic Pro", "FL Studio"],
+
+  languages: ["Arabic", "English"],
+
+  // Shown under About as a short timeline, newest first.
+  experience: [
+    {
+      years: "2021 — now",
+      role: "Freelance editor, colorist & post-production lead",
+      org: "Independent",
+      detail: "Broadcast-ready edits, grades and motion for brand campaigns, working directly with agencies.",
+    },
+    {
+      years: "2017 — 2021",
+      role: "Intern → TV Production Manager's Associate",
+      org: "MBC Group · Dubai",
+      detail: "Studio and on-set operations for major TV productions: lighting, equipment and floor coordination.",
+    },
+  ],
+
+  // Brands whose campaigns you've edited or graded (names only, no logos).
+  clients: ["Vodafone Egypt", "Vodafone Red", "Edita · Bake Rollz", "NXT Bank", "Sohoula"],
 
   about: [
-    "I'm Mostafa Aboustate, a filmmaker and editor. I direct, shoot and cut — and I usually stay on a film through the grade and the mix, because that's where it actually gets finished.",
+    "I'm Mostafa Aboustate, a filmmaker and editor based in Cairo. I direct, shoot and cut — and I usually stay on a film through the grade and the mix, because that's where it actually gets finished.",
+    "I started out on MBC's studio floors in Dubai in 2017, as a 12-year-old intern, and left four years later as a production manager's associate. Since 2021 I've cut and graded campaigns for brands like Vodafone and Edita.",
     "My favourite work starts behind the camera and ends in the edit suite: a documentary on Egypt's arabesque woodcraft I shot, directed and cut myself, short films turned around in days, and finishing work on other directors' films. I care about the parts nobody should notice — the cut that lands a beat early, the grade that holds a scene together, the room tone under a silence.",
     "Outside my own films I run aboustate.tech, a post-production studio.",
   ],
