@@ -62,9 +62,9 @@ window.PORTFOLIO = {
   experience: [
     {
       years: "Since 2021",
-      role: "Freelance editor, colorist & post-production lead",
+      role: "Freelance editor, colorist & designer",
       org: "Independent",
-      detail: "Edits, grades and motion for brand campaigns, delivered to broadcast spec. I work directly with agencies.",
+      detail: "Editing and colour on films, plus design work for brands through agencies.",
     },
     {
       years: "2017 to 2021",
@@ -74,12 +74,12 @@ window.PORTFOLIO = {
     },
   ],
 
-  // Brands whose campaigns you've edited or graded (names only, no logos).
-  clients: ["Vodafone Egypt", "Vodafone Red", "Edita · Bake Rollz", "NXT Bank", "Sohoula"],
+  // Brands to list under "Selected clients" (names only). Empty = section hidden.
+  clients: [],
 
   about: [
     "I'm Mostafa Aboustate, a filmmaker and editor in Cairo. I direct, shoot and cut, and I usually stay on through the grade and the mix. That's where a film gets finished.",
-    "I started on MBC's studio floors in Dubai in 2017 as a 12-year-old intern. Four years later I left as a production manager's associate. Since 2021 I've been cutting and grading campaigns for brands like Vodafone and Edita.",
+    "I started on MBC's studio floors in Dubai in 2017 as a 12-year-old intern. Four years later I left as a production manager's associate. Since 2021 I've worked freelance, editing and grading films and doing design work for brands.",
     "The work I like most starts behind the camera and ends in the edit. I make documentaries and short films, some of them in a few days, and I do finishing work on other directors' films. What I care about most is the stuff you're not meant to notice, like a cut that comes a beat early or the room tone under a silence.",
     "When I'm not on my own films, I run aboustate.tech, a post-production studio.",
   ],
