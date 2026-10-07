@@ -48,12 +48,12 @@ window.PORTFOLIO = {
     { label: "Color", detail: "Building the look and doing the final grade." },
     { label: "Sound", detail: "Sound design, foley, mixing and mastering." },
     { label: "Finishing & VFX", detail: "Online, clean-up, compositing and end credits." },
-    { label: "3D", detail: "Modelled, lit and rendered 16:9 shots." },
+    { label: "3D", detail: "Modelling, texturing, rigging and animation in Maya and Unreal Engine 5." },
     { label: "Motion & VO", detail: "Motion graphics, titles and voice-over." },
     { label: "Graphic design", detail: "Posters, logos and campaign artwork." },
   ],
 
-  tools: ["DaVinci Resolve", "Premiere Pro", "After Effects", "Photoshop", "Illustrator", "Pro Tools", "Logic Pro", "FL Studio"],
+  tools: ["DaVinci Resolve", "Premiere Pro", "After Effects", "Unreal Engine 5", "Maya", "Photoshop", "Illustrator", "Pro Tools", "Logic Pro", "FL Studio"],
 
   languages: ["Arabic", "English"],
 
@@ -205,8 +205,14 @@ window.PORTFOLIO = {
 
   // 3D: 16:9 rendered videos. `poster` = still, `loop` = hover preview, `video` = full piece.
   threeD: [
-    { draft: true, title: "3D piece one", note: "Rendered sequence", poster: null, loop: null, video: null },
-    { draft: true, title: "3D piece two", note: "Rendered sequence", poster: null, loop: null, video: null },
+    { title: "Xine 3D test", note: "Teaser test · vertical", aspect: "9:16", poster: "/portfolio/media/3d-xine.jpg", loop: null, video: { type: "drive", id: "1NlHSpwpOHHzQcLoGieap2uhf7xqmXc-P" } },
+    { title: "Porsche Taycan Turbo GT", note: "Weissach Package · UE5 · 2025", poster: null, loop: null, video: { type: "drive", id: "1XQcpGrWAv1MnYAZ9Nm0IjW_cRIGe8JR6" } },
+    { title: "White Horse", note: "Modelling, texture, rig & animation · Maya + UE5 · 2026", poster: null, loop: null, video: { type: "drive", id: "1Q5B0UHp1ZKi5tD42hSA2f4eLXTP9xXx-" } },
+    { title: "Natural Environment", note: "Environment & particles, inspired by The Last of Us · UE5 · 2026", poster: null, loop: null, video: { type: "drive", id: "1CMCqYDVOpCyzTlry1lv4eJwcoCKiMauh" } },
+    { title: "Sunrise on Horizon", note: "Demo showcase · UE5 · 2026", poster: null, loop: null, video: { type: "drive", id: "1S-HIOLycCKht1roONDL0gSmEfZZXtbby" } },
+    { title: "Room Showcase", note: "Modelling, shading, texturing & cinematography · UE5 · 2025", poster: null, loop: null, video: { type: "drive", id: "17SwaRtyN2xqfrdGHBPU8y0axvrZonlYL" } },
+    { title: "Xine teaser test", note: "Post Dabygannhom · UE5 · 2026", poster: null, loop: null, video: { type: "drive", id: "1-QMc0WKEKo50riCvmZs878IHdkUYxdTM" } },
+    { title: "Dabygannhom multicam test", note: "3D test · vertical", aspect: "9:16", poster: null, loop: null, video: { type: "drive", id: "1lK2HqbGWjCS8tm2QLqjt4ZXo-_CN7ae4" } },
   ],
 
   // Your own motion pieces. `loop` = muted hover preview, `video` = full piece.

@@ -795,7 +795,7 @@
         function videoCard(item, icon, label) {
           var card = h("button", { class: "card reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
             var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
-            if (src) openModal(captioned(playerFor(src, item.title, item.poster), item));
+            if (src) openModal(captioned(playerFor(src, item.title, item.poster, item.aspect === "9:16"), item));
           } });
           var loopVid = hoverLoop(card, item);
           card.appendChild(h("div", { class: "media media--cine" }, cine([
