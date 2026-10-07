@@ -23,7 +23,8 @@ window.PORTFOLIO = {
   since: 2017,
   email: "mostafaaboustate@gmail.com",
   phone: "+201002221670",
-  portrait: null, // e.g. "/portfolio/media/portrait.jpg" (4:5)
+  // A 2.39:1 strip of you: duotone by default, true colour on hover.
+  portrait: { duotone: "/portfolio/media/portrait-band.jpg", color: "/portfolio/media/portrait-band-color.jpg" },
   // Personal links, shown in Contact in this order. Add your own Instagram / Vimeo / LinkedIn here.
   links: [
     { label: "YouTube", url: "https://www.youtube.com/@aboustatee" },
