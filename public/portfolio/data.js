@@ -24,7 +24,7 @@ window.PORTFOLIO = {
   since: 2017,
   // The slate line under the hero: [label, value].
   heroFacts: [
-    ["On set since", "2017"],
+    ["Cutting since", "2017"],
     ["Cuts in", "Resolve & Premiere"],
     ["Works in", "Arabic & English"],
     ["Based in", "Cairo"],
