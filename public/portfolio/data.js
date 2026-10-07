@@ -18,7 +18,7 @@ window.PORTFOLIO = {
   name: "Mostafa Aboustate",
   headline: "Editor, director & cinematographer.",
   intro:
-    "I shoot, cut, grade and mix my own films — from the first frame on set to the final mix.",
+    "I shoot my own films, then cut, grade and mix them myself.",
   location: "Cairo, Egypt",
   since: 2017,
   email: "mostafaaboustate@gmail.com",
@@ -35,14 +35,14 @@ window.PORTFOLIO = {
   reel: null,
 
   disciplines: [
-    { label: "Directing & Camera", detail: "Documentary and narrative — I shoot what I direct." },
-    { label: "Editing", detail: "Story-first cutting, from assembly to picture lock." },
-    { label: "Color", detail: "Look development and final grade." },
+    { label: "Directing & Camera", detail: "Documentary and narrative. I shoot what I direct." },
+    { label: "Editing", detail: "Cutting from the first assembly to picture lock." },
+    { label: "Color", detail: "Building the look and doing the final grade." },
     { label: "Sound", detail: "Sound design, foley, mixing and mastering." },
-    { label: "Finishing & VFX", detail: "Online, clean-up, compositing and end-credit design." },
-    { label: "3D", detail: "Modeled, lit and rendered 16:9 sequences." },
+    { label: "Finishing & VFX", detail: "Online, clean-up, compositing and end credits." },
+    { label: "3D", detail: "Modelled, lit and rendered 16:9 shots." },
     { label: "Motion & VO", detail: "Motion graphics, titles and voice-over." },
-    { label: "Graphic design", detail: "Posters, identities and campaign visuals." },
+    { label: "Graphic design", detail: "Posters, logos and campaign artwork." },
   ],
 
   tools: ["DaVinci Resolve", "Premiere Pro", "After Effects", "Photoshop", "Illustrator", "Pro Tools", "Logic Pro", "FL Studio"],
@@ -52,16 +52,16 @@ window.PORTFOLIO = {
   // Shown under About as a short timeline, newest first.
   experience: [
     {
-      years: "2021 — now",
+      years: "Since 2021",
       role: "Freelance editor, colorist & post-production lead",
       org: "Independent",
-      detail: "Broadcast-ready edits, grades and motion for brand campaigns, working directly with agencies.",
+      detail: "Edits, grades and motion for brand campaigns, delivered to broadcast spec. I work directly with agencies.",
     },
     {
-      years: "2017 — 2021",
+      years: "2017 to 2021",
       role: "Intern → TV Production Manager's Associate",
       org: "MBC Group · Dubai",
-      detail: "Studio and on-set operations for major TV productions: lighting, equipment and floor coordination.",
+      detail: "Lighting, equipment and floor coordination on studio TV productions.",
     },
   ],
 
@@ -69,9 +69,9 @@ window.PORTFOLIO = {
   clients: ["Vodafone Egypt", "Vodafone Red", "Edita · Bake Rollz", "NXT Bank", "Sohoula"],
 
   about: [
-    "I'm Mostafa Aboustate, a filmmaker and editor based in Cairo. I direct, shoot and cut — and I usually stay on a film through the grade and the mix, because that's where it actually gets finished.",
+    "I'm Mostafa Aboustate, a filmmaker and editor in Cairo. I direct, shoot and cut, and I usually stay on through the grade and the mix. That's where a film gets finished.",
     "I started on MBC's studio floors in Dubai in 2017 as a 12-year-old intern. Four years later I left as a production manager's associate. Since 2021 I've been cutting and grading campaigns for brands like Vodafone and Edita.",
-    "The work I like most starts behind the camera and ends in the edit: documentaries, short films turned around in a few days, and finishing work on other directors' films. I care about the parts nobody is supposed to notice, like a cut that lands a beat early, a grade that holds a scene together, or the room tone under a silence.",
+    "The work I like most starts behind the camera and ends in the edit. I make documentaries and short films, some of them in a few days, and I do finishing work on other directors' films. What I care about most is the stuff you're not meant to notice, like a cut that comes a beat early or the room tone under a silence.",
     "When I'm not on my own films, I run aboustate.tech, a post-production studio.",
   ],
 
@@ -79,7 +79,7 @@ window.PORTFOLIO = {
   films: [
     {
       slug: "arabesque",
-      title: "Arabesque", // working title — change to the documentary's real title
+      title: "Arabesque", // working title: change to the documentary's real title
       year: null,
       featured: true,
       format: "Documentary",
@@ -142,7 +142,7 @@ window.PORTFOLIO = {
       director: "Hazem Elsoufy",
       credits: [
         {
-          group: "Post-production — aboustate.tech",
+          group: "Post-production (aboustate.tech)",
           rows: [
             ["Finishing Editor & Audio Mixer", "Mostafa Aboustate"],
             ["Editor", "Nadeen Amr"],
@@ -214,7 +214,7 @@ window.PORTFOLIO = {
   ],
 
   voiceover: [
-    { draft: true, title: "Commercial read", language: "Arabic — Egyptian", style: "Warm, conversational", duration: "0:30", src: null },
+    { draft: true, title: "Commercial read", language: "Arabic (Egyptian)", style: "Warm, conversational", duration: "0:30", src: null },
     { draft: true, title: "Documentary narration", language: "English", style: "Measured", duration: "1:10", src: null },
   ],
 };

@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mostafa Aboustate — Editor, Director & Cinematographer</title>
-    <meta name="description" content="The film and editing portfolio of Mostafa Aboustate — editor, director and cinematographer based in Egypt." />
-    <meta property="og:title" content="Mostafa Aboustate — Portfolio" />
-    <meta property="og:description" content="Film and editing portfolio — editor, director & cinematographer." />
+    <title>Mostafa Aboustate | Editor, director &amp; cinematographer</title>
+    <meta name="description" content="Film and editing portfolio of Mostafa Aboustate, an editor, director and cinematographer in Cairo." />
+    <meta property="og:title" content="Mostafa Aboustate | Film &amp; editing" />
+    <meta property="og:description" content="Films I've shot, directed and cut." />
     <meta property="og:url" content="https://portfolio.aboustate.tech/" />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#02362f" />
@@ -378,7 +378,7 @@
           <div class="section__head reveal">
             <div>
               <p class="eyebrow">Reels</p>
-              <h2 class="h2">Short-form, at a glance.</h2>
+              <h2 class="h2">Short edits and reels.</h2>
             </div>
           </div>
           <div class="reels-top reveal" id="reels-top"></div>
@@ -391,7 +391,7 @@
           <div class="section__head reveal">
             <div>
               <p class="eyebrow">3D</p>
-              <h2 class="h2">Rendered sequences.</h2>
+              <h2 class="h2">Rendered in 3D.</h2>
             </div>
           </div>
           <div class="grid-2" id="three-d-grid"></div>
@@ -403,7 +403,7 @@
           <div class="section__head reveal">
             <div>
               <p class="eyebrow">Motion graphics</p>
-              <h2 class="h2">Titles, type and packages.</h2>
+              <h2 class="h2">Titles and motion pieces.</h2>
             </div>
           </div>
           <div class="grid-3" id="motion-grid"></div>
@@ -415,7 +415,7 @@
           <div class="section__head reveal">
             <div>
               <p class="eyebrow">Graphic design</p>
-              <h2 class="h2">Posters, identities and campaigns.</h2>
+              <h2 class="h2">Posters and logos.</h2>
             </div>
           </div>
           <div class="masonry" id="graphic-grid"></div>
@@ -427,7 +427,7 @@
           <div class="section__head reveal">
             <div>
               <p class="eyebrow">Voice-over</p>
-              <h2 class="h2">Reads across languages and registers.</h2>
+              <h2 class="h2">Reads in Arabic and English.</h2>
             </div>
           </div>
           <div class="vo" id="vo-list"></div>
@@ -439,7 +439,7 @@
           <div class="about__portrait reveal" id="about-portrait"></div>
           <div class="reveal">
             <p class="eyebrow">About me</p>
-            <h2 class="h2" style="margin-bottom: var(--space-5)">Behind the camera, and after it.</h2>
+            <h2 class="h2" style="margin-bottom: var(--space-5)">A bit about me.</h2>
             <div class="about__body" id="about-body"></div>
             <div class="disciplines" id="disciplines"></div>
             <div id="experience-block" hidden>
@@ -472,7 +472,7 @@
     </section>
 
     <footer class="foot">
-      <div class="wrap"><span id="foot-name"></span><span>Direct · Shoot · Edit · Finish</span></div>
+      <div class="wrap"><span id="foot-name"></span><span>Film &amp; editing</span></div>
     </footer>
 
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
@@ -548,7 +548,7 @@
         var forName = (params.get("for") || "").trim().slice(0, 60);
         if (forName) {
           $("hero-eyebrow").textContent = "Prepared for " + forName;
-          document.title = D.name + " — Portfolio for " + forName;
+          document.title = D.name + " | Portfolio for " + forName;
         }
 
         var facts = [[pad(films.length), "Films"], [pad(D.disciplines.length), "Disciplines"]];
@@ -587,7 +587,7 @@
               h("div", { class: "player__locked" }, [
                 h("p", { class: "eyebrow", text: lockedLine ? "Private screener" : "Coming soon" }),
                 h("h3", { text: lockedLine || "Available on request." }),
-                h("a", { class: "btn btn--accent", href: "mailto:" + D.email + "?subject=" + encodeURIComponent("Request — " + title), text: lockedLine ? "Request the screener" : "Ask for it" }),
+                h("a", { class: "btn btn--accent", href: "mailto:" + D.email + "?subject=" + encodeURIComponent("Screener request: " + title), text: lockedLine ? "Request the screener" : "Ask for it" }),
               ]),
             ]);
           }
@@ -812,7 +812,7 @@
             btn,
             h("div", { class: "vo__main" }, [
               h("p", { class: "vo__title", text: item.title }),
-              h("div", { class: "vo__meta", text: [item.language, item.style].filter(Boolean).join(" · ") + (item.draft ? "  —  DRAFT" : "") }),
+              h("div", { class: "vo__meta", text: [item.language, item.style].filter(Boolean).join(" · ") + (item.draft ? " · DRAFT" : "") }),
               wave,
             ]),
             time,
