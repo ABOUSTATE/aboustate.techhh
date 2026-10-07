@@ -172,6 +172,13 @@ window.PORTFOLIO = {
       roles: ["Editor", "Finishing Editor", "Colorist", "Audio Mixer", "Sound Design & Music", "VFX & End Credits", "On-Set Sound"],
       tags: ["Edit", "Color", "Sound", "VFX"],
       director: "Hazem Elsoufy",
+      specs: [
+        ["Film title", "Spirit"],
+        ["Runtime", "19 minutes 20 seconds (including credits)"],
+        ["Country of origin & filming", "Egypt"],
+        ["Film language", "Arabic"],
+        ["Film color", "Color"],
+      ],
       credits: [
         {
           group: "Post-production (aboustate.tech)",
