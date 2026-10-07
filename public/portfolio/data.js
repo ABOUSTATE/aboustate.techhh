@@ -142,10 +142,10 @@ window.PORTFOLIO = {
       runtime: null,
       genre: null,
       logline: null,
-      highlight: "Finishing, color & sound",
+      highlight: "Edit, color & sound",
       poster: "/portfolio/media/spirit.jpg",
       video: { type: "drive", id: "1-XrDz5IydoY8wr7N9WkU5dP29ZA1UAQR" },
-      roles: ["Finishing Editor", "Colorist", "Audio Mixer", "Sound Design & Music", "VFX & End Credits", "On-Set Sound"],
+      roles: ["Editor", "Finishing Editor", "Colorist", "Audio Mixer", "Sound Design & Music", "VFX & End Credits", "On-Set Sound"],
       tags: ["Edit", "Color", "Sound", "VFX"],
       director: "Hazem Elsoufy",
       credits: [
@@ -153,7 +153,7 @@ window.PORTFOLIO = {
           group: "Post-production (aboustate.tech)",
           rows: [
             ["Finishing Editor & Audio Mixer", "Mostafa Aboustate"],
-            ["Editor", "Nadeen Amr"],
+            ["Editor", "Mostafa Aboustate, Nadeen Amr"],
             ["Colorist", "Mostafa Aboustate"],
             ["Sound Design & Music Production / Curation", "Mostafa Aboustate, Omar Sherif (Three)"],
             ["VFX & End Credit Design", "Mostafa Aboustate"],
