@@ -62,7 +62,7 @@ window.PORTFOLIO = {
       genre: "Craft / Heritage",
       logline: "A documentary on the arabesque woodcraft of Egypt.",
       highlight: "Shot, directed & edited",
-      poster: null, // a wide still works best, e.g. "/portfolio/media/arabesque.jpg"
+      poster: "/portfolio/media/arabesque.jpg", // frame from 47% through the film
       video: { type: "drive", id: "1AjL2wTx0xjBZXVbEl8Y8-q5HiU_CkPAm" },
       roles: ["Director", "Director of Photography", "Editor"],
       tags: ["Direct", "Camera", "Edit"],
@@ -177,17 +177,27 @@ window.PORTFOLIO = {
   ],
 
   motion: [
-    { draft: true, title: "Title sequence", note: "Kinetic type", poster: null, loop: null, video: null },
-    { draft: true, title: "Social package", note: "6 deliverables", poster: null, loop: null, video: null },
+    {
+      title: "COO Films — Two Become One",
+      note: "Logo animation · 10s",
+      poster: "/portfolio/media/coo-intro-white.jpg",
+      loop: "/portfolio/media/coo-intro-white.mp4",
+      video: { type: "file", src: "/portfolio/media/coo-intro-white.mp4" },
+    },
+    {
+      title: "COO Films — The Countdown",
+      note: "Character logo sting · 8s",
+      poster: "/portfolio/media/coo-intro-countdown.jpg",
+      loop: "/portfolio/media/coo-intro-countdown.mp4",
+      video: { type: "file", src: "/portfolio/media/coo-intro-countdown.mp4" },
+    },
   ],
 
   // Graphic design: any aspect ratio — the grid keeps each image's natural shape.
   graphic: [
-    { draft: true, title: "Film poster", note: "Key art", image: null, aspect: "2:3" },
-    { draft: true, title: "Brand identity", note: "Logo & system", image: null, aspect: "4:3" },
-    { draft: true, title: "Campaign", note: "Social visuals", image: null, aspect: "1:1" },
-    { draft: true, title: "Event poster", note: "Print", image: null, aspect: "3:4" },
-    { draft: true, title: "Album cover", note: "Artwork", image: null, aspect: "1:1" },
+    { title: "COO Films identity", note: "Brand system", image: "/portfolio/media/coo-identity-board.jpg" },
+    { title: "COO Films logomark", note: "Illustration", image: "/portfolio/media/coo-pigeon.jpg" },
+    { title: "COO Films lockup", note: "Logo", image: "/portfolio/media/coo-lockup.jpg" },
   ],
 
   voiceover: [

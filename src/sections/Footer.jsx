@@ -24,6 +24,12 @@ export function Footer() {
             +20 150 153 8408
           </a>
           <a
+            href="/portfolio"
+            className="font-body text-small text-text-on-inverse-muted transition-colors duration-150 hover:text-accent"
+          >
+            Portfolio
+          </a>
+          <a
             href="/brief"
             className="font-body text-small text-text-on-inverse-muted transition-colors duration-150 hover:text-accent"
           >
