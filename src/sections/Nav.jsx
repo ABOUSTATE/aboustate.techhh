@@ -13,12 +13,6 @@ export function Nav({ onGetQuoteClick }) {
             Services
           </a>
           <a
-            href="/portfolio"
-            className="hidden font-body text-small text-text-on-inverse-muted hover:text-text-on-inverse sm:inline"
-          >
-            Portfolio
-          </a>
-          <a
             href="/account"
             className="hidden font-body text-small text-text-on-inverse-muted hover:text-text-on-inverse sm:inline"
           >

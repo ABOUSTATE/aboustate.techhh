@@ -18,16 +18,15 @@ window.PORTFOLIO = {
   name: "Mostafa Aboustate",
   headline: "Editor, director & cinematographer.",
   intro:
-    "I shoot, cut, grade and mix — from the first frame on set to the final deliverable, under one roof.",
+    "I shoot, cut, grade and mix my own films — from the first frame on set to the final mix.",
   location: "Egypt",
-  email: "studio@aboustate.tech",
+  email: "studio@aboustate.tech", // swap for a personal address when you have one
   phone: "+201501538408",
   portrait: null, // e.g. "/portfolio/media/portrait.jpg" (4:5)
-  links: {
-    studio: "https://www.aboustate.tech",
-    instagram: "https://www.instagram.com/aboustate",
-    linkedin: "https://www.linkedin.com/company/aboustate-tech/",
-  },
+  // Personal links, shown in Contact in this order. Add your own Instagram / Vimeo / LinkedIn here.
+  links: [
+    { label: "My studio · aboustate.tech", url: "https://www.aboustate.tech" },
+  ],
 
   // Optional showreel: `loop` plays muted behind the hero, `video` opens from the "Watch showreel" button.
   reel: null,
@@ -46,8 +45,9 @@ window.PORTFOLIO = {
   tools: [], // e.g. ["DaVinci Resolve", "Premiere Pro", "After Effects", "Blender", "Photoshop"]
 
   about: [
-    "I'm Mostafa Aboustate — I direct, shoot and edit, and I founded aboustate.tech, a post-production studio where a film's cut, grade, sound and finishing happen in one pipeline instead of four.",
+    "I'm Mostafa Aboustate, a filmmaker and editor. I direct, shoot and cut — and I usually stay on a film through the grade and the mix, because that's where it actually gets finished.",
     "My favourite work starts behind the camera and ends in the edit suite: a documentary on Egypt's arabesque woodcraft I shot, directed and cut myself, short films turned around in days, and finishing work on other directors' films. I care about the parts nobody should notice — the cut that lands a beat early, the grade that holds a scene together, the room tone under a silence.",
+    "Outside my own films I run aboustate.tech, a post-production studio.",
   ],
 
   // The film with featured: true is the hero card. Order here = order on the page.
@@ -176,28 +176,16 @@ window.PORTFOLIO = {
     { draft: true, title: "3D piece two", note: "Rendered sequence", poster: null, loop: null, video: null },
   ],
 
+  // Your own motion pieces. `loop` = muted hover preview, `video` = full piece.
   motion: [
-    {
-      title: "COO Films — Two Become One",
-      note: "Logo animation · 10s",
-      poster: "/portfolio/media/coo-intro-white.jpg",
-      loop: "/portfolio/media/coo-intro-white.mp4",
-      video: { type: "file", src: "/portfolio/media/coo-intro-white.mp4" },
-    },
-    {
-      title: "COO Films — The Countdown",
-      note: "Character logo sting · 8s",
-      poster: "/portfolio/media/coo-intro-countdown.jpg",
-      loop: "/portfolio/media/coo-intro-countdown.mp4",
-      video: { type: "file", src: "/portfolio/media/coo-intro-countdown.mp4" },
-    },
+    { draft: true, title: "Title sequence", note: "Kinetic type", poster: null, loop: null, video: null },
+    { draft: true, title: "Social package", note: "6 deliverables", poster: null, loop: null, video: null },
   ],
 
-  // Graphic design: any aspect ratio — the grid keeps each image's natural shape.
+  // Your own graphic design: any aspect ratio — the grid keeps each image's natural shape.
   graphic: [
-    { title: "COO Films identity", note: "Brand system", image: "/portfolio/media/coo-identity-board.jpg" },
-    { title: "COO Films logomark", note: "Illustration", image: "/portfolio/media/coo-pigeon.jpg" },
-    { title: "COO Films lockup", note: "Logo", image: "/portfolio/media/coo-lockup.jpg" },
+    { draft: true, title: "Film poster", note: "Key art", image: null, aspect: "2:3" },
+    { draft: true, title: "Album cover", note: "Artwork", image: null, aspect: "1:1" },
   ],
 
   voiceover: [

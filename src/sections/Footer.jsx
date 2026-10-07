@@ -27,7 +27,7 @@ export function Footer() {
             href="/portfolio"
             className="font-body text-small text-text-on-inverse-muted transition-colors duration-150 hover:text-accent"
           >
-            Portfolio
+            Founder: Mostafa Aboustate
           </a>
           <a
             href="/brief"
