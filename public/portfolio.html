@@ -145,6 +145,32 @@
       .media__play { position: absolute; left: var(--space-4); bottom: var(--space-4); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--green-950); box-shadow: var(--shadow-md); transition: transform 150ms; }
       .card:hover .media__play { transform: scale(1.08); }
       .media__play svg { width: 14px; height: 14px; margin-left: 2px; }
+      /* Thumbnail treatment: brand-green duotone with scanlines, crop marks and a slate label.
+         Hover (or, on touch screens, being centred in view) brings back true colour. */
+      .media--cine { isolation: isolate; }
+      .media--cine > img, .media--cine > video { filter: grayscale(1) brightness(1.2) contrast(1.05); transition: transform 700ms var(--ease-out), filter 700ms var(--ease-out); }
+      .media__tint, .media__lift, .media__scan { position: absolute; inset: 0; pointer-events: none; transition: opacity 700ms var(--ease-out); }
+      .media__tint { z-index: 1; background: var(--green-500); mix-blend-mode: color; }
+      .media__lift { z-index: 1; background: var(--green-950); mix-blend-mode: lighten; opacity: 0.85; }
+      .media__scan { z-index: 2; background: repeating-linear-gradient(to bottom, rgba(1, 31, 26, 0.18) 0 1px, transparent 1px 3px); }
+      .media__marks { position: absolute; inset: 12px; z-index: 3; pointer-events: none;
+        background:
+          linear-gradient(var(--accent), var(--accent)) left top / 14px 1.5px no-repeat,
+          linear-gradient(var(--accent), var(--accent)) left top / 1.5px 14px no-repeat,
+          linear-gradient(var(--accent), var(--accent)) right top / 14px 1.5px no-repeat,
+          linear-gradient(var(--accent), var(--accent)) right top / 1.5px 14px no-repeat,
+          linear-gradient(var(--accent), var(--accent)) left bottom / 14px 1.5px no-repeat,
+          linear-gradient(var(--accent), var(--accent)) left bottom / 1.5px 14px no-repeat,
+          linear-gradient(var(--accent), var(--accent)) right bottom / 14px 1.5px no-repeat,
+          linear-gradient(var(--accent), var(--accent)) right bottom / 1.5px 14px no-repeat; }
+      .media__slate { position: absolute; top: 20px; left: 24px; right: 24px; z-index: 3; display: flex; justify-content: space-between; gap: var(--space-3); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--mint-300); pointer-events: none; }
+      .media__titlecard { position: absolute; inset: 0; display: flex; align-items: flex-start; padding: 48px 24px 24px; background: var(--surface-inverse); }
+      .media__titlecard span { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 4vw, 4rem); line-height: 0.95; letter-spacing: -0.03em; color: var(--text-on-inverse); overflow-wrap: anywhere; }
+      .media__play, .draft, .badge-hero { z-index: 4; }
+      .card:hover .media--cine > img, .card:hover .media--cine > video, .card:focus-visible .media--cine > img, .media--cine.is-live > img, .media--cine.is-live > video { filter: none; }
+      .card:hover .media__tint, .card:hover .media__lift, .card:hover .media__scan,
+      .card:focus-visible .media__tint, .card:focus-visible .media__lift, .card:focus-visible .media__scan,
+      .is-live .media__tint, .is-live .media__lift, .is-live .media__scan { opacity: 0; }
       .draft { position: absolute; top: var(--space-3); left: var(--space-3); z-index: 2; padding: 3px 8px; border-radius: var(--radius-sm); background: var(--beige-100); color: var(--green-950); font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--ls-mono); }
       .card__body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
       .card__kicker { font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-accent); }
@@ -523,6 +549,17 @@
         function visible(list) { return (list || []).filter(function (x) { return SHOW_DRAFTS || !x.draft; }); }
         function draftBadge(item) { return item.draft ? h("span", { class: "draft", text: "DRAFT" }) : null; }
         function emptyArt(icon) { return h("div", { class: "media__empty", html: icon }); }
+        // With no still yet, the frame shows the title set big in the brand type.
+        function titleCard(text) { return h("div", { class: "media__titlecard" }, [h("span", { text: text })]); }
+        function cine(children, label, meta) {
+          return children.concat([
+            h("span", { class: "media__tint", "aria-hidden": "true" }),
+            h("span", { class: "media__lift", "aria-hidden": "true" }),
+            h("span", { class: "media__scan", "aria-hidden": "true" }),
+            h("span", { class: "media__marks", "aria-hidden": "true" }),
+            h("span", { class: "media__slate", "aria-hidden": "true" }, [h("span", { text: label }), meta ? h("span", { text: meta }) : null]),
+          ]);
+        }
 
         var films = visible(D.films);
         films.sort(function (a, b) { return (b.featured ? 1 : 0) - (a.featured ? 1 : 0); });
@@ -613,14 +650,14 @@
         }
 
         /* ---------- films ---------- */
-        function filmCard(f) {
+        function filmCard(f, i) {
           var kicker = [f.format, f.year, f.director ? "Dir. " + f.director : null].filter(Boolean).join(" · ");
           var card = h("button", { class: "card reveal" + (f.featured ? " card--featured" : ""), type: "button", "data-tags": (f.tags || []).join("|"), "aria-label": "Open " + f.title, onclick: function () { openFilm(f); } }, [
-            h("div", { class: "media" }, [
+            h("div", { class: "media media--cine" }, cine([
               draftBadge(f),
-              f.poster ? h("img", { src: f.poster, alt: "", loading: "lazy" }) : emptyArt(ICON_FILM),
+              f.poster ? h("img", { src: f.poster, alt: "", loading: "lazy" }) : titleCard(f.title),
               h("span", { class: "media__play", html: ICON_PLAY }),
-            ]),
+            ], "Film " + pad(i + 1), f.runtime)),
             h("div", { class: "card__body" }, [
               h("div", { class: "card__kicker", text: kicker }),
               h("h3", { class: "card__title", text: f.title }),
@@ -634,7 +671,7 @@
         }
 
         var filmGrid = $("film-grid");
-        films.forEach(function (f) { filmGrid.appendChild(filmCard(f)); });
+        films.forEach(function (f, i) { filmGrid.appendChild(filmCard(f, i)); });
 
         var tagSet = [];
         films.forEach(function (f) { (f.tags || []).forEach(function (t) { if (tagSet.indexOf(t) < 0) tagSet.push(t); }); });
@@ -680,7 +717,9 @@
         }
 
         /* ---------- reels dashboard ---------- */
+        var reelCount = 0;
         function reelCard(item, heroIndex) {
+          reelCount += 1;
           var landscape = item.aspect === "16:9";
           var card = h("button", {
             class: "card card--reel" + (landscape ? " is-landscape" : ""),
@@ -697,12 +736,12 @@
           if (loopVid && heroIndex != null && !REDUCED && "IntersectionObserver" in window) {
             new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) loopVid.play().catch(function () {}); else loopVid.pause(); }); }, { threshold: 0.4 }).observe(card);
           }
-          card.appendChild(h("div", { class: "media" }, [
+          card.appendChild(h("div", { class: "media media--cine" }, cine([
             draftBadge(item),
             heroIndex != null ? h("span", { class: "badge-hero", text: "HERO " + pad(heroIndex + 1) }) : null,
-            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(ICON_REEL)),
+            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : titleCard(item.title)),
             h("span", { class: "media__play", html: ICON_PLAY }),
-          ]));
+          ], "Reel " + pad(reelCount), item.category)));
           card.appendChild(h("div", { class: "card__body" }, [
             h("div", { class: "card__kicker", text: [item.category, item.client].filter(Boolean).join(" · ") }),
             h("h3", { class: "card__title", text: item.title }),
@@ -753,41 +792,52 @@
         }
 
         /* ---------- 3D, motion, graphic ---------- */
-        function videoCard(item, icon) {
+        function videoCard(item, icon, label) {
           var card = h("button", { class: "card reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
             var src = item.video || (item.loop ? { type: "file", src: item.loop } : null);
             if (src) openModal(captioned(playerFor(src, item.title, item.poster), item));
           } });
           var loopVid = hoverLoop(card, item);
-          card.appendChild(h("div", { class: "media" }, [
+          card.appendChild(h("div", { class: "media media--cine" }, cine([
             draftBadge(item),
-            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : emptyArt(icon)),
+            loopVid || (item.poster ? h("img", { src: item.poster, alt: "", loading: "lazy" }) : titleCard(item.title)),
             item.video || item.loop ? h("span", { class: "media__play", html: ICON_PLAY }) : null,
-          ]));
+          ], label)));
           card.appendChild(h("div", { class: "card__body" }, [
             item.note ? h("div", { class: "card__kicker", text: item.note }) : null,
             h("h3", { class: "card__title", text: item.title }),
           ]));
           return card;
         }
-        threeD.forEach(function (item) { $("three-d-grid").appendChild(videoCard(item, ICON_CUBE)); });
-        motion.forEach(function (item) { $("motion-grid").appendChild(videoCard(item, ICON_WAVE)); });
+        threeD.forEach(function (item, i) { $("three-d-grid").appendChild(videoCard(item, ICON_CUBE, "3D " + pad(i + 1))); });
+        motion.forEach(function (item, i) { $("motion-grid").appendChild(videoCard(item, ICON_WAVE, "Motion " + pad(i + 1))); });
 
-        graphic.forEach(function (item) {
+        graphic.forEach(function (item, gi) {
           var ratio = (item.aspect || "4:5").split(":");
           $("graphic-grid").appendChild(h("button", { class: "card reveal", type: "button", "aria-label": "Open " + item.title, onclick: function () {
             if (item.image) openModal(captioned(h("div", { class: "player player--img" }, [h("img", { src: item.image, alt: item.title })]), item));
           } }, [
-            h("div", { class: "media", style: item.image ? null : "aspect-ratio:" + ratio[0] + " / " + ratio[1] }, [
+            h("div", { class: "media media--cine", style: item.image ? null : "aspect-ratio:" + ratio[0] + " / " + ratio[1] }, cine([
               draftBadge(item),
-              item.image ? h("img", { src: item.image, alt: item.title, loading: "lazy" }) : emptyArt(ICON_FRAME),
-            ]),
+              item.image ? h("img", { src: item.image, alt: item.title, loading: "lazy" }) : titleCard(item.title),
+            ], "Design " + pad(gi + 1))),
             h("div", { class: "card__body" }, [
               item.note ? h("div", { class: "card__kicker", text: item.note }) : null,
               h("h3", { class: "card__title", text: item.title }),
             ]),
           ]));
         });
+
+        // Touch screens have no hover: a thumbnail goes to colour while it sits centred in view.
+        if (window.matchMedia("(hover: none)").matches && "IntersectionObserver" in window) {
+          var liveIO = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.intersectionRatio >= 0.75) e.target.classList.add("is-live");
+              else if (e.intersectionRatio <= 0.3) e.target.classList.remove("is-live");
+            });
+          }, { threshold: [0, 0.3, 0.75, 1], rootMargin: "-20% 0px -20% 0px" });
+          document.querySelectorAll(".media--cine").forEach(function (m) { liveIO.observe(m); });
+        }
 
         /* ---------- voice-over ---------- */
         var BARS = 72;
