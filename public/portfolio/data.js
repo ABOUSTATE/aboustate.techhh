@@ -35,6 +35,7 @@ window.PORTFOLIO = {
   portrait: { duotone: "/portfolio/media/portrait-duotone.jpg", color: "/portfolio/media/portrait-color.jpg" },
   // Personal links, shown in Contact in this order. Add your own Instagram / Vimeo / LinkedIn here.
   links: [
+    { label: "Instagram", url: "https://www.instagram.com/aboustatee/" },
     { label: "YouTube", url: "https://www.youtube.com/@aboustatee" },
     { label: "My studio · aboustate.tech", url: "https://www.aboustate.tech" },
   ],
