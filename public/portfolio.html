@@ -711,7 +711,11 @@
                 h("p", { class: "eyebrow", text: "My role" }),
                 h("div", { class: "pills" }, (f.roles || []).map(function (r) { return h("span", { class: "pill", text: r }); })),
               ]),
-              h("div", { class: "credits" }, credits.length ? credits : [h("p", { class: "card__text", text: "Full credits coming soon." })]),
+              h("div", { class: "credits" }, credits.length ? credits : f.specs && f.specs.length ? [h("div", {}, [
+                // Films without full credits show a spec sheet in the same layout.
+                h("h4", { text: "Film details" }),
+                h("dl", {}, f.specs.map(function (r) { return h("div", { class: "credits__row" }, [h("dt", { text: r[0] }), h("dd", { text: r[1] })]); })),
+              ])] : [h("p", { class: "card__text", text: "Full credits coming soon." })]),
             ]),
           ]));
         }
