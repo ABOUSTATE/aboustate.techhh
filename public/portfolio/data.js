@@ -26,6 +26,7 @@ window.PORTFOLIO = {
   portrait: null, // e.g. "/portfolio/media/portrait.jpg" (4:5)
   // Personal links, shown in Contact in this order. Add your own Instagram / Vimeo / LinkedIn here.
   links: [
+    { label: "YouTube", url: "https://www.youtube.com/@aboustatee" },
     { label: "My studio · aboustate.tech", url: "https://www.aboustate.tech" },
   ],
 
@@ -117,8 +118,8 @@ window.PORTFOLIO = {
       genre: null,
       logline: null,
       highlight: "Shot & edited in two days",
-      poster: null,
-      video: null,
+      poster: "/portfolio/media/3enwan.jpg", // YouTube's mid-video frame
+      video: { type: "youtube", id: "mbIDe4sjB88" },
       roles: ["Director of Photography", "Editor"],
       tags: ["Camera", "Edit"],
       director: null,
