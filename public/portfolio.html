@@ -313,7 +313,7 @@
       <div class="wrap nav__row">
         <a class="wordmark" href="#top">Mostafa Aboustate<span>.</span><small>Film &amp; editing</small></a>
         <ul class="nav__links" id="nav-links"></ul>
-        <a class="btn btn--accent" href="#contact">Get in touch</a>
+        <a class="btn btn--accent" href="#contact">Hire me</a>
       </div>
     </header>
 
@@ -861,7 +861,7 @@
         $("tools-block").hidden = !((D.tools || []).length || (D.languages || []).length);
 
         /* ---------- contact ---------- */
-        var subject = forName ? "?subject=" + encodeURIComponent("Hello from " + forName) : "";
+        var subject = "?subject=" + encodeURIComponent(forName ? "Hiring enquiry from " + forName : "Hiring enquiry");
         $("contact-email").href = "mailto:" + D.email + subject;
         $("contact-email").textContent = D.email;
         if (D.phone) { $("contact-wa").href = "https://wa.me/" + D.phone.replace(/\D/g, ""); $("contact-wa").hidden = false; }
