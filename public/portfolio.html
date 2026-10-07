@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mostafa Aboustate | Editor, director &amp; cinematographer</title>
+    <title>Mostafa Aboustate | Film editor, director &amp; cinematographer</title>
     <meta name="description" content="Film and editing portfolio of Mostafa Aboustate, an editor, director and cinematographer in Cairo." />
     <meta property="og:title" content="Mostafa Aboustate | Film &amp; editing" />
     <meta property="og:description" content="Films I've shot, directed and cut." />
@@ -120,7 +120,9 @@
       .hero .wrap { position: relative; }
       .hero .eyebrow { color: var(--accent); margin-bottom: var(--space-4); }
       .hero__name { font-family: var(--font-display); font-weight: 800; font-size: var(--size-display-xl); line-height: 1.02; letter-spacing: var(--ls-tight); margin: 0; max-width: 14ch; }
-      .hero__headline { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.4rem, 2.4vw, 2rem); line-height: 1.2; margin: var(--space-4) 0 0; color: var(--text-on-inverse); }
+      .hero__headline { font-family: var(--font-display); line-height: 1.15; margin: var(--space-4) 0 0; color: var(--text-on-inverse); }
+      .hero__headline strong { display: block; font-weight: 800; font-size: clamp(1.75rem, 3vw, 2.5rem); letter-spacing: var(--ls-tight); }
+      .hero__headline span { display: block; margin-top: var(--space-1); font-weight: 500; font-size: clamp(1.05rem, 1.5vw, 1.3rem); color: var(--text-on-inverse-muted); }
       .hero__intro { max-width: 560px; margin: var(--space-4) 0 0; font-size: var(--size-body-l); color: var(--text-on-inverse-muted); }
       .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-6); }
       .hero__facts { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--border-on-inverse); font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-on-inverse-muted); }
@@ -541,7 +543,7 @@
 
         /* ---------- hero ---------- */
         $("hero-name").textContent = D.name;
-        $("hero-headline").textContent = D.headline;
+        $("hero-headline").append(h("strong", { text: D.headline }), D.subline ? h("span", { text: D.subline }) : "");
         $("hero-intro").textContent = D.intro;
         $("foot-name").textContent = "© " + new Date().getFullYear() + " " + D.name;
 
