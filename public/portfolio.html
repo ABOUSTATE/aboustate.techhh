@@ -208,15 +208,16 @@
       .about__portrait img { width: 100%; height: 100%; object-fit: cover; }
       .about__initials { position: absolute; inset: auto var(--space-6) var(--space-6); font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 11vw, 9rem); line-height: 0.85; letter-spacing: -0.04em; color: var(--text-on-inverse); }
       .about__initials span { color: var(--accent); }
-      /* cinemascope slit: a 2.39:1 strip of the portrait, duotone until hovered */
-      .slit { position: absolute; left: var(--space-6); right: var(--space-6); top: 31%; }
-      .slit__meta { display: flex; justify-content: space-between; margin-bottom: var(--space-3); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--accent); }
-      .slit__frame { position: relative; aspect-ratio: 2.39 / 1; overflow: hidden; border-radius: 2px; }
-      .slit__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 400ms var(--ease-out); }
-      .slit__color { opacity: 0; }
-      .about__portrait:hover .slit__color { opacity: 1; }
-      .slit__frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(1, 31, 26, 0.16) 0 1px, transparent 1px 3px); }
-      .slit__marks { position: absolute; inset: -8px; top: calc(-8px + 10.5px * 1.5 + var(--space-3)); pointer-events: none;
+      /* Portrait: the full photo masked to a cinemascope eye strip; opens to the whole picture while the
+         card is in view and closes again when it leaves. The card is a fixed 4:5, so the strip percentages
+         (the eye band of the source photo) always line up. */
+      .portrait { --band-top: 23.25%; --band-bottom: 49.25%; --ease-frame: cubic-bezier(0.65, 0, 0.35, 1); }
+      .portrait__media { position: absolute; inset: 0; clip-path: inset(var(--band-top) var(--space-6) var(--band-bottom) var(--space-6) round 2px); transition: clip-path 1100ms var(--ease-frame); }
+      .portrait__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+      .portrait__color { opacity: 0; transition: opacity 900ms var(--ease-out) 250ms; }
+      .portrait__media::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(1, 31, 26, 0.16) 0 1px, transparent 1px 3px); transition: opacity 900ms var(--ease-out); }
+      .portrait__meta { position: absolute; left: var(--space-6); right: var(--space-6); bottom: calc(100% - var(--band-top) + var(--space-3)); display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--accent); transition: opacity 400ms var(--ease-out); }
+      .portrait__marks { position: absolute; left: calc(var(--space-6) - 8px); right: calc(var(--space-6) - 8px); top: calc(var(--band-top) - 8px); bottom: calc(var(--band-bottom) - 8px); pointer-events: none; transition: opacity 400ms var(--ease-out);
         background:
           linear-gradient(var(--accent), var(--accent)) left top / 14px 1.5px no-repeat,
           linear-gradient(var(--accent), var(--accent)) left top / 1.5px 14px no-repeat,
@@ -226,6 +227,12 @@
           linear-gradient(var(--accent), var(--accent)) left bottom / 1.5px 14px no-repeat,
           linear-gradient(var(--accent), var(--accent)) right bottom / 14px 1.5px no-repeat,
           linear-gradient(var(--accent), var(--accent)) right bottom / 1.5px 14px no-repeat; }
+      .portrait .about__loc, .portrait .about__initials { z-index: 1; transition: opacity 500ms var(--ease-out); }
+      .portrait.is-open .portrait__media { clip-path: inset(0 0 0 0 round 0px); }
+      .portrait.is-open .portrait__color { opacity: 1; }
+      .portrait.is-open .portrait__media::after { opacity: 0; }
+      .portrait.is-open .portrait__meta, .portrait.is-open .portrait__marks, .portrait.is-open .about__loc { opacity: 0; }
+      .portrait.is-open .about__initials { opacity: 0; }
       .about__loc { position: absolute; top: var(--space-6); left: var(--space-6); font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-on-inverse-muted); }
       .about__body p { margin: 0 0 var(--space-4); font-size: var(--size-body-l); color: var(--text-secondary); }
       .about__body p:first-child { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.3rem, 2vw, 1.6rem); line-height: 1.35; color: var(--text-primary); }
@@ -859,14 +866,22 @@
         var portrait = $("about-portrait");
         if (D.location) portrait.appendChild(h("span", { class: "about__loc", text: "Based in " + D.location }));
         if (D.portrait && D.portrait.duotone) {
-          portrait.appendChild(h("div", { class: "slit" }, [
-            h("div", { class: "slit__meta", "aria-hidden": "true" }, [h("span", { text: "Frame 01 · 2.39:1" }), h("span", { text: "● Rec" })]),
-            h("div", { class: "slit__frame" }, [
-              h("img", { src: D.portrait.duotone, alt: D.name }),
-              D.portrait.color ? h("img", { class: "slit__color", src: D.portrait.color, alt: "", "aria-hidden": "true" }) : null,
-            ]),
-            h("span", { class: "slit__marks", "aria-hidden": "true" }),
+          portrait.classList.add("portrait");
+          portrait.appendChild(h("div", { class: "portrait__media" }, [
+            h("img", { src: D.portrait.duotone, alt: D.name }),
+            D.portrait.color ? h("img", { class: "portrait__color", src: D.portrait.color, alt: "", "aria-hidden": "true" }) : null,
           ]));
+          portrait.appendChild(h("div", { class: "portrait__meta", "aria-hidden": "true" }, [h("span", { text: "Frame 01" }), h("span", { text: "● Rec" })]));
+          portrait.appendChild(h("span", { class: "portrait__marks", "aria-hidden": "true" }));
+          // Open when most of the card is on screen, close once it's mostly gone (the gap stops flicker at the edge).
+          if ("IntersectionObserver" in window) {
+            new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) {
+                if (e.intersectionRatio >= 0.6) portrait.classList.add("is-open");
+                else if (e.intersectionRatio <= 0.2) portrait.classList.remove("is-open");
+              });
+            }, { threshold: [0, 0.2, 0.6, 1] }).observe(portrait);
+          }
         }
         portrait.appendChild(h("div", { class: "about__initials" }, [D.name.split(" ").map(function (p) { return p[0]; }).join(""), h("span", { text: "." })]));
         D.about.forEach(function (p) { $("about-body").appendChild(h("p", { text: p })); });

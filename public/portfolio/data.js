@@ -23,8 +23,8 @@ window.PORTFOLIO = {
   since: 2017,
   email: "mostafaaboustate@gmail.com",
   phone: "+201002221670",
-  // A 2.39:1 strip of you: duotone by default, true colour on hover.
-  portrait: { duotone: "/portfolio/media/portrait-band.jpg", color: "/portfolio/media/portrait-band-color.jpg" },
+  // Full photo, shown as a duotone eye strip that opens to the whole colour picture when About scrolls into view.
+  portrait: { duotone: "/portfolio/media/portrait-duotone.jpg", color: "/portfolio/media/portrait-color.jpg" },
   // Personal links, shown in Contact in this order. Add your own Instagram / Vimeo / LinkedIn here.
   links: [
     { label: "YouTube", url: "https://www.youtube.com/@aboustatee" },
