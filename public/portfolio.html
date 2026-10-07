@@ -553,10 +553,8 @@
           document.title = D.name + " | Portfolio for " + forName;
         }
 
-        var facts = [[pad(films.length), "Films"], [pad(D.disciplines.length), "Disciplines"]];
-        if (D.since) facts.push([String(new Date().getFullYear() - D.since) + "+", "Years"]);
-        if (D.location) facts.push(["Based in", D.location]);
-        facts.forEach(function (f) { $("hero-facts").appendChild(h("span", {}, [h("strong", { text: f[0] }), " " + f[1]])); });
+        // Slate-style line under the hero: a muted label followed by the value in white.
+        (D.heroFacts || []).forEach(function (f) { $("hero-facts").appendChild(h("span", {}, [f[0] + " ", h("strong", { text: f[1] })])); });
 
         var hero = $("hero");
         hero.addEventListener("mousemove", function (e) {

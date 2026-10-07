@@ -22,6 +22,13 @@ window.PORTFOLIO = {
     "I shoot my own films, then cut, grade and mix them myself.",
   location: "Cairo, Egypt",
   since: 2017,
+  // The slate line under the hero: [label, value].
+  heroFacts: [
+    ["On set since", "2017"],
+    ["Cuts in", "Resolve & Premiere"],
+    ["Works in", "Arabic & English"],
+    ["Based in", "Cairo"],
+  ],
   email: "mostafaaboustate@gmail.com",
   phone: "+201002221670",
   // Full photo, shown as a duotone eye strip that opens to the whole colour picture when About scrolls into view.
