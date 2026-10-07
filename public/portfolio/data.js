@@ -70,9 +70,9 @@ window.PORTFOLIO = {
 
   about: [
     "I'm Mostafa Aboustate, a filmmaker and editor based in Cairo. I direct, shoot and cut — and I usually stay on a film through the grade and the mix, because that's where it actually gets finished.",
-    "I started out on MBC's studio floors in Dubai in 2017, as a 12-year-old intern, and left four years later as a production manager's associate. Since 2021 I've cut and graded brand campaigns.",
-    "My favourite work starts behind the camera and ends in the edit suite — documentaries, short films, and finishing work on other directors' films. I care about the parts nobody should notice: the cut that lands a beat early, the grade that holds a scene together, the room tone under a silence.",
-    "Outside my own films I run aboustate.tech, a post-production studio.",
+    "I started on MBC's studio floors in Dubai in 2017 as a 12-year-old intern. Four years later I left as a production manager's associate. Since 2021 I've been cutting and grading campaigns for brands like Vodafone and Edita.",
+    "The work I like most starts behind the camera and ends in the edit: documentaries, short films turned around in a few days, and finishing work on other directors' films. I care about the parts nobody is supposed to notice, like a cut that lands a beat early, a grade that holds a scene together, or the room tone under a silence.",
+    "When I'm not on my own films, I run aboustate.tech, a post-production studio.",
   ],
 
   // The film with featured: true is the hero card. Order here = order on the page.
