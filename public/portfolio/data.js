@@ -130,6 +130,7 @@ window.PORTFOLIO = {
         ["Runtime", "9 minutes 28 seconds (including credits)"],
         ["Country of origin & filming", "Egypt"],
         ["Film language", "Arabic"],
+        ["Aspect ratio", "16:9"],
         ["Film color", "Color"],
       ],
       credits: [],
@@ -177,6 +178,7 @@ window.PORTFOLIO = {
         ["Runtime", "19 minutes 20 seconds (including credits)"],
         ["Country of origin & filming", "Egypt"],
         ["Film language", "Arabic"],
+        ["Aspect ratio", "2.35:1"],
         ["Film color", "Color"],
       ],
       credits: [
