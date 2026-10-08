@@ -16,7 +16,7 @@
 */
 window.PORTFOLIO = {
   name: "Mostafa Aboustate",
-  headline: "Film Editor",
+  headline: "Editor",
   subline: "Director & cinematographer",
   intro:
     "I shoot my own films, then cut, grade and mix them myself.",
