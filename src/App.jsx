@@ -3,6 +3,7 @@ import { Nav } from "./sections/Nav.jsx";
 import { Hero } from "./sections/Hero.jsx";
 import { ServicesDirectory } from "./sections/ServicesDirectory.jsx";
 import { BookingForm } from "./sections/BookingForm.jsx";
+import { Studio } from "./sections/Studio.jsx";
 import { Footer } from "./sections/Footer.jsx";
 import { QuoteJokeModal } from "./components/QuoteJokeModal.tsx";
 import { getRandomQuoteJoke } from "./data/quoteJokes.js";
@@ -37,6 +38,7 @@ export default function App() {
         selectedServiceIds={selectedServiceIds}
         onSelectForQuote={handleSelectForQuote}
       />
+      <Studio />
       <BookingForm
         mode={formMode}
         setMode={setFormMode}
