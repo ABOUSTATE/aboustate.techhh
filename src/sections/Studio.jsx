@@ -5,7 +5,7 @@ const REGISTRATION = null; // e.g. { label: "Commercial Register No.", value: "1
 const FACTS = [
   { label: "Founded", value: "March 2026" },
   { label: "Founder", value: "Mostafa Aboustate", href: "/portfolio" },
-  { label: "Based in", value: "Cairo, Egypt" },
+  { label: "We operate in", value: "Egypt, MENA & the US" },
   { label: "Contact", value: "studio@aboustate.tech", href: "mailto:studio@aboustate.tech" },
 ];
 
@@ -17,7 +17,7 @@ export function Studio() {
         <div>
           <div className="mb-2 font-mono text-micro uppercase tracking-mono text-text-secondary">The studio</div>
           <h2 className="mb-6 max-w-[20ch] font-display text-h1 font-bold tracking-tight text-text-primary">
-            Founded in Cairo in March 2026.
+            Founded in March 2026.
           </h2>
           <p className="max-w-[56ch] font-body text-body-l leading-body text-text-secondary">
             aboustate.tech is a creative studio for media production, post-production, branding and digital
