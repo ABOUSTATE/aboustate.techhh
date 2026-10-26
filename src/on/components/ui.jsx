@@ -126,7 +126,7 @@ export function Toggle({ checked, onChange, label, hint }) {
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative mt-1 h-5 w-9 shrink-0 rounded-pill transition-colors duration-150 ${checked ? "bg-green-900" : "bg-beige-500"}`}
+        className={`relative mt-1 h-[20px] w-[36px] shrink-0 rounded-pill transition-colors duration-150 ${checked ? "bg-green-900" : "bg-beige-500"}`}
       >
         <span className={`absolute top-[2px] h-4 w-4 rounded-pill bg-white shadow-sm transition-all duration-150 ${checked ? "start-[18px]" : "start-[2px]"}`} />
       </button>

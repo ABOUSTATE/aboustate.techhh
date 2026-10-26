@@ -74,7 +74,7 @@ export function Landing() {
             {TALENT_STEPS.map((s, i) => (
               <div key={s.title} className="rounded-lg border border-border-subtle bg-surface-card p-5">
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-pill bg-mint-100 text-green-900">
+                  <span className="flex h-[40px] w-[40px] items-center justify-center rounded-pill bg-mint-100 text-green-900">
                     <Icon name={s.icon} />
                   </span>
                   <span className="font-mono text-micro text-text-secondary">0{i + 1}</span>
