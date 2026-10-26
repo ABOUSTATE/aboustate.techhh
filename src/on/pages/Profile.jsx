@@ -9,6 +9,7 @@ import { Avatar, Badge, Button, Card, Empty, Label, Notice, Spinner, Verified } 
 import { Icon } from "../components/icons.jsx";
 import { Page } from "../components/Shell.jsx";
 import { opt, tr } from "../lib/i18n.jsx";
+import { WorkCard } from "../components/WorkCard.jsx";
 
 export function ProfilePage() {
   const { slug } = useParams();
@@ -85,8 +86,10 @@ export function ProfilePage() {
     setTimeout(() => setState((s) => ({ ...s, copied: false })), 1800);
   };
 
+  const work = t?.work || [];
   const tabs = [
     ["photos", `${tr("Photos")}${photos.length ? ` ${photos.length}` : ""}`],
+    ...(work.length || isOwner ? [["work", `${tr("Past work")}${work.length ? ` ${work.length}` : ""}`]] : []),
     ["reels", `${tr("Reels")}${videos.length + audio.length ? ` ${videos.length + audio.length}` : ""}`],
     ["about", tr("About")],
   ];
@@ -107,11 +110,11 @@ export function ProfilePage() {
           <aside className="relative z-10 -mt-9 lg:-mt-10">
             <Avatar profile={p} size={120} ring />
             <div className="mt-3 flex items-center gap-2">
-              <h1 className="m-0 font-display text-h2 font-bold tracking-tight text-text-primary">{p.display_name}</h1>
+              <h1 className="m-0 font-display text-h2 font-bold tracking-tight text-text-primary"><bdi>{p.display_name}</bdi></h1>
               {p.verified && <Verified size={20} />}
             </div>
             <div className="font-mono text-small text-text-secondary"><bdi dir="ltr">@{p.handle}</bdi></div>
-            {p.headline && <p className="mb-0 mt-3 font-body text-body text-text-primary">{p.headline}</p>}
+            {p.headline && <p className="mb-0 mt-3 font-body text-body text-text-primary"><bdi>{p.headline}</bdi></p>}
             <div className="mt-3 flex flex-wrap gap-2">
               {t?.available && <Badge tone="accent">{tr("Available")}</Badge>}
               {t?.will_travel && <Badge tone="outline">{tr("Will travel")}</Badge>}
@@ -214,7 +217,7 @@ export function ProfilePage() {
                     <Card key={m.id} className="overflow-hidden">
                       <video src={mediaUrl(m.path)} controls preload="metadata" playsInline className="aspect-video w-full bg-green-950 object-contain" />
                       <div className="flex items-center justify-between gap-3 px-4 py-3">
-                        <span className="truncate font-body text-small font-semibold text-text-primary">{m.caption || tr(MEDIA_KINDS[m.kind])}</span>
+                        <span className="truncate font-body text-small font-semibold text-text-primary"><bdi>{m.caption || tr(MEDIA_KINDS[m.kind])}</bdi></span>
                         <Badge tone="outline">{tr(MEDIA_KINDS[m.kind])}</Badge>
                       </div>
                     </Card>
@@ -233,6 +236,21 @@ export function ProfilePage() {
                   title={tr("No reels yet")}
                   body={tr(isOwner ? "A 30 second self-tape does more than any photo." : "Nothing here yet.")}
                   action={isOwner && <Button to="/me/edit?tab=media">{tr("Upload a reel")}</Button>}
+                />
+              ))}
+
+            {tab === "work" &&
+              (work.length ? (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {work.map((w, i) => (
+                    <WorkCard key={i} item={w} />
+                  ))}
+                </div>
+              ) : (
+                <Empty
+                  title="No past work yet"
+                  body="Link the ads and films you've been in. They play right here, straight from YouTube, Google Drive, Vimeo or Instagram."
+                  action={<Button to="/me/edit?tab=work">{tr("Add past work")}</Button>}
                 />
               ))}
 
@@ -261,7 +279,7 @@ function About({ p, t }) {
       {p.bio && (
         <Card className="p-5">
           <Label>{tr("Bio")}</Label>
-          <p className="mb-0 mt-2 whitespace-pre-line font-body text-body leading-body text-text-primary">{p.bio}</p>
+          <p className="mb-0 mt-2 whitespace-pre-line font-body text-body leading-body text-text-primary"><bdi>{p.bio}</bdi></p>
         </Card>
       )}
       {lists.length > 0 && (
@@ -287,7 +305,7 @@ function About({ p, t }) {
             {credits.map((c, i) => (
               <li key={i} className="flex flex-wrap items-baseline justify-between gap-2 py-3">
                 <span>
-                  <span className="font-body text-body font-semibold text-text-primary">{c.title}</span>
+                  <span className="font-body text-body font-semibold text-text-primary"><bdi>{c.title}</bdi></span>
                   {c.role && <span className="font-body text-small text-text-secondary"> {tr("as {role}", { role: c.role })}</span>}
                   {c.director && <span className="block font-body text-micro text-text-secondary">{tr("Dir. {name}", { name: c.director })}</span>}
                 </span>
@@ -300,7 +318,7 @@ function About({ p, t }) {
       {t?.training && (
         <Card className="p-5">
           <Label>{tr("Training")}</Label>
-          <p className="mb-0 mt-2 whitespace-pre-line font-body text-body text-text-primary">{t.training}</p>
+          <p className="mb-0 mt-2 whitespace-pre-line font-body text-body text-text-primary"><bdi>{t.training}</bdi></p>
         </Card>
       )}
     </div>

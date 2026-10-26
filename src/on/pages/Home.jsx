@@ -115,7 +115,7 @@ function TalentHome({ profile, t, media }) {
           <Avatar profile={profile} size={52} />
           <div className="min-w-0">
             <div className="flex items-center gap-1 font-body text-body font-semibold">
-              <span className="truncate">{profile.display_name}</span>
+              <span className="truncate"><bdi>{profile.display_name}</bdi></span>
               {profile.verified && <Verified size={16} />}
             </div>
             <div className="truncate font-mono text-micro text-mint-300" dir="ltr">{url}</div>

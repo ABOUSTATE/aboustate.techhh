@@ -250,6 +250,23 @@ export const AR = {
   "That link doesn't go anywhere on ON.": "اللينك ده مش بيودّي لأي حتة على ON.",
   "Go home": "ارجع للرئيسية",
 
+  // Past work
+  "Past work": "أعمال سابقة",
+  "Add past work": "ضيف عمل سابق",
+  "No past work yet": "لسه مفيش أعمال سابقة",
+  "Link the ads and films you've been in. They play right here, straight from YouTube, Google Drive, Vimeo or Instagram.":
+    "حط لينكات الإعلانات والأفلام اللي اشتغلت فيها. بتشتغل هنا على طول من يوتيوب أو جوجل درايف أو فيميو أو إنستجرام.",
+  "Ads, films and series you've been in. Paste a link from YouTube, Google Drive, Vimeo or Instagram and it plays on your profile. Nothing is uploaded.":
+    "الإعلانات والأفلام والمسلسلات اللي اشتغلت فيها. حط لينك من يوتيوب أو جوجل درايف أو فيميو أو إنستجرام وهيشتغل على البروفايل بتاعك. مش هنرفع أي حاجة.",
+  Link: "اللينك",
+  "Paste a YouTube, Google Drive, Vimeo or Instagram link.": "حط لينك من يوتيوب أو جوجل درايف أو فيميو أو إنستجرام.",
+  "Share it as “Anyone with the link”.": "خلّي المشاركة «أي حد معاه اللينك».",
+  "Brand or client": "البراند أو العميل",
+  "Your role": "دورك",
+  "Vertical video": "فيديو طولي",
+  "Play {title}": "شغّل {title}",
+  Untitled: "من غير عنوان",
+
   // Profile strength checklist
   "Add a profile photo": "ضيف صورة بروفايل",
   "Write a headline": "اكتب سطر تعريفي",

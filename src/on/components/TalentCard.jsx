@@ -32,10 +32,10 @@ export function TalentCard({ p }) {
       </div>
       <div className="p-3">
         <div className="flex items-center gap-1">
-          <span className="truncate font-body text-small font-semibold text-text-primary">{p.display_name}</span>
+          <span className="truncate font-body text-small font-semibold text-text-primary"><bdi>{p.display_name}</bdi></span>
           {p.verified && <Verified size={14} />}
         </div>
-        <div className="truncate font-body text-micro text-text-secondary">{p.headline || (t?.categories || []).map(opt).join(" · ") || <bdi dir="ltr">@{p.handle}</bdi>}</div>
+        <div className="truncate font-body text-micro text-text-secondary">{(p.headline && <bdi>{p.headline}</bdi>) || (t?.categories || []).map(opt).join(" · ") || <bdi dir="ltr">@{p.handle}</bdi>}</div>
         <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] text-text-secondary">
           {age && <span>{tr("Plays {age}", { age })}</span>}
           {p.city && (

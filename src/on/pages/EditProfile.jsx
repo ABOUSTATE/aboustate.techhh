@@ -11,10 +11,13 @@ import { Avatar, Badge, Button, Card, Chips, Input, Label, Notice, Select, Spinn
 import { Icon } from "../components/icons.jsx";
 import { Page } from "../components/Shell.jsx";
 import { opt, tr } from "../lib/i18n.jsx";
+import { parseVideoLink } from "../lib/embeds.js";
+import { WorkCard } from "../components/WorkCard.jsx";
 
 const TABS = [
   ["basics", "Basics"],
   ["media", "Photos & reels"],
+  ["work", "Past work"],
   ["look", "Look"],
   ["skills", "Skills"],
   ["credits", "Credits"],
@@ -24,7 +27,7 @@ const TABS = [
 const PROFILE_FIELDS = ["display_name", "headline", "bio", "city", "country", "website", "published", "avatar_path", "cover_path"];
 const TALENT_FIELDS = [
   "gender", "playing_age_min", "playing_age_max", "height_cm", "weight_kg", "build", "eye_color", "hair_color", "nationality",
-  "languages", "accents", "skills", "categories", "experience_level", "training", "credits", "available", "will_travel", "instagram",
+  "languages", "accents", "skills", "categories", "experience_level", "training", "credits", "work", "available", "will_travel", "instagram",
 ];
 const PRIVATE_FIELDS = ["phone", "whatsapp", "contact_email", "guardian_name", "guardian_phone"];
 
@@ -109,6 +112,7 @@ export function EditProfile() {
     const talent = pick(t, TALENT_FIELDS);
     ["playing_age_min", "playing_age_max", "height_cm", "weight_kg"].forEach((k) => (talent[k] = numOrNull(talent[k])));
     talent.credits = (talent.credits || []).filter((c) => c.title?.trim());
+    talent.work = (talent.work || []).filter((w) => parseVideoLink(w.url));
     const results = await Promise.all([
       supabase.from("on_profiles").update(pick(p, PROFILE_FIELDS)).eq("id", p.id),
       p.role === "talent" ? supabase.from("on_talent").update(talent).eq("profile_id", p.id) : { error: null },
@@ -190,6 +194,7 @@ export function EditProfile() {
         <div className="min-w-0 pb-9">
           {tab === "basics" && <Basics p={p} setProfile={setProfile} setProfileSaved={setProfileSaved} />}
           {tab === "media" && <MediaManager p={p} media={media} setMedia={setMedia} setProfile={setProfileSaved} />}
+          {tab === "work" && <PastWork t={t} setTalent={setTalent} />}
           {tab === "look" && <Look t={t} setTalent={setTalent} />}
           {tab === "skills" && <Skills t={t} setTalent={setTalent} />}
           {tab === "credits" && <Credits t={t} setTalent={setTalent} />}
@@ -538,6 +543,59 @@ function IconBtn({ label, icon, onClick, active }) {
     >
       <Icon name={icon} size={16} />
     </button>
+  );
+}
+
+// Links only: the videos stay on YouTube, Drive, Vimeo or Instagram and play
+// in embedded players, so they cost no storage on ON.
+function PastWork({ t, setTalent }) {
+  const work = t.work || [];
+  const set = (i, k, v) => setTalent("work", work.map((w, j) => (j === i ? { ...w, [k]: v } : w)));
+  return (
+    <Section title="Past work" hint="Ads, films and series you've been in. Paste a link from YouTube, Google Drive, Vimeo or Instagram and it plays on your profile. Nothing is uploaded.">
+      {work.map((w, i) => {
+        const video = parseVideoLink(w.url);
+        return (
+          <div key={i} className="grid gap-3 rounded-md border border-border-subtle p-3">
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <Input
+                label="Link"
+                dir="ltr"
+                type="url"
+                placeholder="https://"
+                value={w.url || ""}
+                onChange={(e) => set(i, "url", e.target.value)}
+                error={w.url && !video ? "Paste a YouTube, Google Drive, Vimeo or Instagram link." : ""}
+                hint={video ? video.provider + (video.provider === "Google Drive" ? " · " + tr("Share it as “Anyone with the link”.") : "") : ""}
+              />
+              <div className="flex items-end">
+                <IconBtn label="Remove" icon="trash" onClick={() => setTalent("work", work.filter((_, j) => j !== i))} />
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-[1.3fr_1fr_1fr]">
+              <Input label="Title" value={w.title || ""} onChange={(e) => set(i, "title", e.target.value)} maxLength={80} />
+              <Input label="Brand or client" value={w.brand || ""} onChange={(e) => set(i, "brand", e.target.value)} maxLength={60} />
+              <Input label="Your role" value={w.role || ""} onChange={(e) => set(i, "role", e.target.value)} maxLength={60} />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-[1fr_0.6fr_1fr]">
+              <Select label="Type" options={CREDIT_TYPES} value={w.type || ""} onChange={(e) => set(i, "type", e.target.value)} />
+              <Input label="Year" type="number" min={1950} max={2100} value={w.year || ""} onChange={(e) => set(i, "year", e.target.value)} />
+              <div className="flex items-end pb-2">
+                <Toggle label="Vertical video" checked={!!(w.vertical ?? video?.vertical)} onChange={(v) => set(i, "vertical", v)} />
+              </div>
+            </div>
+            {video && <WorkCard item={w} />}
+          </div>
+        );
+      })}
+      {work.length < 12 && (
+        <div>
+          <Button variant="secondary" size="sm" onClick={() => setTalent("work", [...work, { url: "", title: "", brand: "", role: "", type: "TV ad", year: "" }])}>
+            <Icon name="plus" size={16} /> {tr("Add past work")}
+          </Button>
+        </div>
+      )}
+    </Section>
   );
 }
 

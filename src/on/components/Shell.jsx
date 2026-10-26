@@ -40,7 +40,7 @@ function AccountMenu() {
       {open && (
         <div className="absolute end-0 top-[calc(100%+8px)] z-50 w-60 overflow-hidden rounded-lg border border-border-subtle bg-surface-card shadow-md">
           <div className="border-b border-border-subtle px-4 py-3">
-            <div className="truncate font-body text-small font-semibold text-text-primary">{profile.display_name}</div>
+            <div className="truncate font-body text-small font-semibold text-text-primary"><bdi>{profile.display_name}</bdi></div>
             <div className="truncate font-mono text-micro text-text-secondary"><bdi dir="ltr">@{profile.handle}</bdi></div>
           </div>
           {profile.role === "talent" && (
