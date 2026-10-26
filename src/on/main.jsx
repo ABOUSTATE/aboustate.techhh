@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "./lib/auth.jsx";
 import { LangProvider } from "./lib/i18n.jsx";
 import { Shell } from "./components/Shell.jsx";
 import { InstallPrompt } from "./components/InstallPrompt.jsx";
+import { LangPicker } from "./components/LangPicker.jsx";
 import { Spinner } from "./components/ui.jsx";
 import { Landing } from "./pages/Landing.jsx";
 import { Home } from "./pages/Home.jsx";
@@ -74,6 +75,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <LangProvider>
           <App />
           <InstallPrompt />
+          <LangPicker />
         </LangProvider>
       </AuthProvider>
     </BrowserRouter>

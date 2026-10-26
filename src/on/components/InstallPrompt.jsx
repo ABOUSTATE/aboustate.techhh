@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { tr } from "../lib/i18n.jsx";
+import { hasChosenLang, tr } from "../lib/i18n.jsx";
 import { useAuth } from "../lib/auth.jsx";
 import { Button, Card, Label, Wordmark } from "./ui.jsx";
 import { Icon } from "./icons.jsx";
@@ -89,7 +89,7 @@ export function InstallPrompt() {
   }, []);
 
   const blocked = pathname.startsWith("/me/edit") || pathname.startsWith("/edit/") || pathname.startsWith("/welcome");
-  if (installed || hidden || !ready || blocked || !(canPrompt || ios)) return null;
+  if (installed || hidden || !ready || blocked || !hasChosenLang() || !(canPrompt || ios)) return null;
 
   const dismiss = () => {
     try {

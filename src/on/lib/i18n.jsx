@@ -64,6 +64,15 @@ export function LangProvider({ children }) {
   );
 }
 
+// True once the visitor has picked a language (or switched) on this browser.
+export function hasChosenLang() {
+  try {
+    return localStorage.getItem(KEY) !== null;
+  } catch {
+    return true; // storage blocked: don't ask on every page
+  }
+}
+
 export function useLang() {
   return useContext(LangContext);
 }
