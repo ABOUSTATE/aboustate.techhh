@@ -5,6 +5,7 @@ import { useAuth } from "../lib/auth.jsx";
 import { Avatar, Badge, Button, Card, Empty, Input, Label, Notice, Spinner, Verified } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
 import { Page } from "../components/Shell.jsx";
+import { tr } from "../lib/i18n.jsx";
 
 export function Family() {
   const [wards, setWards] = useState(null);
@@ -21,15 +22,15 @@ export function Family() {
     setError("");
     const { error: err } = await supabase.rpc("on_guardian_approve", { ward: id, approve });
     setBusy(null);
-    if (err) return setError(err.message);
+    if (err) return setError(tr(err.message));
     load();
   };
 
   if (!wards) return <Spinner />;
   return (
     <Page narrow>
-      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Family</h1>
-      <p className="mb-6 mt-1 font-body text-body text-text-secondary">Profiles that list your email as their parent or guardian.</p>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Family")}</h1>
+      <p className="mb-6 mt-1 font-body text-body text-text-secondary">{tr("Profiles that list your email as their parent or guardian.")}</p>
       {error && (
         <div className="mb-4">
           <Notice>{error}</Notice>
@@ -39,7 +40,7 @@ export function Family() {
         <Empty
           title="No profiles yet"
           body="When your child signs up as under 18 and enters your email, their profile appears here for you to confirm."
-          action={<Button to="/join?as=minor" variant="secondary">Help them sign up</Button>}
+          action={<Button to="/join?as=minor" variant="secondary">{tr("Help them sign up")}</Button>}
         />
       ) : (
         <div className="grid gap-3">
@@ -51,30 +52,29 @@ export function Family() {
                   <div className="flex items-center gap-1 font-body text-body font-semibold text-text-primary">
                     {w.display_name} {w.verified && <Verified size={14} />}
                   </div>
-                  <div className="font-mono text-micro text-text-secondary">@{w.handle}</div>
-                  <div className="mt-2">{w.guardian_approved_at ? <Badge tone="accent">Confirmed</Badge> : <Badge>Waiting for you</Badge>}</div>
+                  <div className="font-mono text-micro text-text-secondary"><bdi dir="ltr">@{w.handle}</bdi></div>
+                  <div className="mt-2">{w.guardian_approved_at ? <Badge tone="accent">{tr("Confirmed")}</Badge> : <Badge>{tr("Waiting for you")}</Badge>}</div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {w.guardian_approved_at ? (
                     <>
                       <Button size="sm" variant="secondary" to={`/edit/${w.id}`}>
-                        <Icon name="edit" size={16} /> Edit
+                        <Icon name="edit" size={16} /> {tr("Edit")}
                       </Button>
                       <Button size="sm" variant="ghost" disabled={busy === w.id} onClick={() => decide(w.id, false)}>
-                        Hide profile
+                        {tr("Hide profile")}
                       </Button>
                     </>
                   ) : (
                     <Button size="sm" disabled={busy === w.id} onClick={() => decide(w.id, true)}>
-                      <Icon name="check" size={16} /> Confirm profile
+                      <Icon name="check" size={16} /> {tr("Confirm profile")}
                     </Button>
                   )}
                 </div>
               </div>
               {!w.guardian_approved_at && (
                 <p className="mb-0 mt-3 font-body text-small text-text-secondary">
-                  Confirming means you agree to this profile being visible to approved casting directors on ON, who will contact you, not your child.
-                  You can hide it again at any time.
+                  {tr("Confirming means you agree to this profile being visible to approved casting directors on ON, who will contact you, not your child. You can hide it again at any time.")}
                 </p>
               )}
             </Card>
@@ -93,7 +93,7 @@ export function Settings() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState({});
 
-  const say = (k, text) => setMsg((m) => ({ ...m, [k]: text }));
+  const say = (k, text) => setMsg((m) => ({ ...m, [k]: tr(text) }));
 
   const saveHandle = async () => {
     const { data: ok } = await supabase.rpc("on_handle_available", { h: handle });
@@ -112,7 +112,7 @@ export function Settings() {
     say("password", error ? error.message : "Password updated.");
   };
   const deleteProfile = async () => {
-    if (!confirm("Delete your ON profile, photos and reels? Your login stays so you can come back.")) return;
+    if (!confirm(tr("Delete your ON profile, photos and reels? Your login stays so you can come back."))) return;
     const { data: files } = await supabase.storage.from("on-media").list(profile.id, { limit: 100 });
     if (files?.length) await supabase.storage.from("on-media").remove(files.map((f) => `${profile.id}/${f.name}`));
     await supabase.from("on_profiles").delete().eq("id", profile.id);
@@ -122,49 +122,49 @@ export function Settings() {
 
   return (
     <Page narrow>
-      <h1 className="mb-6 mt-0 font-display text-h1 font-bold tracking-tight text-text-primary">Settings</h1>
+      <h1 className="mb-6 mt-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Settings")}</h1>
       <div className="grid gap-4">
         <Card className="grid gap-3 p-5">
-          <Label>Account type</Label>
+          <Label>{tr("Account type")}</Label>
           <div className="flex items-center gap-2 font-body text-body text-text-primary">
-            {{ talent: "Talent", director: "Casting director", guardian: "Parent or guardian" }[profile.role]}
-            {profile.role === "director" && <Badge tone={profile.director_status === "approved" ? "accent" : "neutral"}>{profile.director_status}</Badge>}
-            {profile.is_admin && <Badge tone="inverse">Admin</Badge>}
+            {tr({ talent: "Talent", director: "Casting director", guardian: "Parent or guardian" }[profile.role])}
+            {profile.role === "director" && <Badge tone={profile.director_status === "approved" ? "accent" : "neutral"}>{tr(profile.director_status)}</Badge>}
+            {profile.is_admin && <Badge tone="inverse">{tr("Admin")}</Badge>}
           </div>
         </Card>
         <Card className="grid gap-3 p-5">
-          <Input label="Handle" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))} hint={`on.aboustate.tech/@${handle}`} />
+          <Input label="Handle" dir="ltr" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))} hint={`on.aboustate.tech/@${handle}`} />
           <div className="flex items-center gap-3">
             <Button size="sm" variant="secondary" disabled={handle === profile.handle} onClick={saveHandle}>
-              Change handle
+              {tr("Change handle")}
             </Button>
             <span className="font-body text-micro text-text-secondary">{msg.handle}</span>
           </div>
         </Card>
         <Card className="grid gap-3 p-5">
-          <Input label="Login email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input label="Login email" type="email" dir="ltr" value={email} onChange={(e) => setEmail(e.target.value)} />
           <div className="flex items-center gap-3">
             <Button size="sm" variant="secondary" disabled={email === user.email} onClick={saveEmail}>
-              Change email
+              {tr("Change email")}
             </Button>
             <span className="font-body text-micro text-text-secondary">{msg.email}</span>
           </div>
         </Card>
         <Card className="grid gap-3 p-5">
-          <Input label="New password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input label="New password" type="password" dir="ltr" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <div className="flex items-center gap-3">
             <Button size="sm" variant="secondary" disabled={!password} onClick={savePassword}>
-              Update password
+              {tr("Update password")}
             </Button>
             <span className="font-body text-micro text-text-secondary">{msg.password}</span>
           </div>
         </Card>
         <Card className="flex flex-wrap items-center justify-between gap-3 p-5">
           <Button variant="secondary" onClick={async () => { await signOut(); navigate("/"); }}>
-            <Icon name="logout" size={16} /> Sign out
+            <Icon name="logout" size={16} /> {tr("Sign out")}
           </Button>
           <Button variant="danger" onClick={deleteProfile}>
-            <Icon name="trash" size={16} /> Delete my ON profile
+            <Icon name="trash" size={16} /> {tr("Delete my ON profile")}
           </Button>
         </Card>
       </div>
@@ -176,19 +176,19 @@ export function Studio() {
   const { profile } = useAuth();
   return (
     <Page narrow>
-      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Studio</h1>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Studio")}</h1>
       <p className="mb-6 mt-1 font-body text-body text-text-secondary">{profile.company}</p>
       {profile.director_status === "approved" ? (
         <Card className="grid gap-4 p-5">
-          <p className="m-0 font-body text-body text-text-primary">Castings, shortlists and self-tape requests are being built now and will land here first.</p>
+          <p className="m-0 font-body text-body text-text-primary">{tr("Castings, shortlists and self-tape requests are being built now and will land here first.")}</p>
           <div>
             <Button to="/explore">
-              <Icon name="search" size={16} /> Search talent
+              <Icon name="search" size={16} /> {tr("Search talent")}
             </Button>
           </div>
         </Card>
       ) : (
-        <Notice tone="accent">Your account is under review. We'll open Studio as soon as you're approved.</Notice>
+        <Notice tone="accent">{tr("Your account is under review. We'll open Studio as soon as you're approved.")}</Notice>
       )}
     </Page>
   );
@@ -231,11 +231,11 @@ export function Admin() {
 
   return (
     <Page>
-      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Admin</h1>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Admin")}</h1>
       <div className="my-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {Object.entries(counts).map(([k, v]) => (
           <Card key={k} className="p-4">
-            <Label>{k}</Label>
+            <Label>{tr(k)}</Label>
             <div className="font-display text-h1 font-bold text-text-primary">{v ?? "–"}</div>
           </Card>
         ))}
@@ -243,7 +243,7 @@ export function Admin() {
       <div className="mb-4 flex flex-wrap gap-2">
         {["pending", "directors", "talent", "minors"].map((v) => (
           <Button key={v} size="sm" variant={view === v ? "dark" : "secondary"} onClick={() => setView(v)} className="!rounded-pill capitalize">
-            {v === "pending" ? "Directors to review" : v}
+            {tr(v === "pending" ? "Directors to review" : v)}
           </Button>
         ))}
       </div>
@@ -271,16 +271,16 @@ export function Admin() {
               <div className="flex flex-wrap gap-2">
                 {r.role === "director" && r.director_status !== "approved" && (
                   <Button size="sm" onClick={() => act("on_admin_set_director", { pid: r.id, status: "approved" })}>
-                    Approve
+                    {tr("Approve")}
                   </Button>
                 )}
                 {r.role === "director" && r.director_status !== "rejected" && (
                   <Button size="sm" variant="secondary" onClick={() => act("on_admin_set_director", { pid: r.id, status: "rejected" })}>
-                    {r.director_status === "approved" ? "Revoke" : "Reject"}
+                    {tr(r.director_status === "approved" ? "Revoke" : "Reject")}
                   </Button>
                 )}
                 <Button size="sm" variant="secondary" onClick={() => act("on_admin_set_verified", { pid: r.id, v: !r.verified })}>
-                  {r.verified ? "Unverify" : "Verify"}
+                  {tr(r.verified ? "Unverify" : "Verify")}
                 </Button>
               </div>
             </div>
@@ -294,12 +294,12 @@ export function Admin() {
 export function Safety() {
   return (
     <Page narrow>
-      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Safety and minors</h1>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Safety and minors")}</h1>
       <div className="mt-5 grid gap-4 font-body text-body leading-body text-text-primary">
-        <p className="m-0">Anyone under 18 joins ON with a parent or guardian. The guardian creates their own account with the email the child gave us, and confirms the profile from there. Until they do, nobody else can see it.</p>
-        <p className="m-0">Once confirmed, an under-18 profile is still hidden from the public and from search. Only casting directors we've reviewed and approved can open it, and they see the guardian's contact details, never the child's.</p>
-        <p className="m-0">Guardians can edit or hide the profile at any time from their Family page.</p>
-        <p className="m-0">Casting directors are checked by hand before they get access. If anyone asks you for money to be cast, or to meet somewhere that isn't a known studio or office, don't go, and tell us at studio@aboustate.tech.</p>
+        <p className="m-0">{tr("Anyone under 18 joins ON with a parent or guardian. The guardian creates their own account with the email the child gave us, and confirms the profile from there. Until they do, nobody else can see it.")}</p>
+        <p className="m-0">{tr("Once confirmed, an under-18 profile is still hidden from the public and from search. Only casting directors we've reviewed and approved can open it, and they see the guardian's contact details, never the child's.")}</p>
+        <p className="m-0">{tr("Guardians can edit or hide the profile at any time from their Family page.")}</p>
+        <p className="m-0">{tr("Casting directors are checked by hand before they get access. If anyone asks you for money to be cast, or to meet somewhere that isn't a known studio or office, don't go, and tell us at studio@aboustate.tech.")}</p>
       </div>
     </Page>
   );
@@ -308,11 +308,11 @@ export function Safety() {
 export function Privacy() {
   return (
     <Page narrow>
-      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Privacy</h1>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Privacy")}</h1>
       <div className="mt-5 grid gap-4 font-body text-body leading-body text-text-primary">
-        <p className="m-0">Your public profile (name, photos, reels, look and skills) is visible to anyone with the link, unless you turn it off in Contact and privacy. Your date of birth, phone, WhatsApp and contact email are only visible to you and to approved casting directors.</p>
-        <p className="m-0">We don't sell your data or show ads. Photos are stored with Supabase and served from their storage. You can delete your profile and everything you've uploaded from Settings.</p>
-        <p className="m-0">Questions: studio@aboustate.tech</p>
+        <p className="m-0">{tr("Your public profile (name, photos, reels, look and skills) is visible to anyone with the link, unless you turn it off in Contact and privacy. Your date of birth is never shown to anyone. Your phone, WhatsApp and contact email are only visible to you and to approved casting directors.")}</p>
+        <p className="m-0">{tr("We don't sell your data or show ads. Photos are stored with Supabase and served from their storage. You can delete your profile and everything you've uploaded from Settings.")}</p>
+        <p className="m-0">{tr("Questions: studio@aboustate.tech")}</p>
       </div>
     </Page>
   );

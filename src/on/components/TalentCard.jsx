@@ -3,6 +3,7 @@ import { mediaUrl } from "../lib/media.js";
 import { playingAge } from "../lib/options.js";
 import { Badge, Verified } from "./ui.jsx";
 import { Icon } from "./icons.jsx";
+import { opt, tr } from "../lib/i18n.jsx";
 
 export const CARD_SELECT =
   "id, handle, display_name, headline, city, avatar_path, verified, is_minor, created_at, on_talent(playing_age_min, playing_age_max, categories, available, gender, height_cm)";
@@ -24,9 +25,9 @@ export function TalentCard({ p }) {
             {p.display_name?.[0]}
           </div>
         )}
-        <div className="absolute left-2 top-2 flex gap-1">
-          {t?.available && <Badge tone="accent">Available</Badge>}
-          {p.is_minor && <Badge tone="inverse">Under 18</Badge>}
+        <div className="absolute start-2 top-2 flex gap-1">
+          {t?.available && <Badge tone="accent">{tr("Available")}</Badge>}
+          {p.is_minor && <Badge tone="inverse">{tr("Under 18")}</Badge>}
         </div>
       </div>
       <div className="p-3">
@@ -34,13 +35,13 @@ export function TalentCard({ p }) {
           <span className="truncate font-body text-small font-semibold text-text-primary">{p.display_name}</span>
           {p.verified && <Verified size={14} />}
         </div>
-        <div className="truncate font-body text-micro text-text-secondary">{p.headline || (t?.categories || []).join(" · ") || `@${p.handle}`}</div>
+        <div className="truncate font-body text-micro text-text-secondary">{p.headline || (t?.categories || []).map(opt).join(" · ") || <bdi dir="ltr">@{p.handle}</bdi>}</div>
         <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] text-text-secondary">
-          {age && <span>Plays {age}</span>}
+          {age && <span>{tr("Plays {age}", { age })}</span>}
           {p.city && (
             <span className="inline-flex items-center gap-1">
               <Icon name="pin" size={12} />
-              {p.city}
+              {opt(p.city)}
             </span>
           )}
         </div>

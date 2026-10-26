@@ -4,6 +4,7 @@ import { supabase } from "../../lib/supabaseClient.js";
 import { useAuth } from "../lib/auth.jsx";
 import { Button, Input, Notice, Wordmark } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
+import { tr } from "../lib/i18n.jsx";
 
 export const ROLES = {
   talent: { title: "I'm talent", body: "Actor, model, voice, dancer, presenter. 18 or over.", icon: "user" },
@@ -16,8 +17,8 @@ function AuthFrame({ title, sub, children }) {
   return (
     <main className="mx-auto flex min-h-[calc(100vh-60px)] w-full max-w-[460px] flex-col justify-center px-4 py-8">
       <div className="mb-6">
-        <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{title}</h1>
-        {sub && <p className="mb-0 mt-2 font-body text-body text-text-secondary">{sub}</p>}
+        <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr(title)}</h1>
+        {sub && <p className="mb-0 mt-2 font-body text-body text-text-secondary">{tr(sub)}</p>}
       </div>
       {children}
     </main>
@@ -44,7 +45,7 @@ function GoogleButton({ role }) {
         <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
         <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
       </svg>
-      Continue with Google
+      {tr("Continue with Google")}
     </button>
   );
 }
@@ -53,7 +54,7 @@ function Divider() {
   return (
     <div className="my-5 flex items-center gap-3">
       <span className="h-px flex-1 bg-border-subtle" />
-      <span className="font-mono text-micro uppercase tracking-mono text-text-secondary">or</span>
+      <span className="font-mono text-micro uppercase tracking-mono text-text-secondary">{tr("or")}</span>
       <span className="h-px flex-1 bg-border-subtle" />
     </div>
   );
@@ -81,23 +82,23 @@ export function Join() {
               key={key}
               type="button"
               onClick={() => setRole(key)}
-              className="flex items-center gap-4 rounded-lg border border-border-subtle bg-surface-card p-4 text-left transition-colors duration-150 hover:border-green-950"
+              className="flex items-center gap-4 rounded-lg border border-border-subtle bg-surface-card p-4 text-start transition-colors duration-150 hover:border-green-950"
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-mint-100 text-green-900">
                 <Icon name={r.icon} />
               </span>
               <span className="flex-1">
-                <span className="block font-body text-body font-semibold text-text-primary">{r.title}</span>
-                <span className="block font-body text-small text-text-secondary">{r.body}</span>
+                <span className="block font-body text-body font-semibold text-text-primary">{tr(r.title)}</span>
+                <span className="block font-body text-small text-text-secondary">{tr(r.body)}</span>
               </span>
               <Icon name="arrow" size={18} className="text-text-secondary" />
             </button>
           ))}
         </div>
         <p className="mt-6 text-center font-body text-small text-text-secondary">
-          Already on ON?{" "}
+          {tr("Already on ON?")}{" "}
           <Link to="/login" className="font-semibold text-text-primary underline">
-            Log in
+            {tr("Log in")}
           </Link>
         </p>
       </AuthFrame>
@@ -107,7 +108,7 @@ export function Join() {
   const submit = async (e) => {
     e.preventDefault();
     setError("");
-    if (password.length < 8) return setError("Use at least 8 characters for your password.");
+    if (password.length < 8) return setError(tr("Use at least 8 characters for your password."));
     setBusy(true);
     localStorage.setItem("on:role", role);
     const { data, error: err } = await supabase.auth.signUp({
@@ -116,14 +117,14 @@ export function Join() {
       options: { emailRedirectTo: `${window.location.origin}/welcome`, data: { on_role: role } },
     });
     setBusy(false);
-    if (err) return setError(err.message);
+    if (err) return setError(tr(err.message));
     if (!data.session) setSent(true);
   };
 
   if (sent) {
     return (
-      <AuthFrame title="Check your inbox" sub={`We sent a link to ${email}. Open it on this device to finish setting up.`}>
-        <Notice>Nothing there after a few minutes? Look in spam, or try again with Google.</Notice>
+      <AuthFrame title="Check your inbox" sub={tr("We sent a link to {email}. Open it on this device to finish setting up.", { email })}>
+        <Notice>{tr("Nothing there after a few minutes? Look in spam, or try again with Google.")}</Notice>
       </AuthFrame>
     );
   }
@@ -133,34 +134,35 @@ export function Join() {
       {role === "minor" && (
         <div className="mb-5">
           <Notice tone="accent">
-            Ask your parent or guardian to sit with you. You'll need their email, and they'll confirm your profile from their own account.
+            {tr("Ask your parent or guardian to sit with you. You'll need their email, and they'll confirm your profile from their own account.")}
           </Notice>
         </div>
       )}
       <GoogleButton role={role} />
       <Divider />
       <form onSubmit={submit} className="grid gap-4">
-        <Input label="Email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input label={tr("Email")} type="email" dir="ltr" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input
-          label="Password"
+          label={tr("Password")}
           type="password"
+          dir="ltr"
           required
           autoComplete="new-password"
-          hint="At least 8 characters"
+          hint={tr("At least 8 characters")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <Notice>{error}</Notice>}
         <Button type="submit" size="lg" disabled={busy} className="w-full">
-          {busy ? "Creating account" : "Create account"}
+          {busy ? tr("Creating account") : tr("Create account")}
         </Button>
       </form>
       <div className="mt-5 flex justify-between font-body text-small text-text-secondary">
         <button type="button" onClick={() => setRole(null)} className="underline">
-          Change type
+          {tr("Change type")}
         </button>
         <Link to="/login" className="underline">
-          I have an account
+          {tr("I have an account")}
         </Link>
       </div>
     </AuthFrame>
@@ -184,7 +186,7 @@ export function Login() {
     setError("");
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (err) return setError(err.message === "Invalid login credentials" ? "That email and password don't match." : err.message);
+    if (err) return setError(err.message === "Invalid login credentials" ? tr("That email and password don't match.") : tr(err.message));
     navigate("/");
   };
 
@@ -193,19 +195,19 @@ export function Login() {
       <GoogleButton />
       <Divider />
       <form onSubmit={submit} className="grid gap-4">
-        <Input label="Email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input label="Password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input label={tr("Email")} type="email" dir="ltr" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input label={tr("Password")} type="password" dir="ltr" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         {error && <Notice>{error}</Notice>}
         <Button type="submit" size="lg" disabled={busy} className="w-full">
-          {busy ? "Logging in" : "Log in"}
+          {busy ? tr("Logging in") : tr("Log in")}
         </Button>
       </form>
       <div className="mt-5 flex justify-between font-body text-small text-text-secondary">
         <Link to="/forgot" className="underline">
-          Forgot password?
+          {tr("Forgot password?")}
         </Link>
         <Link to="/join" className="underline">
-          New here? Join
+          {tr("New here? Join")}
         </Link>
       </div>
     </AuthFrame>
@@ -220,24 +222,24 @@ export function Forgot() {
   const submit = async (e) => {
     e.preventDefault();
     const { error: err } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset` });
-    if (err) return setError(err.message);
+    if (err) return setError(tr(err.message));
     setSent(true);
   };
 
   return (
-    <AuthFrame title="Reset your password" sub={sent ? `If ${email} has an account, a reset link is on its way.` : "We'll email you a link to set a new one."}>
+    <AuthFrame title="Reset your password" sub={sent ? tr("If {email} has an account, a reset link is on its way.", { email }) : "We'll email you a link to set a new one."}>
       {!sent && (
         <form onSubmit={submit} className="grid gap-4">
-          <Input label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input label={tr("Email")} type="email" dir="ltr" required value={email} onChange={(e) => setEmail(e.target.value)} />
           {error && <Notice>{error}</Notice>}
           <Button type="submit" size="lg" className="w-full">
-            Send reset link
+            {tr("Send reset link")}
           </Button>
         </form>
       )}
       <p className="mt-5 font-body text-small text-text-secondary">
         <Link to="/login" className="underline">
-          Back to log in
+          {tr("Back to log in")}
         </Link>
       </p>
     </AuthFrame>
@@ -258,22 +260,22 @@ export function Reset() {
 
   const submit = async (e) => {
     e.preventDefault();
-    if (password.length < 8) return setError("Use at least 8 characters.");
+    if (password.length < 8) return setError(tr("Use at least 8 characters."));
     const { error: err } = await supabase.auth.updateUser({ password });
-    if (err) return setError(err.message);
+    if (err) return setError(tr(err.message));
     navigate("/");
   };
 
   return (
     <AuthFrame title="Choose a new password">
       {!ready ? (
-        <Notice>Open this page from the link in your email.</Notice>
+        <Notice>{tr("Open this page from the link in your email.")}</Notice>
       ) : (
         <form onSubmit={submit} className="grid gap-4">
-          <Input label="New password" type="password" required autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input label={tr("New password")} type="password" dir="ltr" required autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
           {error && <Notice>{error}</Notice>}
           <Button type="submit" size="lg" className="w-full">
-            Save password
+            {tr("Save password")}
           </Button>
         </form>
       )}

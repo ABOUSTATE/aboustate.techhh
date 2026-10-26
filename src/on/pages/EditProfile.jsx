@@ -10,6 +10,7 @@ import {
 import { Avatar, Badge, Button, Card, Chips, Input, Label, Notice, Select, Spinner, Textarea, Toggle } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
 import { Page } from "../components/Shell.jsx";
+import { opt, tr } from "../lib/i18n.jsx";
 
 const TABS = [
   ["basics", "Basics"],
@@ -82,7 +83,7 @@ export function EditProfile() {
   if (p.id !== me.id && p.guardian_id !== me.id && !me.is_admin) {
     return (
       <Page narrow>
-        <Notice>You can't edit this profile.</Notice>
+        <Notice>{tr("You can't edit this profile.")}</Notice>
       </Page>
     );
   }
@@ -115,9 +116,9 @@ export function EditProfile() {
     ]);
     setSaving(false);
     const err = results.find((r) => r.error)?.error;
-    if (err) return setMsg(err.message);
+    if (err) return setMsg(tr(err.message));
     setDirty(false);
-    setMsg("Saved");
+    setMsg(tr("Saved"));
     setTimeout(() => setMsg(""), 2000);
     if (p.id === me.id) refresh();
   };
@@ -131,19 +132,19 @@ export function EditProfile() {
         <div className="flex items-center gap-3">
           <Avatar profile={p} size={48} />
           <div>
-            <h1 className="m-0 font-display text-h2 font-bold tracking-tight text-text-primary">Edit profile</h1>
-            <Link to={`/@${p.handle}`} className="font-mono text-small text-text-secondary hover:text-text-primary">
+            <h1 className="m-0 font-display text-h2 font-bold tracking-tight text-text-primary">{tr("Edit profile")}</h1>
+            <Link to={`/@${p.handle}`} className="font-mono text-small text-text-secondary hover:text-text-primary" dir="ltr">
               on.aboustate.tech/@{p.handle}
             </Link>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <div className="hidden text-right sm:block">
-            <div className="font-mono text-micro uppercase tracking-mono text-text-secondary">Strength</div>
-            <div className="font-display text-h3 font-bold text-text-primary">{score}%</div>
+          <div className="hidden text-end sm:block">
+            <div className="font-mono text-micro uppercase tracking-mono text-text-secondary">{tr("Strength")}</div>
+            <div className="font-display text-h3 font-bold text-text-primary" dir="ltr">{score}%</div>
           </div>
           <Button variant="secondary" to={`/@${p.handle}`}>
-            View profile
+            {tr("View profile")}
           </Button>
         </div>
       </div>
@@ -151,8 +152,8 @@ export function EditProfile() {
       {isWelcome && (
         <div className="mb-5">
           <Notice tone="dark">
-            <span className="font-semibold">You're on ON.</span> Start with a clear photo of your face, then add a few more and a short
-            self-tape. That's what casting directors open first.
+            <span className="font-semibold">{tr("You're on ON.")}</span>{" "}
+            {tr("Start with a clear photo of your face, then add a few more and a short self-tape. That's what casting directors open first.")}
           </Notice>
         </div>
       )}
@@ -164,21 +165,21 @@ export function EditProfile() {
               key={key}
               type="button"
               onClick={() => setParams({ tab: key }, { replace: true })}
-              className={`shrink-0 rounded-pill px-4 py-2 text-left font-body text-small font-semibold transition-colors duration-150 lg:rounded-md ${
+              className={`shrink-0 rounded-pill px-4 py-2 text-start font-body text-small font-semibold transition-colors duration-150 lg:rounded-md ${
                 tab === key ? "bg-green-900 text-beige-100" : "text-text-secondary hover:bg-surface-card hover:text-text-primary"
               }`}
             >
-              {label}
+              {tr(label)}
             </button>
           ))}
           {missing.length > 0 && (
             <div className="mt-4 hidden rounded-md border border-border-subtle bg-surface-card p-3 lg:block">
-              <Label>Next up</Label>
+              <Label>{tr("Next up")}</Label>
               <ul className="m-0 mt-2 grid list-none gap-1 p-0 font-body text-micro text-text-primary">
                 {missing.slice(0, 4).map((m) => (
                   <li key={m.label} className="flex gap-2">
                     <span className="mt-[6px] h-1 w-1 shrink-0 rounded-pill bg-accent" />
-                    {m.label}
+                    {tr(m.label)}
                   </li>
                 ))}
               </ul>
@@ -200,10 +201,10 @@ export function EditProfile() {
         className={`fixed inset-x-0 bottom-[72px] z-30 px-4 transition-all duration-200 md:bottom-5 ${dirty || msg ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
       >
         <div className="mx-auto flex max-w-[560px] items-center justify-between gap-4 rounded-lg bg-green-950 px-4 py-3 shadow-lg">
-          <span className="font-body text-small text-beige-100">{msg || "You have unsaved changes"}</span>
+          <span className="font-body text-small text-beige-100">{msg || tr("You have unsaved changes")}</span>
           {dirty && (
             <Button size="sm" onClick={save} disabled={saving}>
-              {saving ? "Saving" : "Save changes"}
+              {saving ? tr("Saving") : tr("Save changes")}
             </Button>
           )}
         </div>
@@ -215,8 +216,8 @@ export function EditProfile() {
 function Section({ title, hint, children }) {
   return (
     <Card className="mb-4 p-5">
-      <h2 className="m-0 font-display text-h3 font-semibold tracking-tight text-text-primary">{title}</h2>
-      {hint && <p className="mb-0 mt-1 font-body text-small text-text-secondary">{hint}</p>}
+      <h2 className="m-0 font-display text-h3 font-semibold tracking-tight text-text-primary">{tr(title)}</h2>
+      {hint && <p className="mb-0 mt-1 font-body text-small text-text-secondary">{tr(hint)}</p>}
       <div className="mt-4 grid gap-4">{children}</div>
     </Card>
   );
@@ -246,20 +247,20 @@ function Basics({ p, setProfile, setProfileSaved }) {
           value={p.bio || ""}
           maxLength={600}
           onChange={(e) => setProfile("bio", e.target.value)}
-          hint={`${(p.bio || "").length}/600. Write it the way you'd introduce yourself at a casting.`}
+          hint={tr("{n}/600. Write it the way you'd introduce yourself at a casting.", { n: (p.bio || "").length })}
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field2 label="City">
             <input list="on-cities" className="w-full rounded-sm border border-border-subtle bg-surface-card px-3 py-2 font-body text-small text-text-primary outline-none focus:border-green-950" value={p.city || ""} onChange={(e) => setProfile("city", e.target.value)} />
             <datalist id="on-cities">
               {CITIES.map((c) => (
-                <option key={c} value={c} />
+                <option key={c} value={c}>{opt(c)}</option>
               ))}
             </datalist>
           </Field2>
           <Input label="Country" value={p.country || ""} onChange={(e) => setProfile("country", e.target.value)} />
         </div>
-        {p.role === "director" && <Input label="Website" type="url" value={p.website || ""} onChange={(e) => setProfile("website", e.target.value)} />}
+        {p.role === "director" && <Input label="Website" type="url" dir="ltr" value={p.website || ""} onChange={(e) => setProfile("website", e.target.value)} />}
       </Section>
     </>
   );
@@ -268,7 +269,7 @@ function Basics({ p, setProfile, setProfileSaved }) {
 function Field2({ label, children }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-body text-micro font-medium text-text-secondary">{label}</span>
+      <span className="font-body text-micro font-medium text-text-secondary">{tr(label)}</span>
       {children}
     </label>
   );
@@ -308,7 +309,7 @@ function ImagePicker({ p, field, setProfile, round }) {
       </div>
       <div className="flex gap-2">
         <Button variant="secondary" size="sm" onClick={() => input.current.click()} disabled={busy}>
-          {busy ? "Uploading" : src ? "Replace" : "Upload"}
+          {tr(busy ? "Uploading" : src ? "Replace" : "Upload")}
         </Button>
         {src && (
           <Button
@@ -379,7 +380,7 @@ function MediaManager({ p, media, setMedia, setProfile }) {
   };
 
   const remove = async (m) => {
-    if (!confirm("Delete this from your profile?")) return;
+    if (!confirm(tr("Delete this from your profile?"))) return;
     setMedia((list) => list.filter((x) => x.id !== m.id));
     await supabase.from("on_media").delete().eq("id", m.id);
     if (p.avatar_path === m.path) {
@@ -404,19 +405,19 @@ function MediaManager({ p, media, setMedia, setProfile }) {
 
   return (
     <>
-      <Section title="Photos" hint={`${photos.length}/16. Headshots first, then full length, then anything that shows range. The first photo leads your profile.`}>
+      <Section title="Photos" hint={tr("{n}/16. Headshots first, then full length, then anything that shows range. The first photo leads your profile.", { n: photos.length })}>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           {photos.map((m, i) => (
             <div key={m.id} className="group relative overflow-hidden rounded-md border border-border-subtle bg-mint-100">
               <img src={mediaUrl(m.path)} alt="" className="aspect-[4/5] w-full object-cover" />
-              <div className="absolute left-2 top-2 flex gap-1">
-                {i === 0 && <Badge tone="accent">Lead</Badge>}
-                {m.kind === "headshot" && <Badge>Headshot</Badge>}
-                {p.avatar_path === m.path && <Badge tone="inverse">Profile photo</Badge>}
+              <div className="absolute start-2 top-2 flex gap-1">
+                {i === 0 && <Badge tone="accent">{tr("Lead")}</Badge>}
+                {m.kind === "headshot" && <Badge>{tr("Headshot")}</Badge>}
+                {p.avatar_path === m.path && <Badge tone="inverse">{tr("Profile photo")}</Badge>}
               </div>
               <div className="flex flex-wrap items-center gap-1 border-t border-border-subtle bg-surface-card p-2">
-                <IconBtn label="Move left" icon="back" onClick={() => move(m, -1, photos)} />
-                <IconBtn label="Move right" icon="arrow" onClick={() => move(m, 1, photos)} />
+                <IconBtn label="Move earlier" icon="back" onClick={() => move(m, -1, photos)} />
+                <IconBtn label="Move later" icon="arrow" onClick={() => move(m, 1, photos)} />
                 <IconBtn
                   label={m.kind === "headshot" ? "Mark as photo" : "Mark as headshot"}
                   icon="star"
@@ -432,7 +433,7 @@ function MediaManager({ p, media, setMedia, setProfile }) {
                     await supabase.from("on_profiles").update({ avatar_path: m.path }).eq("id", p.id);
                   }}
                 />
-                <span className="ml-auto" />
+                <span className="ms-auto" />
                 <IconBtn label="Delete" icon="trash" onClick={() => remove(m)} />
               </div>
             </div>
@@ -444,7 +445,7 @@ function MediaManager({ p, media, setMedia, setProfile }) {
               className="flex aspect-[4/5] flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border-subtle bg-surface-card text-text-secondary transition-colors duration-150 hover:border-green-950 hover:text-text-primary"
             >
               <Icon name="plus" size={28} />
-              <span className="font-body text-small font-semibold">Add photos</span>
+              <span className="font-body text-small font-semibold">{tr("Add photos")}</span>
             </button>
           )}
         </div>
@@ -461,7 +462,7 @@ function MediaManager({ p, media, setMedia, setProfile }) {
         />
       </Section>
 
-      <Section title="Reels, self-tapes and voice" hint={`${clips.length}/4. Up to 50 MB each. MP4 from your phone works fine.`}>
+      <Section title="Reels, self-tapes and voice" hint={tr("{n}/4. Up to 50 MB each. MP4 from your phone works fine.", { n: clips.length })}>
         <div className="grid gap-3 sm:grid-cols-2">
           {clips.map((m) => (
             <div key={m.id} className="overflow-hidden rounded-md border border-border-subtle bg-surface-card">
@@ -481,13 +482,13 @@ function MediaManager({ p, media, setMedia, setProfile }) {
                   >
                     {(m.kind === "audio" ? ["audio"] : ["reel", "selftape"]).map((k) => (
                       <option key={k} value={k}>
-                        {MEDIA_KINDS[k]}
+                        {tr(MEDIA_KINDS[k])}
                       </option>
                     ))}
                   </select>
                   <input
                     className="min-w-0 flex-1 rounded-sm border border-border-subtle bg-surface-card px-2 py-1 font-body text-small text-text-primary"
-                    placeholder="Caption, e.g. Monologue in Sa'idi"
+                    placeholder={tr("Caption, e.g. Monologue in Sa'idi")}
                     defaultValue={m.caption || ""}
                     maxLength={200}
                     onBlur={(e) => e.target.value !== (m.caption || "") && update(m, { caption: e.target.value })}
@@ -504,7 +505,7 @@ function MediaManager({ p, media, setMedia, setProfile }) {
               className="flex min-h-[160px] flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border-subtle bg-surface-card text-text-secondary transition-colors duration-150 hover:border-green-950 hover:text-text-primary"
             >
               <Icon name="film" size={28} />
-              <span className="font-body text-small font-semibold">Add a reel, self-tape or voice clip</span>
+              <span className="font-body text-small font-semibold">{tr("Add a reel, self-tape or voice clip")}</span>
             </button>
           )}
         </div>
@@ -520,8 +521,8 @@ function MediaManager({ p, media, setMedia, setProfile }) {
         />
       </Section>
 
-      {queue.length > 0 && <Notice tone="accent">Uploading {queue.length} file{queue.length > 1 ? "s" : ""}. Keep this page open.</Notice>}
-      {error && <Notice>{error}</Notice>}
+      {queue.length > 0 && <Notice tone="accent">{queue.length > 1 ? tr("Uploading {n} files. Keep this page open.", { n: queue.length }) : tr("Uploading 1 file. Keep this page open.")}</Notice>}
+      {error && <Notice>{tr(error)}</Notice>}
     </>
   );
 }
@@ -530,8 +531,8 @@ function IconBtn({ label, icon, onClick, active }) {
   return (
     <button
       type="button"
-      title={label}
-      aria-label={label}
+      title={tr(label)}
+      aria-label={tr(label)}
       onClick={onClick}
       className={`rounded-sm p-1 transition-colors duration-150 ${active ? "bg-green-900 text-beige-100" : "text-text-secondary hover:bg-beige-100 hover:text-text-primary"}`}
     >
@@ -606,7 +607,7 @@ function AddCustom({ onAdd }) {
     >
       <input
         className="min-w-0 flex-1 rounded-sm border border-border-subtle bg-surface-card px-3 py-2 font-body text-small text-text-primary outline-none focus:border-green-950"
-        placeholder="Something else"
+        placeholder={tr("Something else")}
         value={v}
         onChange={(e) => setV(e.target.value)}
       />
@@ -664,16 +665,16 @@ function Contact({ p, t, priv, setProfile, setTalent, setPrivate }) {
         {p.is_minor ? (
           <div className="grid gap-4 sm:grid-cols-2">
             <Input label="Guardian name" value={priv.guardian_name || ""} onChange={(e) => setPrivate("guardian_name", e.target.value)} />
-            <Input label="Guardian phone" type="tel" value={priv.guardian_phone || ""} onChange={(e) => setPrivate("guardian_phone", e.target.value)} />
+            <Input label="Guardian phone" type="tel" dir="ltr" value={priv.guardian_phone || ""} onChange={(e) => setPrivate("guardian_phone", e.target.value)} />
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            <Input label="Phone" type="tel" value={priv.phone || ""} onChange={(e) => setPrivate("phone", e.target.value)} />
-            <Input label="WhatsApp" type="tel" value={priv.whatsapp || ""} onChange={(e) => setPrivate("whatsapp", e.target.value)} hint="Leave empty if same as phone" />
-            <Input label="Contact email" type="email" value={priv.contact_email || ""} onChange={(e) => setPrivate("contact_email", e.target.value)} />
+            <Input label="Phone" type="tel" dir="ltr" value={priv.phone || ""} onChange={(e) => setPrivate("phone", e.target.value)} />
+            <Input label="WhatsApp" type="tel" dir="ltr" value={priv.whatsapp || ""} onChange={(e) => setPrivate("whatsapp", e.target.value)} hint="Leave empty if same as phone" />
+            <Input label="Contact email" type="email" dir="ltr" value={priv.contact_email || ""} onChange={(e) => setPrivate("contact_email", e.target.value)} />
           </div>
         )}
-        <Input label="Instagram" placeholder="@yourhandle" value={t.instagram || ""} onChange={(e) => setTalent("instagram", e.target.value)} />
+        <Input label="Instagram" placeholder="@yourhandle" dir="ltr" value={t.instagram || ""} onChange={(e) => setTalent("instagram", e.target.value)} />
       </Section>
       {p.is_minor && (
         <Notice tone="accent">

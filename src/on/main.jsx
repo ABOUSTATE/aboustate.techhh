@@ -2,7 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "../globals.css";
+import "./on.css";
 import { AuthProvider, useAuth } from "./lib/auth.jsx";
+import { LangProvider } from "./lib/i18n.jsx";
 import { Shell } from "./components/Shell.jsx";
 import { Spinner } from "./components/ui.jsx";
 import { Landing } from "./pages/Landing.jsx";
@@ -62,7 +64,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <LangProvider>
+          <App />
+        </LangProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

@@ -8,6 +8,7 @@ import { MEDIA_KINDS, playingAge, profileStrength } from "../lib/options.js";
 import { Avatar, Badge, Button, Card, Empty, Label, Notice, Spinner, Verified } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
 import { Page } from "../components/Shell.jsx";
+import { opt, tr } from "../lib/i18n.jsx";
 
 export function ProfilePage() {
   const { slug } = useParams();
@@ -42,9 +43,9 @@ export function ProfilePage() {
     return (
       <Page narrow>
         <Empty
-          title="This profile isn't available"
-          body="It may not exist, or it's private. Under-18 profiles are only visible to approved casting directors."
-          action={<Button to="/explore" variant="secondary">Explore talent</Button>}
+          title={tr("This profile isn't available")}
+          body={tr("It may not exist, or it's private. Under-18 profiles are only visible to approved casting directors.")}
+          action={<Button to="/explore" variant="secondary">{tr("Explore talent")}</Button>}
         />
       </Page>
     );
@@ -60,20 +61,20 @@ export function ProfilePage() {
 
   const facts = [
     age && ["Playing age", age],
-    t?.height_cm && ["Height", `${t.height_cm} cm`],
-    t?.gender && ["Gender", t.gender],
-    t?.build && ["Build", t.build],
-    t?.hair_color && ["Hair", t.hair_color],
-    t?.eye_color && ["Eyes", t.eye_color],
+    t?.height_cm && ["Height", tr("{n} cm", { n: t.height_cm })],
+    t?.gender && ["Gender", opt(t.gender)],
+    t?.build && ["Build", opt(t.build)],
+    t?.hair_color && ["Hair", opt(t.hair_color)],
+    t?.eye_color && ["Eyes", opt(t.eye_color)],
     t?.nationality && ["Nationality", t.nationality],
-    t?.experience_level && ["Experience", t.experience_level],
+    t?.experience_level && ["Experience", opt(t.experience_level)],
   ].filter(Boolean);
 
   const share = async () => {
     const url = `${window.location.origin}/@${p.handle}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${p.display_name} on ON`, url });
+        await navigator.share({ title: tr("{name} on ON", { name: p.display_name }), url });
         return;
       } catch {
         /* cancelled */
@@ -85,9 +86,9 @@ export function ProfilePage() {
   };
 
   const tabs = [
-    ["photos", `Photos${photos.length ? ` ${photos.length}` : ""}`],
-    ["reels", `Reels${videos.length + audio.length ? ` ${videos.length + audio.length}` : ""}`],
-    ["about", "About"],
+    ["photos", `${tr("Photos")}${photos.length ? ` ${photos.length}` : ""}`],
+    ["reels", `${tr("Reels")}${videos.length + audio.length ? ` ${videos.length + audio.length}` : ""}`],
+    ["about", tr("About")],
   ];
 
   return (
@@ -109,32 +110,32 @@ export function ProfilePage() {
               <h1 className="m-0 font-display text-h2 font-bold tracking-tight text-text-primary">{p.display_name}</h1>
               {p.verified && <Verified size={20} />}
             </div>
-            <div className="font-mono text-small text-text-secondary">@{p.handle}</div>
+            <div className="font-mono text-small text-text-secondary"><bdi dir="ltr">@{p.handle}</bdi></div>
             {p.headline && <p className="mb-0 mt-3 font-body text-body text-text-primary">{p.headline}</p>}
             <div className="mt-3 flex flex-wrap gap-2">
-              {t?.available && <Badge tone="accent">Available</Badge>}
-              {t?.will_travel && <Badge tone="outline">Will travel</Badge>}
-              {p.is_minor && <Badge tone="inverse">Under 18</Badge>}
-              {p.role === "director" && <Badge tone="inverse">Casting director</Badge>}
+              {t?.available && <Badge tone="accent">{tr("Available")}</Badge>}
+              {t?.will_travel && <Badge tone="outline">{tr("Will travel")}</Badge>}
+              {p.is_minor && <Badge tone="inverse">{tr("Under 18")}</Badge>}
+              {p.role === "director" && <Badge tone="inverse">{tr("Casting director")}</Badge>}
               {(t?.categories || []).map((c) => (
-                <Badge key={c}>{c}</Badge>
+                <Badge key={c}>{opt(c)}</Badge>
               ))}
             </div>
             {p.city && (
               <div className="mt-3 flex items-center gap-1 font-body text-small text-text-secondary">
                 <Icon name="pin" size={16} />
-                {[p.city, p.country].filter(Boolean).join(", ")}
+                {[p.city, p.country].filter(Boolean).map(opt).join(tr(", "))}
               </div>
             )}
 
             <div className="mt-5 flex flex-wrap gap-2">
               {isOwner && (
                 <Button to={p.id === me.id ? "/me/edit" : `/edit/${p.id}`} size="sm">
-                  <Icon name="edit" size={16} /> Edit profile
+                  <Icon name="edit" size={16} /> {tr("Edit profile")}
                 </Button>
               )}
               <Button variant="secondary" size="sm" onClick={share}>
-                <Icon name="share" size={16} /> {state.copied ? "Link copied" : "Share"}
+                <Icon name="share" size={16} /> {state.copied ? tr("Link copied") : tr("Share")}
               </Button>
             </div>
 
@@ -142,7 +143,7 @@ export function ProfilePage() {
             {isOwner && p.is_minor && !p.guardian_approved_at && (
               <div className="mt-4">
                 <Notice tone="accent">
-                  Waiting for your guardian ({p.guardian_email}) to confirm. Ask them to join ON as a parent with that email.
+                  {tr("Waiting for your guardian ({email}) to confirm. Ask them to join ON as a parent with that email.", { email: p.guardian_email })}
                 </Notice>
               </div>
             )}
@@ -152,7 +153,7 @@ export function ProfilePage() {
                 <dl className="m-0 grid grid-cols-2 gap-x-4 gap-y-3">
                   {facts.map(([k, v]) => (
                     <div key={k}>
-                      <dt className="font-mono text-[10px] uppercase tracking-mono text-text-secondary">{k}</dt>
+                      <dt className="font-mono text-[10px] uppercase tracking-mono text-text-secondary">{tr(k)}</dt>
                       <dd className="m-0 font-body text-small font-semibold text-text-primary">{v}</dd>
                     </div>
                   ))}
@@ -191,8 +192,8 @@ export function ProfilePage() {
                     >
                       <img src={mediaUrl(m.path)} alt={m.caption || p.display_name} loading="lazy" className="aspect-[4/5] h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                       {m.kind === "headshot" && (
-                        <span className="absolute left-2 top-2">
-                          <Badge>Headshot</Badge>
+                        <span className="absolute start-2 top-2">
+                          <Badge>{tr("Headshot")}</Badge>
                         </span>
                       )}
                     </button>
@@ -200,9 +201,9 @@ export function ProfilePage() {
                 </div>
               ) : (
                 <Empty
-                  title="No photos yet"
-                  body={isOwner ? "Profiles with three or more photos get opened far more often." : "Check back soon."}
-                  action={isOwner && <Button to="/me/edit?tab=media">Add photos</Button>}
+                  title={tr("No photos yet")}
+                  body={tr(isOwner ? "Profiles with three or more photos get opened far more often." : "Check back soon.")}
+                  action={isOwner && <Button to="/me/edit?tab=media">{tr("Add photos")}</Button>}
                 />
               ))}
 
@@ -213,15 +214,15 @@ export function ProfilePage() {
                     <Card key={m.id} className="overflow-hidden">
                       <video src={mediaUrl(m.path)} controls preload="metadata" playsInline className="aspect-video w-full bg-green-950 object-contain" />
                       <div className="flex items-center justify-between gap-3 px-4 py-3">
-                        <span className="truncate font-body text-small font-semibold text-text-primary">{m.caption || MEDIA_KINDS[m.kind]}</span>
-                        <Badge tone="outline">{MEDIA_KINDS[m.kind]}</Badge>
+                        <span className="truncate font-body text-small font-semibold text-text-primary">{m.caption || tr(MEDIA_KINDS[m.kind])}</span>
+                        <Badge tone="outline">{tr(MEDIA_KINDS[m.kind])}</Badge>
                       </div>
                     </Card>
                   ))}
                   {audio.map((m) => (
                     <Card key={m.id} className="p-4">
                       <div className="mb-3 flex items-center gap-2 font-body text-small font-semibold text-text-primary">
-                        <Icon name="mic" size={18} /> {m.caption || "Voice clip"}
+                        <Icon name="mic" size={18} /> {m.caption || tr("Voice clip")}
                       </div>
                       <audio src={mediaUrl(m.path)} controls preload="none" className="w-full" />
                     </Card>
@@ -229,9 +230,9 @@ export function ProfilePage() {
                 </div>
               ) : (
                 <Empty
-                  title="No reels yet"
-                  body={isOwner ? "A 30 second self-tape does more than any photo." : "Nothing here yet."}
-                  action={isOwner && <Button to="/me/edit?tab=media">Upload a reel</Button>}
+                  title={tr("No reels yet")}
+                  body={tr(isOwner ? "A 30 second self-tape does more than any photo." : "Nothing here yet.")}
+                  action={isOwner && <Button to="/me/edit?tab=media">{tr("Upload a reel")}</Button>}
                 />
               ))}
 
@@ -253,13 +254,13 @@ function About({ p, t }) {
   ].filter(([, v]) => v && v.length);
   const credits = t?.credits || [];
   if (!p.bio && !lists.length && !credits.length && !t?.training) {
-    return <Empty title="Nothing here yet" />;
+    return <Empty title={tr("Nothing here yet")} />;
   }
   return (
     <div className="grid gap-5">
       {p.bio && (
         <Card className="p-5">
-          <Label>Bio</Label>
+          <Label>{tr("Bio")}</Label>
           <p className="mb-0 mt-2 whitespace-pre-line font-body text-body leading-body text-text-primary">{p.bio}</p>
         </Card>
       )}
@@ -267,11 +268,11 @@ function About({ p, t }) {
         <Card className="grid gap-4 p-5">
           {lists.map(([k, v]) => (
             <div key={k}>
-              <Label>{k}</Label>
+              <Label>{tr(k)}</Label>
               <div className="mt-2 flex flex-wrap gap-2">
                 {v.map((x) => (
                   <span key={x} className="rounded-pill border border-border-subtle px-3 py-1 font-body text-small text-text-primary">
-                    {x}
+                    {opt(x)}
                   </span>
                 ))}
               </div>
@@ -281,16 +282,16 @@ function About({ p, t }) {
       )}
       {credits.length > 0 && (
         <Card className="p-5">
-          <Label>Credits</Label>
+          <Label>{tr("Credits")}</Label>
           <ul className="m-0 mt-3 list-none divide-y divide-border-subtle p-0">
             {credits.map((c, i) => (
               <li key={i} className="flex flex-wrap items-baseline justify-between gap-2 py-3">
                 <span>
                   <span className="font-body text-body font-semibold text-text-primary">{c.title}</span>
-                  {c.role && <span className="font-body text-small text-text-secondary"> as {c.role}</span>}
-                  {c.director && <span className="block font-body text-micro text-text-secondary">Dir. {c.director}</span>}
+                  {c.role && <span className="font-body text-small text-text-secondary"> {tr("as {role}", { role: c.role })}</span>}
+                  {c.director && <span className="block font-body text-micro text-text-secondary">{tr("Dir. {name}", { name: c.director })}</span>}
                 </span>
-                <span className="font-mono text-micro text-text-secondary">{[c.type, c.year].filter(Boolean).join(" · ")}</span>
+                <span className="font-mono text-micro text-text-secondary">{[opt(c.type), c.year].filter(Boolean).join(" · ")}</span>
               </li>
             ))}
           </ul>
@@ -298,7 +299,7 @@ function About({ p, t }) {
       )}
       {t?.training && (
         <Card className="p-5">
-          <Label>Training</Label>
+          <Label>{tr("Training")}</Label>
           <p className="mb-0 mt-2 whitespace-pre-line font-body text-body text-text-primary">{t.training}</p>
         </Card>
       )}
@@ -309,36 +310,43 @@ function About({ p, t }) {
 function ContactCard({ p, t, priv, me, isOwner }) {
   if (p.role !== "talent") return null;
   if (priv && (isApprovedDirector(me) || me?.is_admin || isOwner)) {
+    // [icon, shown text, link]
     const rows = p.is_minor
       ? [
-          ["user", priv.guardian_name ? `Guardian: ${priv.guardian_name}` : "Guardian"],
-          ["phone", priv.guardian_phone],
-          ["mail", p.guardian_email],
+          ["user", priv.guardian_name ? tr("Guardian: {name}", { name: priv.guardian_name }) : tr("Guardian")],
+          ["phone", priv.guardian_phone, priv.guardian_phone && `tel:${priv.guardian_phone}`],
+          ["mail", p.guardian_email, `mailto:${p.guardian_email}`],
         ]
       : [
-          ["phone", priv.phone],
-          ["phone", priv.whatsapp && `WhatsApp ${priv.whatsapp}`],
-          ["mail", priv.contact_email],
+          ["phone", priv.phone, priv.phone && `tel:${priv.phone}`],
+          ["phone", priv.whatsapp && tr("WhatsApp {n}", { n: priv.whatsapp }), priv.whatsapp && `https://wa.me/${priv.whatsapp.replace(/\D/g, "")}`],
+          ["mail", priv.contact_email, `mailto:${priv.contact_email}`],
         ];
     return (
       <Card className="mt-4 p-4">
         <div className="mb-3 flex items-center justify-between">
-          <Label>Contact</Label>
-          {isOwner && <span className="font-body text-micro text-text-secondary">Only approved directors see this</span>}
+          <Label>{tr("Contact")}</Label>
+          {isOwner && <span className="font-body text-micro text-text-secondary">{tr("Only approved directors see this")}</span>}
         </div>
         <ul className="m-0 grid list-none gap-2 p-0">
           {rows
             .filter(([, v]) => v)
-            .map(([icon, v], i) => (
+            .map(([icon, v, href], i) => (
               <li key={i} className="flex items-center gap-2 font-body text-small text-text-primary">
                 <Icon name={icon} size={16} className="text-text-secondary" />
-                {icon === "mail" ? <a href={`mailto:${v}`} className="underline">{v}</a> : icon === "phone" && !v.startsWith("WhatsApp") ? <a href={`tel:${v}`}>{v}</a> : v}
+                {href ? (
+                  <a href={href} className="underline" dir="ltr" target={href.startsWith("https") ? "_blank" : undefined} rel="noopener">
+                    {v}
+                  </a>
+                ) : (
+                  v
+                )}
               </li>
             ))}
           {t?.instagram && (
             <li className="flex items-center gap-2 font-body text-small text-text-primary">
               <Icon name="globe" size={16} className="text-text-secondary" />
-              <a href={`https://instagram.com/${t.instagram.replace(/^@/, "")}`} target="_blank" rel="noopener" className="underline">
+              <a href={`https://instagram.com/${t.instagram.replace(/^@/, "")}`} target="_blank" rel="noopener" className="underline" dir="ltr">
                 @{t.instagram.replace(/^@/, "")}
               </a>
             </li>
@@ -351,10 +359,10 @@ function ContactCard({ p, t, priv, me, isOwner }) {
     <Card className="mt-4 flex items-start gap-3 p-4">
       <Icon name="lock" size={18} className="mt-[2px] text-text-secondary" />
       <p className="m-0 font-body text-small text-text-secondary">
-        Contact details are visible to approved casting directors.{" "}
+        {tr("Contact details are visible to approved casting directors.")}{" "}
         {!me && (
           <Link to="/join?as=director" className="font-semibold text-text-primary underline">
-            Cast on ON
+            {tr("Cast on ON")}
           </Link>
         )}
       </p>
@@ -367,7 +375,7 @@ function StrengthCard({ p, t, media }) {
   return (
     <Card className="mt-5 p-4">
       <div className="flex items-center justify-between">
-        <Label>Profile strength</Label>
+        <Label>{tr("Profile strength")}</Label>
         <span className="font-display text-h3 font-bold text-text-primary">{score}%</span>
       </div>
       <div className="mt-2 h-2 overflow-hidden rounded-pill bg-beige-300">
@@ -378,7 +386,7 @@ function StrengthCard({ p, t, media }) {
           {missing.slice(0, 3).map((m) => (
             <li key={m.label}>
               <Link to="/me/edit" className="flex items-center gap-2 font-body text-small text-text-primary hover:underline">
-                <Icon name="plus" size={14} className="text-text-accent" /> {m.label}
+                <Icon name="plus" size={14} className="text-text-accent" /> {tr(m.label)}
               </Link>
             </li>
           ))}
@@ -406,15 +414,15 @@ function Lightbox({ items, index, onClose, onMove }) {
   const m = items[index];
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" onClick={onClose} role="dialog" aria-modal="true">
-      <button type="button" className="absolute right-4 top-4 text-beige-100" aria-label="Close" onClick={onClose}>
+      <button type="button" className="absolute end-4 top-4 text-beige-100" aria-label={tr("Close")} onClick={onClose}>
         <Icon name="close" size={28} />
       </button>
       {items.length > 1 && (
         <>
           <button
             type="button"
-            aria-label="Previous"
-            className="absolute left-2 top-1/2 -translate-y-1/2 rounded-pill bg-green-900/70 p-3 text-beige-100"
+            aria-label={tr("Previous")}
+            className="absolute start-2 top-1/2 -translate-y-1/2 rounded-pill bg-green-900/70 p-3 text-beige-100"
             onClick={(e) => {
               e.stopPropagation();
               onMove((index - 1 + items.length) % items.length);
@@ -424,8 +432,8 @@ function Lightbox({ items, index, onClose, onMove }) {
           </button>
           <button
             type="button"
-            aria-label="Next"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-pill bg-green-900/70 p-3 text-beige-100"
+            aria-label={tr("Next")}
+            className="absolute end-2 top-1/2 -translate-y-1/2 rounded-pill bg-green-900/70 p-3 text-beige-100"
             onClick={(e) => {
               e.stopPropagation();
               onMove((index + 1) % items.length);
@@ -447,7 +455,7 @@ function Lightbox({ items, index, onClose, onMove }) {
 export function NotFoundPage() {
   return (
     <Page narrow>
-      <Empty title="Page not found" body="That link doesn't go anywhere on ON." action={<Button to="/">Go home</Button>} />
+      <Empty title={tr("Page not found")} body={tr("That link doesn't go anywhere on ON.")} action={<Button to="/">{tr("Go home")}</Button>} />
     </Page>
   );
 }

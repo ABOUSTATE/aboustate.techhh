@@ -42,7 +42,8 @@ export function ageFrom(birthDate) {
 export function playingAge(t) {
   if (!t?.playing_age_min && !t?.playing_age_max) return null;
   if (t.playing_age_min && t.playing_age_max && t.playing_age_min !== t.playing_age_max) {
-    return `${t.playing_age_min}–${t.playing_age_max}`;
+    // Isolated left-to-right so "20–28" doesn't flip to "28–20" in Arabic.
+    return `⁦${t.playing_age_min}–${t.playing_age_max}⁩`;
   }
   return String(t.playing_age_min || t.playing_age_max);
 }

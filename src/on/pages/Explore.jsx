@@ -7,6 +7,7 @@ import { Button, Chips, Empty, Input, Label, Notice, Select, Spinner, Toggle } f
 import { Icon } from "../components/icons.jsx";
 import { CARD_SELECT, TalentGrid } from "../components/TalentCard.jsx";
 import { Page } from "../components/Shell.jsx";
+import { tr } from "../lib/i18n.jsx";
 
 const PAGE = 24;
 const LIST_KEYS = ["cat", "lang", "acc", "skill"];
@@ -91,9 +92,9 @@ export function Explore() {
     <Page>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Explore talent</h1>
+          <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Explore talent")}</h1>
           <p className="mb-0 mt-1 font-body text-small text-text-secondary">
-            {isApprovedDirector(profile) ? "You're seeing everyone, including under-18 profiles." : "Public profiles. Approved casting directors also see under-18s and contact details."}
+            {tr(isApprovedDirector(profile) ? "You're seeing everyone, including under-18 profiles." : "Public profiles. Approved casting directors also see under-18s and contact details.")}
           </p>
         </div>
       </div>
@@ -103,22 +104,22 @@ export function Explore() {
           <Icon name="search" size={18} className="text-text-secondary" />
           <input
             className="w-full bg-transparent py-2 font-body text-small text-text-primary outline-none placeholder:text-beige-700"
-            placeholder="Search names, handles, headlines"
+            placeholder={tr("Search names, handles, headlines")}
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
         </label>
         <Button variant={activeCount ? "dark" : "secondary"} onClick={() => setPanel((v) => !v)} className="!rounded-pill">
-          <Icon name="filter" size={16} /> Filters{activeCount ? ` ${activeCount}` : ""}
+          <Icon name="filter" size={16} /> {tr("Filters")}{activeCount ? ` ${activeCount}` : ""}
         </Button>
         <select
-          aria-label="Sort"
+          aria-label={tr("Sort")}
           className="hidden rounded-pill border border-border-subtle bg-surface-card px-4 font-body text-small text-text-primary sm:block"
           value={filters.sort || ""}
           onChange={(e) => setFilter("sort", e.target.value)}
         >
-          <option value="">Newest</option>
-          <option value="updated">Recently updated</option>
+          <option value="">{tr("Newest")}</option>
+          <option value="updated">{tr("Recently updated")}</option>
         </select>
       </div>
 
@@ -144,10 +145,10 @@ export function Explore() {
           </div>
           <div className="flex justify-between">
             <Button variant="ghost" onClick={() => setParams({}, { replace: true })}>
-              Clear all
+              {tr("Clear all")}
             </Button>
             <Button variant="dark" onClick={() => setPanel(false)}>
-              Show results
+              {tr("Show results")}
             </Button>
           </div>
         </div>
@@ -161,7 +162,7 @@ export function Explore() {
           {more && (
             <div className="mt-6 text-center">
               <Button variant="secondary" onClick={() => setPage((n) => n + 1)} disabled={loading}>
-                {loading ? "Loading" : "Load more"}
+                {tr(loading ? "Loading" : "Load more")}
               </Button>
             </div>
           )}
@@ -170,13 +171,17 @@ export function Explore() {
         <Empty
           title="Nobody matches yet"
           body={activeCount || filters.q ? "Try fewer filters. New profiles join every week." : "Profiles will show up here as talent joins."}
-          action={(activeCount || filters.q) && <Button variant="secondary" onClick={() => setParams({}, { replace: true })}>Clear filters</Button>}
+          action={(activeCount || filters.q) && <Button variant="secondary" onClick={() => setParams({}, { replace: true })}>{tr("Clear filters")}</Button>}
         />
       )}
       {!profile && (
         <div className="mt-7">
           <Notice tone="dark">
-            Casting? <a href="/join?as=director" className="font-semibold underline">Request director access</a> to see contacts and under-18 talent.
+            {tr("Casting?")}{" "}
+            <a href="/join?as=director" className="font-semibold underline">
+              {tr("Request director access")}
+            </a>{" "}
+            {tr("to see contacts and under-18 talent.")}
           </Notice>
         </div>
       )}
@@ -188,7 +193,7 @@ function FilterChips({ label, options, value, onChange }) {
   return (
     <div>
       <div className="mb-2">
-        <Label>{label}</Label>
+        <Label>{tr(label)}</Label>
       </div>
       <Chips options={options} value={value} onChange={onChange} />
     </div>

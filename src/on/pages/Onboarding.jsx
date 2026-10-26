@@ -6,6 +6,7 @@ import { ageFrom } from "../lib/options.js";
 import { Button, Input, Notice, Spinner } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
 import { AuthFrame, ROLES } from "./Auth.jsx";
+import { tr } from "../lib/i18n.jsx";
 
 function suggestHandle(name, email) {
   const base = (name || email.split("@")[0] || "")
@@ -80,7 +81,7 @@ export function Onboarding() {
     });
     if (err) {
       setBusy(false);
-      return setError(err.message);
+      return setError(tr(err.message));
     }
     if (legacy.trim()) await supabase.rpc("on_claim_legacy", { p_uid: legacy.trim() });
     localStorage.removeItem("on:role");
@@ -97,14 +98,14 @@ export function Onboarding() {
               key={key}
               type="button"
               onClick={() => setRole(key)}
-              className="flex items-center gap-4 rounded-lg border border-border-subtle bg-surface-card p-4 text-left hover:border-green-950"
+              className="flex items-center gap-4 rounded-lg border border-border-subtle bg-surface-card p-4 text-start hover:border-green-950"
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-mint-100 text-green-900">
                 <Icon name={r.icon} />
               </span>
               <span>
-                <span className="block font-body text-body font-semibold text-text-primary">{r.title}</span>
-                <span className="block font-body text-small text-text-secondary">{r.body}</span>
+                <span className="block font-body text-body font-semibold text-text-primary">{tr(r.title)}</span>
+                <span className="block font-body text-small text-text-secondary">{tr(r.body)}</span>
               </span>
             </button>
           ))}
@@ -117,32 +118,33 @@ export function Onboarding() {
     <AuthFrame title="Set up your profile" sub={ROLES[role].title}>
       <form onSubmit={submit} className="grid gap-4">
         <Input
-          label={role === "director" ? "Your name" : role === "guardian" ? "Your name" : "Name you work under"}
+          label={tr(role === "talent" || role === "minor" ? "Name you work under" : "Your name")}
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <Input
-          label="Handle"
+          label={tr("Handle")}
           required
+          dir="ltr"
           value={handle}
           onChange={(e) => {
             setHandleTouched(true);
             setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""));
           }}
           hint={`on.aboustate.tech/@${handle || "you"}`}
-          error={handleOk === false ? "Taken or not allowed. Use 3 to 24 letters, numbers, dots or underscores." : ""}
+          error={handleOk === false ? tr("Taken or not allowed. Use 3 to 24 letters, numbers, dots or underscores.") : ""}
         />
 
         {roleForDb === "talent" && (
           <Input
-            label="Date of birth"
+            label={tr("Date of birth")}
             type="date"
             required
             max={new Date().toISOString().slice(0, 10)}
             value={birth}
             onChange={(e) => setBirth(e.target.value)}
-            hint="Private. Directors see your playing age, not your birthday."
+            hint={tr("Private. Directors see your playing age, not your birthday.")}
           />
         )}
 
@@ -151,14 +153,13 @@ export function Onboarding() {
             <div className="flex items-start gap-3">
               <Icon name="shield" className="mt-[2px] text-green-900" />
               <p className="m-0 font-body text-small text-green-950">
-                You're under 18, so a parent or guardian needs to confirm this profile. Until they do, nobody else can see it. After
-                that, only approved casting directors can.
+                {tr("You're under 18, so a parent or guardian needs to confirm this profile. Until they do, nobody else can see it. After that, only approved casting directors can.")}
               </p>
             </div>
-            <Input label="Parent or guardian's email" type="email" required value={gEmail} onChange={(e) => setGEmail(e.target.value)} />
+            <Input label={tr("Parent or guardian's email")} type="email" dir="ltr" required value={gEmail} onChange={(e) => setGEmail(e.target.value)} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <Input label="Their name" value={gName} onChange={(e) => setGName(e.target.value)} />
-              <Input label="Their phone" type="tel" value={gPhone} onChange={(e) => setGPhone(e.target.value)} />
+              <Input label={tr("Their name")} value={gName} onChange={(e) => setGName(e.target.value)} />
+              <Input label={tr("Their phone")} type="tel" dir="ltr" value={gPhone} onChange={(e) => setGPhone(e.target.value)} />
             </div>
           </div>
         )}
@@ -166,35 +167,35 @@ export function Onboarding() {
         {role === "director" && (
           <>
             <Input
-              label="Where do you cast?"
+              label={tr("Where do you cast?")}
               required
-              placeholder="Production house, agency or freelance"
+              placeholder={tr("Production house, agency or freelance")}
               value={company}
               onChange={(e) => setCompany(e.target.value)}
             />
-            <Notice>We check every director account by hand. You can browse public profiles while you wait; contacts and under-18 profiles open once you're approved.</Notice>
+            <Notice>{tr("We check every director account by hand. You can browse public profiles while you wait; contacts and under-18 profiles open once you're approved.")}</Notice>
           </>
         )}
 
         {role === "guardian" && (
-          <Notice>Sign up with the same email your child entered. Their profile will show up on your Family page to confirm.</Notice>
+          <Notice>{tr("Sign up with the same email your child entered. Their profile will show up on your Family page to confirm.")}</Notice>
         )}
 
         {roleForDb === "talent" && (
           <details className="rounded-md border border-border-subtle bg-surface-card px-4 py-3">
-            <summary className="cursor-pointer font-body text-small font-medium text-text-primary">Signed up on the old ON form?</summary>
+            <summary className="cursor-pointer font-body text-small font-medium text-text-primary">{tr("Signed up on the old ON form?")}</summary>
             <div className="mt-3">
-              <Input label="Your ON ID" placeholder="e.g. 76YEZ934" value={legacy} onChange={(e) => setLegacy(e.target.value.toUpperCase())} hint="We'll bring your details across if the email matches." />
+              <Input label={tr("Your ON ID")} placeholder={tr("e.g. 76YEZ934")} dir="ltr" value={legacy} onChange={(e) => setLegacy(e.target.value.toUpperCase())} hint={tr("We'll bring your details across if the email matches.")} />
             </div>
           </details>
         )}
 
         {error && <Notice>{error}</Notice>}
         <Button type="submit" size="lg" disabled={!canSubmit || busy} className="w-full">
-          {busy ? "Setting up" : "Continue"}
+          {busy ? tr("Setting up") : tr("Continue")}
         </Button>
         <button type="button" onClick={() => setRole("")} className="font-body text-small text-text-secondary underline">
-          Change account type
+          {tr("Change account type")}
         </button>
       </form>
     </AuthFrame>

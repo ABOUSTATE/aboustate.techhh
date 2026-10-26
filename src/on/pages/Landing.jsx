@@ -6,6 +6,7 @@ import { Button, Label } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
 import { CARD_SELECT, TalentGrid } from "../components/TalentCard.jsx";
 import { Footer } from "../components/Shell.jsx";
+import { tr } from "../lib/i18n.jsx";
 
 const TALENT_STEPS = [
   { icon: "user", title: "Make your profile", body: "Your photos, your reel, your look and what you can do. One link instead of a folder of headshots." },
@@ -42,24 +43,23 @@ export function Landing() {
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-pill border border-green-700 px-3 py-1">
               <span className="h-2 w-2 animate-pulse rounded-pill bg-accent" />
-              <span className="font-mono text-micro uppercase tracking-mono text-mint-300">Casting is on</span>
+              <span className="font-mono text-micro uppercase tracking-mono text-mint-300">{tr("Casting is on")}</span>
             </div>
             <h1 className="m-0 max-w-[14ch] font-display text-display-l font-bold leading-tight tracking-tight text-beige-100">
-              Get seen by the people who cast.
+              {tr("Get seen by the people who cast.")}
             </h1>
             <p className="mt-5 max-w-[46ch] font-body text-body-l leading-body text-mint-300">
-              ON is where Egyptian actors, models and voices keep their profile, and where casting directors come looking. No
-              waiting rooms, no lost headshots.
+              {tr("ON is where Egyptian actors, models and voices keep their profile, and where casting directors come looking. No waiting rooms, no lost headshots.")}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button to="/join?as=talent" size="lg">
-                Make my profile
+                {tr("Make my profile")}
               </Button>
               <Button to="/join?as=director" size="lg" variant="inverse">
-                I cast
+                {tr("I cast")}
               </Button>
             </div>
-            <p className="mt-4 font-body text-small text-green-300">Free for talent. Under 18? Join with a parent.</p>
+            <p className="mt-4 font-body text-small text-green-300">{tr("Free for talent. Under 18? Join with a parent.")}</p>
           </div>
 
           <HeroCollage faces={faces} />
@@ -68,8 +68,8 @@ export function Landing() {
 
       <section className="px-4 py-9 sm:px-6">
         <div className="mx-auto max-w-container">
-          <Label>For talent</Label>
-          <h2 className="mb-6 mt-2 max-w-[22ch] font-display text-h1 font-bold tracking-tight text-text-primary">Your whole casting self, one link.</h2>
+          <Label>{tr("For talent")}</Label>
+          <h2 className="mb-6 mt-2 max-w-[22ch] font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Your whole casting self, one link.")}</h2>
           <div className="grid gap-4 md:grid-cols-3">
             {TALENT_STEPS.map((s, i) => (
               <div key={s.title} className="rounded-lg border border-border-subtle bg-surface-card p-5">
@@ -79,8 +79,8 @@ export function Landing() {
                   </span>
                   <span className="font-mono text-micro text-text-secondary">0{i + 1}</span>
                 </div>
-                <h3 className="m-0 font-display text-h3 font-semibold text-text-primary">{s.title}</h3>
-                <p className="mb-0 mt-2 font-body text-small leading-body text-text-secondary">{s.body}</p>
+                <h3 className="m-0 font-display text-h3 font-semibold text-text-primary">{tr(s.title)}</h3>
+                <p className="mb-0 mt-2 font-body text-small leading-body text-text-secondary">{tr(s.body)}</p>
               </div>
             ))}
           </div>
@@ -92,11 +92,11 @@ export function Landing() {
           <div className="mx-auto max-w-container">
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
-                <Label>New on ON</Label>
-                <h2 className="m-0 mt-2 font-display text-h2 font-bold tracking-tight text-text-primary">Fresh faces</h2>
+                <Label>{tr("New on ON")}</Label>
+                <h2 className="m-0 mt-2 font-display text-h2 font-bold tracking-tight text-text-primary">{tr("Fresh faces")}</h2>
               </div>
               <Button to="/explore" variant="secondary" size="sm">
-                Explore all
+                {tr("Explore all")}
               </Button>
             </div>
             <TalentGrid items={faces.slice(0, 10)} />
@@ -108,16 +108,15 @@ export function Landing() {
         <div className="mx-auto grid max-w-container gap-8 lg:grid-cols-2">
           <div>
             <Label>
-              <span className="text-mint-300">For casting directors</span>
+              <span className="text-mint-300">{tr("For casting directors")}</span>
             </Label>
-            <h2 className="mb-4 mt-2 max-w-[18ch] font-display text-h1 font-bold tracking-tight text-beige-100">Search talent the way you brief it.</h2>
+            <h2 className="mb-4 mt-2 max-w-[18ch] font-display text-h1 font-bold tracking-tight text-beige-100">{tr("Search talent the way you brief it.")}</h2>
             <p className="max-w-[48ch] font-body text-body leading-body text-mint-300">
-              Filter by playing age, look, city, languages, accents and skills. Open a profile and the reel is right there. Approved
-              directors see contact details and can reach talent directly.
+              {tr("Filter by playing age, look, city, languages, accents and skills. Open a profile and the reel is right there. Approved directors see contact details and can reach talent directly.")}
             </p>
             <div className="mt-6">
               <Button to="/join?as=director" variant="inverse">
-                Request director access
+                {tr("Request director access")}
               </Button>
             </div>
           </div>
@@ -130,8 +129,8 @@ export function Landing() {
             ].map(([icon, t, b]) => (
               <li key={t} className="rounded-lg border border-green-700 p-4">
                 <Icon name={icon} className="text-accent" />
-                <div className="mt-3 font-body text-small font-semibold text-beige-100">{t}</div>
-                <div className="mt-1 font-body text-small text-mint-300">{b}</div>
+                <div className="mt-3 font-body text-small font-semibold text-beige-100">{tr(t)}</div>
+                <div className="mt-1 font-body text-small text-mint-300">{tr(b)}</div>
               </li>
             ))}
           </ul>
@@ -140,22 +139,22 @@ export function Landing() {
 
       <section className="px-4 py-9 sm:px-6">
         <div className="mx-auto max-w-[780px]">
-          <Label>Questions</Label>
-          <h2 className="mb-5 mt-2 font-display text-h2 font-bold tracking-tight text-text-primary">Good to know</h2>
+          <Label>{tr("Questions")}</Label>
+          <h2 className="mb-5 mt-2 font-display text-h2 font-bold tracking-tight text-text-primary">{tr("Good to know")}</h2>
           <div className="divide-y divide-border-subtle rounded-lg border border-border-subtle bg-surface-card">
             {FAQ.map(([q, a]) => (
               <details key={q} className="group px-5 py-4">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-body text-body font-semibold text-text-primary">
-                  {q}
+                  {tr(q)}
                   <Icon name="plus" size={18} className="transition-transform duration-200 group-open:rotate-45" />
                 </summary>
-                <p className="mb-0 mt-2 font-body text-small leading-body text-text-secondary">{a}</p>
+                <p className="mb-0 mt-2 font-body text-small leading-body text-text-secondary">{tr(a)}</p>
               </details>
             ))}
           </div>
           <div className="mt-7 flex flex-wrap items-center justify-between gap-4 rounded-lg bg-mint-100 p-5">
-            <div className="font-display text-h3 font-semibold text-text-primary">Your next role starts with a profile.</div>
-            <Button to="/join?as=talent">Join ON</Button>
+            <div className="font-display text-h3 font-semibold text-text-primary">{tr("Your next role starts with a profile.")}</div>
+            <Button to="/join?as=talent">{tr("Join ON")}</Button>
           </div>
         </div>
       </section>
@@ -177,8 +176,8 @@ function HeroCollage({ faces }) {
           <div className="mt-2 h-2 w-20 rounded-pill bg-green-700" />
         </div>
         <div className="absolute -bottom-4 right-0 rotate-[4deg] rounded-lg bg-beige-100 px-4 py-3 shadow-lg">
-          <div className="font-mono text-micro uppercase tracking-mono text-text-secondary">Your profile</div>
-          <div className="font-display text-h3 font-bold text-text-primary">on.aboustate.tech/@you</div>
+          <div className="font-mono text-micro uppercase tracking-mono text-text-secondary">{tr("Your profile")}</div>
+          <div className="font-display text-h3 font-bold text-text-primary" dir="ltr">on.aboustate.tech/@you</div>
         </div>
       </div>
     );

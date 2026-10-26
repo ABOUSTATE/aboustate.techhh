@@ -41,7 +41,7 @@ export function Icon({ name, size = 20, className = "", fill = false }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className={`shrink-0 ${className}`}
+      className={`shrink-0 ${name === "arrow" || name === "back" ? "rtl:-scale-x-100" : ""} ${className}`}
     >
       <path d={PATHS[name]} />
     </svg>

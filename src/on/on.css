@@ -1,0 +1,44 @@
+/* ON in Egyptian Arabic.
+   The Aboustate Design System has no Arabic typeface yet (flagged). Until it
+   does, ON pairs IBM Plex Sans Arabic with the system's own fonts: Latin text
+   keeps Funnel Display / DM Sans / IBM Plex Mono, Arabic falls through to
+   Plex Sans Arabic, the same family as the system's IBM Plex Mono.
+   Loaded in on-app.html. */
+:root {
+  --font-arabic: "IBM Plex Sans Arabic";
+}
+
+/* Both languages: Arabic names can appear on the English site too. */
+body,
+.font-body {
+  font-family: "DM Sans", var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+}
+.font-display,
+h1,
+h2,
+h3 {
+  font-family: "Funnel Display", var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+}
+.font-mono {
+  font-family: "IBM Plex Mono", var(--font-arabic), ui-monospace, monospace;
+}
+/* Arabic first here: a monospace space between Arabic words reads as a gap. */
+html[lang="ar"] .font-mono {
+  font-family: var(--font-arabic), "IBM Plex Mono", ui-monospace, monospace;
+}
+
+/* Arabic letters join; tracking breaks them apart, and tight leading clips
+   the dots and descenders. */
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] .tracking-tight,
+html[lang="ar"] .tracking-mono {
+  letter-spacing: 0;
+}
+html[lang="ar"] .leading-tight {
+  line-height: 1.3;
+}
+html[lang="ar"] .leading-body {
+  line-height: 1.75;
+}

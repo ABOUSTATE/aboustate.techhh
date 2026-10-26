@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { mediaUrl } from "../lib/media.js";
+import { opt, tr } from "../lib/i18n.jsx";
 
 // Shared building blocks for ON. Variants follow the design system's
 // Button / Badge / Input specs (D:\Aboustate Design System\components).
@@ -46,38 +47,38 @@ const FIELD = "w-full rounded-sm border border-border-subtle bg-surface-card px-
 export function Field({ label, hint, error, children, className = "" }) {
   return (
     <label className={`flex flex-col gap-1 ${className}`}>
-      {label && <span className="font-body text-micro font-medium text-text-secondary">{label}</span>}
+      {label && <span className="font-body text-micro font-medium text-text-secondary">{tr(label)}</span>}
       {children}
-      {hint && !error && <span className="font-body text-micro text-text-secondary">{hint}</span>}
-      {error && <span className="font-body text-micro font-medium text-text-primary">{error}</span>}
+      {hint && !error && <span className="font-body text-micro text-text-secondary">{tr(hint)}</span>}
+      {error && <span className="font-body text-micro font-medium text-text-primary">{tr(error)}</span>}
     </label>
   );
 }
 
-export function Input({ label, hint, error, className, ...rest }) {
+export function Input({ label, hint, error, className, placeholder, ...rest }) {
   return (
     <Field label={label} hint={hint} error={error} className={className}>
-      <input className={FIELD} {...rest} />
+      <input className={FIELD} placeholder={placeholder && tr(placeholder)} {...rest} />
     </Field>
   );
 }
 
-export function Textarea({ label, hint, className, ...rest }) {
+export function Textarea({ label, hint, className, placeholder, ...rest }) {
   return (
     <Field label={label} hint={hint} className={className}>
-      <textarea className={`${FIELD} min-h-[110px] resize-y leading-body`} {...rest} />
+      <textarea className={`${FIELD} min-h-[110px] resize-y leading-body`} placeholder={placeholder && tr(placeholder)} {...rest} />
     </Field>
   );
 }
 
-export function Select({ label, hint, options, placeholder = "Choose", className, ...rest }) {
+export function Select({ label, hint, options, placeholder, className, ...rest }) {
   return (
     <Field label={label} hint={hint} className={className}>
       <select className={`${FIELD} appearance-none`} {...rest}>
-        <option value="">{placeholder}</option>
+        <option value="">{tr(placeholder ?? "Choose")}</option>
         {options.map((o) => (
           <option key={o} value={o}>
-            {o}
+            {opt(o)}
           </option>
         ))}
       </select>
@@ -105,7 +106,7 @@ export function Chips({ options, value = [], onChange, max }) {
               on ? "border-green-900 bg-green-900 text-beige-100" : "border-border-subtle bg-surface-card text-text-primary hover:border-green-950"
             }`}
           >
-            {o}
+            {opt(o)}
           </button>
         );
       })}
@@ -117,8 +118,8 @@ export function Toggle({ checked, onChange, label, hint }) {
   return (
     <label className="flex cursor-pointer items-start justify-between gap-4">
       <span>
-        <span className="block font-body text-small font-medium text-text-primary">{label}</span>
-        {hint && <span className="block font-body text-micro text-text-secondary">{hint}</span>}
+        <span className="block font-body text-small font-medium text-text-primary">{tr(label)}</span>
+        {hint && <span className="block font-body text-micro text-text-secondary">{tr(hint)}</span>}
       </span>
       <button
         type="button"
@@ -127,7 +128,7 @@ export function Toggle({ checked, onChange, label, hint }) {
         onClick={() => onChange(!checked)}
         className={`relative mt-1 h-5 w-9 shrink-0 rounded-pill transition-colors duration-150 ${checked ? "bg-green-900" : "bg-beige-500"}`}
       >
-        <span className={`absolute top-[2px] h-4 w-4 rounded-pill bg-white shadow-sm transition-all duration-150 ${checked ? "left-[18px]" : "left-[2px]"}`} />
+        <span className={`absolute top-[2px] h-4 w-4 rounded-pill bg-white shadow-sm transition-all duration-150 ${checked ? "start-[18px]" : "start-[2px]"}`} />
       </button>
     </label>
   );
@@ -155,7 +156,7 @@ export function Avatar({ profile, size = 40, ring = false }) {
 
 export function Verified({ size = 16 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-label="Verified" role="img" className="inline-block shrink-0">
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-label={tr("Verified")} role="img" className="inline-block shrink-0">
       <path
         fill="var(--mint-500)"
         d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-.9 3.1.9 3.1-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3-2.7-1.8.9-3.1-.9-3.1 2.7-1.8 1-3 3.2.2z"
@@ -169,7 +170,7 @@ export function Spinner({ label = "Loading" }) {
   return (
     <div className="flex items-center justify-center gap-3 py-9 text-text-secondary" role="status">
       <span className="h-2 w-2 animate-pulse rounded-pill bg-accent" />
-      <span className="font-mono text-micro uppercase tracking-mono">{label}</span>
+      <span className="font-mono text-micro uppercase tracking-mono">{tr(label)}</span>
     </div>
   );
 }
@@ -177,8 +178,8 @@ export function Spinner({ label = "Loading" }) {
 export function Empty({ title, body, action }) {
   return (
     <div className="rounded-lg border border-dashed border-border-subtle bg-surface-card px-5 py-8 text-center">
-      <p className="m-0 font-display text-h3 font-semibold tracking-tight text-text-primary">{title}</p>
-      {body && <p className="mx-auto mt-2 max-w-[44ch] font-body text-small text-text-secondary">{body}</p>}
+      <p className="m-0 font-display text-h3 font-semibold tracking-tight text-text-primary">{tr(title)}</p>
+      {body && <p className="mx-auto mt-2 max-w-[44ch] font-body text-small text-text-secondary">{tr(body)}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );
@@ -203,7 +204,7 @@ export function Notice({ tone = "neutral", children }) {
 
 export function Wordmark({ light = false, className = "" }) {
   return (
-    <span className={`inline-flex items-baseline gap-1 font-display text-h3 font-extrabold tracking-tight ${light ? "text-beige-100" : "text-text-primary"} ${className}`}>
+    <span dir="ltr" className={`inline-flex items-baseline gap-1 font-display text-h3 font-extrabold tracking-tight ${light ? "text-beige-100" : "text-text-primary"} ${className}`}>
       ON
       <span className="relative top-[-2px] inline-block h-2 w-2 rounded-pill bg-accent" aria-hidden="true">
         <span className="absolute inset-0 animate-ping rounded-pill bg-accent opacity-60" />
