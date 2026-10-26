@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { tr } from "../lib/i18n.jsx";
+import { useAuth } from "../lib/auth.jsx";
 import { Button, Card, Label, Wordmark } from "./ui.jsx";
 import { Icon } from "./icons.jsx";
 
@@ -78,6 +79,7 @@ function IOSSteps() {
 export function InstallPrompt() {
   const { installed, canPrompt, ios, prompt } = useInstall();
   const { pathname } = useLocation();
+  const { profile } = useAuth();
   const [ready, setReady] = useState(false);
   const [hidden, setHidden] = useState(recentlyDismissed);
 
@@ -99,7 +101,8 @@ export function InstallPrompt() {
   };
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(72px+env(safe-area-inset-bottom))] z-40 px-4 md:bottom-5" role="dialog" aria-label={tr("Get the ON app")}>
+    <div
+      className={`fixed inset-x-0 z-40 px-4 md:bottom-5 ${profile ? "bottom-[calc(72px+env(safe-area-inset-bottom))]" : "bottom-[calc(16px+env(safe-area-inset-bottom))]"}`} role="dialog" aria-label={tr("Get the ON app")}>
       <div className="mx-auto flex max-w-[480px] items-start gap-3 rounded-lg border border-border-subtle bg-surface-card p-4 shadow-lg">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-green-950">
           <Wordmark light className="!text-small" />
