@@ -1,0 +1,24 @@
+{
+  "id": "/",
+  "name": "ON | كاستينج أونلاين",
+  "short_name": "ON",
+  "description": "الكاستينج بقى أونلاين. بروفايل واحد للممثلين والموديلز وأصحاب الأصوات في مصر، والكاستينج دايركتورز بييجوا يدوّروا فيه.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#011f1a",
+  "theme_color": "#f2efeb",
+  "categories": ["entertainment", "social", "business"],
+  "icons": [
+    { "src": "/on-icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/on-icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/on-icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "اكتشف المواهب", "short_name": "استكشف", "url": "/explore", "icons": [{ "src": "/on-icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "عدّل البروفايل", "short_name": "البروفايل", "url": "/me/edit", "icons": [{ "src": "/on-icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

@@ -28,6 +28,18 @@ export const AR = {
   "Switch to English": "Switch to English",
   "Switch to Arabic": "التحويل للعربي",
 
+  // Install the app
+  "Get the ON app": "نزّل تطبيق ON",
+  "Add ON to your home screen. It opens full screen, like any app, and takes almost no space.":
+    "ضيف ON على الشاشة الرئيسية. بيفتح على الشاشة كلها زي أي تطبيق، ومش بياخد مساحة تقريبًا.",
+  Install: "ثبّت",
+  "Not now": "مش دلوقتي",
+  "On iPhone: tap": "على الآيفون: دوس على",
+  "then “Add to Home Screen”.": "وبعدين «إضافة إلى الشاشة الرئيسية».",
+  "Install app": "ثبّت التطبيق",
+  "Already installed on this device.": "التطبيق متثبّت على الجهاز ده.",
+  "Open this site in Chrome on Android or Safari on iPhone to install it.": "افتح الموقع من Chrome على أندرويد أو Safari على الآيفون عشان تثبّته.",
+
   // Shared UI
   Choose: "اختار",
   ", ": "، ",

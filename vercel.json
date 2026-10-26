@@ -46,5 +46,29 @@
       "path": "/api/on?ping=1",
       "schedule": "0 6 * * *"
     }
+  ],
+  "headers": [
+    {
+      "source": "/on-sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/on-manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        }
+      ]
+    }
   ]
 }

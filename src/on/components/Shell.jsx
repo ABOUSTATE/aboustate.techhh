@@ -85,7 +85,7 @@ export function Shell() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-surface-page pb-[72px] md:pb-0">
+    <div className="min-h-screen bg-surface-page pb-[calc(72px+env(safe-area-inset-bottom))] md:pb-0">
       <header className="sticky top-0 z-40 border-b border-border-subtle bg-surface-page/90 backdrop-blur">
         <div className="mx-auto flex h-[60px] max-w-container items-center gap-5 px-4 sm:px-6">
           <Link to="/" aria-label={tr("ON home")}>
@@ -139,7 +139,7 @@ export function Shell() {
       <Outlet />
 
       {items.length > 0 && (
-        <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border-subtle bg-surface-card md:hidden" aria-label={tr("Main")}>
+        <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border-subtle bg-surface-card pb-[env(safe-area-inset-bottom)] md:hidden" aria-label={tr("Main")}>
           <div className="mx-auto flex max-w-[520px] justify-around">
             {items.map((i) => (
               <NavLink

@@ -6,6 +6,7 @@ import "./on.css";
 import { AuthProvider, useAuth } from "./lib/auth.jsx";
 import { LangProvider } from "./lib/i18n.jsx";
 import { Shell } from "./components/Shell.jsx";
+import { InstallPrompt } from "./components/InstallPrompt.jsx";
 import { Spinner } from "./components/ui.jsx";
 import { Landing } from "./pages/Landing.jsx";
 import { Home } from "./pages/Home.jsx";
@@ -60,12 +61,19 @@ function App() {
   );
 }
 
+// Offline support and "install app" need a service worker; production only
+// so local development never serves stale files.
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/on-sw.js").catch(() => {}));
+}
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <LangProvider>
           <App />
+          <InstallPrompt />
         </LangProvider>
       </AuthProvider>
     </BrowserRouter>

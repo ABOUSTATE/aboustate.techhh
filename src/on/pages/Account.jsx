@@ -5,6 +5,7 @@ import { useAuth } from "../lib/auth.jsx";
 import { Avatar, Badge, Button, Card, Empty, Input, Label, Notice, Spinner, Verified } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
 import { Page } from "../components/Shell.jsx";
+import { InstallCard } from "../components/InstallPrompt.jsx";
 import { tr } from "../lib/i18n.jsx";
 
 export function Family() {
@@ -159,6 +160,7 @@ export function Settings() {
             <span className="font-body text-micro text-text-secondary">{msg.password}</span>
           </div>
         </Card>
+        <InstallCard />
         <Card className="flex flex-wrap items-center justify-between gap-3 p-5">
           <Button variant="secondary" onClick={async () => { await signOut(); navigate("/"); }}>
             <Icon name="logout" size={16} /> {tr("Sign out")}
