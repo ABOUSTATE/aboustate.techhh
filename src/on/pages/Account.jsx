@@ -1,0 +1,319 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../../lib/supabaseClient.js";
+import { useAuth } from "../lib/auth.jsx";
+import { Avatar, Badge, Button, Card, Empty, Input, Label, Notice, Spinner, Verified } from "../components/ui.jsx";
+import { Icon } from "../components/icons.jsx";
+import { Page } from "../components/Shell.jsx";
+
+export function Family() {
+  const [wards, setWards] = useState(null);
+  const [busy, setBusy] = useState(null);
+  const [error, setError] = useState("");
+
+  const load = () => supabase.rpc("on_guardian_wards").then(({ data }) => setWards(data || []));
+  useEffect(() => {
+    load();
+  }, []);
+
+  const decide = async (id, approve) => {
+    setBusy(id);
+    setError("");
+    const { error: err } = await supabase.rpc("on_guardian_approve", { ward: id, approve });
+    setBusy(null);
+    if (err) return setError(err.message);
+    load();
+  };
+
+  if (!wards) return <Spinner />;
+  return (
+    <Page narrow>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Family</h1>
+      <p className="mb-6 mt-1 font-body text-body text-text-secondary">Profiles that list your email as their parent or guardian.</p>
+      {error && (
+        <div className="mb-4">
+          <Notice>{error}</Notice>
+        </div>
+      )}
+      {wards.length === 0 ? (
+        <Empty
+          title="No profiles yet"
+          body="When your child signs up as under 18 and enters your email, their profile appears here for you to confirm."
+          action={<Button to="/join?as=minor" variant="secondary">Help them sign up</Button>}
+        />
+      ) : (
+        <div className="grid gap-3">
+          {wards.map((w) => (
+            <Card key={w.id} className="p-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <Avatar profile={w} size={56} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1 font-body text-body font-semibold text-text-primary">
+                    {w.display_name} {w.verified && <Verified size={14} />}
+                  </div>
+                  <div className="font-mono text-micro text-text-secondary">@{w.handle}</div>
+                  <div className="mt-2">{w.guardian_approved_at ? <Badge tone="accent">Confirmed</Badge> : <Badge>Waiting for you</Badge>}</div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {w.guardian_approved_at ? (
+                    <>
+                      <Button size="sm" variant="secondary" to={`/edit/${w.id}`}>
+                        <Icon name="edit" size={16} /> Edit
+                      </Button>
+                      <Button size="sm" variant="ghost" disabled={busy === w.id} onClick={() => decide(w.id, false)}>
+                        Hide profile
+                      </Button>
+                    </>
+                  ) : (
+                    <Button size="sm" disabled={busy === w.id} onClick={() => decide(w.id, true)}>
+                      <Icon name="check" size={16} /> Confirm profile
+                    </Button>
+                  )}
+                </div>
+              </div>
+              {!w.guardian_approved_at && (
+                <p className="mb-0 mt-3 font-body text-small text-text-secondary">
+                  Confirming means you agree to this profile being visible to approved casting directors on ON, who will contact you, not your child.
+                  You can hide it again at any time.
+                </p>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </Page>
+  );
+}
+
+export function Settings() {
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [handle, setHandle] = useState(profile.handle);
+  const [email, setEmail] = useState(user.email);
+  const [password, setPassword] = useState("");
+  const [msg, setMsg] = useState({});
+
+  const say = (k, text) => setMsg((m) => ({ ...m, [k]: text }));
+
+  const saveHandle = async () => {
+    const { data: ok } = await supabase.rpc("on_handle_available", { h: handle });
+    if (!ok) return say("handle", "That handle is taken or not allowed.");
+    const { error } = await supabase.from("on_profiles").update({ handle }).eq("id", profile.id);
+    say("handle", error ? error.message : "Saved. Your old link no longer works.");
+  };
+  const saveEmail = async () => {
+    const { error } = await supabase.auth.updateUser({ email });
+    say("email", error ? error.message : "Check both inboxes to confirm the change.");
+  };
+  const savePassword = async () => {
+    if (password.length < 8) return say("password", "Use at least 8 characters.");
+    const { error } = await supabase.auth.updateUser({ password });
+    setPassword("");
+    say("password", error ? error.message : "Password updated.");
+  };
+  const deleteProfile = async () => {
+    if (!confirm("Delete your ON profile, photos and reels? Your login stays so you can come back.")) return;
+    const { data: files } = await supabase.storage.from("on-media").list(profile.id, { limit: 100 });
+    if (files?.length) await supabase.storage.from("on-media").remove(files.map((f) => `${profile.id}/${f.name}`));
+    await supabase.from("on_profiles").delete().eq("id", profile.id);
+    await signOut();
+    navigate("/");
+  };
+
+  return (
+    <Page narrow>
+      <h1 className="mb-6 mt-0 font-display text-h1 font-bold tracking-tight text-text-primary">Settings</h1>
+      <div className="grid gap-4">
+        <Card className="grid gap-3 p-5">
+          <Label>Account type</Label>
+          <div className="flex items-center gap-2 font-body text-body text-text-primary">
+            {{ talent: "Talent", director: "Casting director", guardian: "Parent or guardian" }[profile.role]}
+            {profile.role === "director" && <Badge tone={profile.director_status === "approved" ? "accent" : "neutral"}>{profile.director_status}</Badge>}
+            {profile.is_admin && <Badge tone="inverse">Admin</Badge>}
+          </div>
+        </Card>
+        <Card className="grid gap-3 p-5">
+          <Input label="Handle" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))} hint={`on.aboustate.tech/@${handle}`} />
+          <div className="flex items-center gap-3">
+            <Button size="sm" variant="secondary" disabled={handle === profile.handle} onClick={saveHandle}>
+              Change handle
+            </Button>
+            <span className="font-body text-micro text-text-secondary">{msg.handle}</span>
+          </div>
+        </Card>
+        <Card className="grid gap-3 p-5">
+          <Input label="Login email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <div className="flex items-center gap-3">
+            <Button size="sm" variant="secondary" disabled={email === user.email} onClick={saveEmail}>
+              Change email
+            </Button>
+            <span className="font-body text-micro text-text-secondary">{msg.email}</span>
+          </div>
+        </Card>
+        <Card className="grid gap-3 p-5">
+          <Input label="New password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <div className="flex items-center gap-3">
+            <Button size="sm" variant="secondary" disabled={!password} onClick={savePassword}>
+              Update password
+            </Button>
+            <span className="font-body text-micro text-text-secondary">{msg.password}</span>
+          </div>
+        </Card>
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-5">
+          <Button variant="secondary" onClick={async () => { await signOut(); navigate("/"); }}>
+            <Icon name="logout" size={16} /> Sign out
+          </Button>
+          <Button variant="danger" onClick={deleteProfile}>
+            <Icon name="trash" size={16} /> Delete my ON profile
+          </Button>
+        </Card>
+      </div>
+    </Page>
+  );
+}
+
+export function Studio() {
+  const { profile } = useAuth();
+  return (
+    <Page narrow>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Studio</h1>
+      <p className="mb-6 mt-1 font-body text-body text-text-secondary">{profile.company}</p>
+      {profile.director_status === "approved" ? (
+        <Card className="grid gap-4 p-5">
+          <p className="m-0 font-body text-body text-text-primary">Castings, shortlists and self-tape requests are being built now and will land here first.</p>
+          <div>
+            <Button to="/explore">
+              <Icon name="search" size={16} /> Search talent
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <Notice tone="accent">Your account is under review. We'll open Studio as soon as you're approved.</Notice>
+      )}
+    </Page>
+  );
+}
+
+export function Admin() {
+  const [rows, setRows] = useState(null);
+  const [counts, setCounts] = useState({});
+  const [view, setView] = useState("pending");
+
+  const load = async () => {
+    let q = supabase.from("on_profiles").select("*").order("created_at", { ascending: false }).limit(200);
+    if (view === "pending") q = q.eq("role", "director").eq("director_status", "pending");
+    else if (view === "directors") q = q.eq("role", "director");
+    else if (view === "talent") q = q.eq("role", "talent");
+    else if (view === "minors") q = q.eq("is_minor", true);
+    const { data } = await q;
+    setRows(data || []);
+    const [a, b, c, d] = await Promise.all(
+      [
+        ["role", "talent"],
+        ["role", "director"],
+        ["is_minor", true],
+        ["role", "guardian"],
+      ].map(([k, v]) => supabase.from("on_profiles").select("id", { head: true, count: "exact" }).eq(k, v))
+    );
+    setCounts({ talent: a.count, directors: b.count, minors: c.count, guardians: d.count });
+  };
+  useEffect(() => {
+    setRows(null);
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
+
+  const act = async (fn, args) => {
+    const { error } = await supabase.rpc(fn, args);
+    if (error) alert(error.message);
+    load();
+  };
+
+  return (
+    <Page>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Admin</h1>
+      <div className="my-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {Object.entries(counts).map(([k, v]) => (
+          <Card key={k} className="p-4">
+            <Label>{k}</Label>
+            <div className="font-display text-h1 font-bold text-text-primary">{v ?? "–"}</div>
+          </Card>
+        ))}
+      </div>
+      <div className="mb-4 flex flex-wrap gap-2">
+        {["pending", "directors", "talent", "minors"].map((v) => (
+          <Button key={v} size="sm" variant={view === v ? "dark" : "secondary"} onClick={() => setView(v)} className="!rounded-pill capitalize">
+            {v === "pending" ? "Directors to review" : v}
+          </Button>
+        ))}
+      </div>
+      {!rows ? (
+        <Spinner />
+      ) : rows.length === 0 ? (
+        <Empty title="Nothing here" />
+      ) : (
+        <div className="overflow-hidden rounded-lg border border-border-subtle bg-surface-card">
+          {rows.map((r) => (
+            <div key={r.id} className="flex flex-wrap items-center gap-3 border-b border-border-subtle p-4 last:border-b-0">
+              <Avatar profile={r} size={40} />
+              <div className="min-w-0 flex-1">
+                <Link to={`/@${r.handle}`} className="flex items-center gap-1 font-body text-small font-semibold text-text-primary hover:underline">
+                  {r.display_name} {r.verified && <Verified size={14} />}
+                </Link>
+                <div className="font-mono text-micro text-text-secondary">
+                  @{r.handle} · {r.role}
+                  {r.company ? ` · ${r.company}` : ""}
+                  {r.is_minor ? ` · minor (${r.guardian_approved_at ? "confirmed" : "waiting for guardian"})` : ""}
+                  {" · "}
+                  {new Date(r.created_at).toLocaleDateString()}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {r.role === "director" && r.director_status !== "approved" && (
+                  <Button size="sm" onClick={() => act("on_admin_set_director", { pid: r.id, status: "approved" })}>
+                    Approve
+                  </Button>
+                )}
+                {r.role === "director" && r.director_status !== "rejected" && (
+                  <Button size="sm" variant="secondary" onClick={() => act("on_admin_set_director", { pid: r.id, status: "rejected" })}>
+                    {r.director_status === "approved" ? "Revoke" : "Reject"}
+                  </Button>
+                )}
+                <Button size="sm" variant="secondary" onClick={() => act("on_admin_set_verified", { pid: r.id, v: !r.verified })}>
+                  {r.verified ? "Unverify" : "Verify"}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </Page>
+  );
+}
+
+export function Safety() {
+  return (
+    <Page narrow>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Safety and minors</h1>
+      <div className="mt-5 grid gap-4 font-body text-body leading-body text-text-primary">
+        <p className="m-0">Anyone under 18 joins ON with a parent or guardian. The guardian creates their own account with the email the child gave us, and confirms the profile from there. Until they do, nobody else can see it.</p>
+        <p className="m-0">Once confirmed, an under-18 profile is still hidden from the public and from search. Only casting directors we've reviewed and approved can open it, and they see the guardian's contact details, never the child's.</p>
+        <p className="m-0">Guardians can edit or hide the profile at any time from their Family page.</p>
+        <p className="m-0">Casting directors are checked by hand before they get access. If anyone asks you for money to be cast, or to meet somewhere that isn't a known studio or office, don't go, and tell us at studio@aboustate.tech.</p>
+      </div>
+    </Page>
+  );
+}
+
+export function Privacy() {
+  return (
+    <Page narrow>
+      <h1 className="m-0 font-display text-h1 font-bold tracking-tight text-text-primary">Privacy</h1>
+      <div className="mt-5 grid gap-4 font-body text-body leading-body text-text-primary">
+        <p className="m-0">Your public profile (name, photos, reels, look and skills) is visible to anyone with the link, unless you turn it off in Contact and privacy. Your date of birth, phone, WhatsApp and contact email are only visible to you and to approved casting directors.</p>
+        <p className="m-0">We don't sell your data or show ads. Photos are stored with Supabase and served from their storage. You can delete your profile and everything you've uploaded from Settings.</p>
+        <p className="m-0">Questions: studio@aboustate.tech</p>
+      </div>
+    </Page>
+  );
+}

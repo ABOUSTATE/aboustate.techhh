@@ -23,6 +23,15 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Daily Vercel cron hit: one tiny query so the free Supabase project
+    // never sits idle long enough to be paused.
+    if (req.method === "GET" && req.query && req.query.ping !== undefined) {
+      const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+      const { error } = await supabase.from("on_profiles").select("id", { head: true, count: "exact" });
+      res.status(error ? 500 : 200).json({ ok: !error });
+      return;
+    }
+
     if (req.method === "GET" || req.method === "PATCH") {
       if (!isAuthenticated(req)) {
         res.status(401).json({ error: "unauthorized" });

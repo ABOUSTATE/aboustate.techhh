@@ -131,5 +131,10 @@ code, pre {
   outline-offset: 2px;
 }
 
+/* brand patterns (tokens/patterns.css) */
+.bg-pattern-mark{background-image:url("/assets/patterns/hairline-grid.svg");background-size:28px 28px;background-repeat:repeat}
+.bg-pattern-dots-dark{background-image:url("/assets/patterns/dot-grid-dark.svg");background-size:24px 24px;background-repeat:repeat}
+.bg-pattern-dots-light{background-image:url("/assets/patterns/dot-grid-light.svg");background-size:24px 24px;background-repeat:repeat}
+
 @tailwind components;
 @tailwind utilities;
