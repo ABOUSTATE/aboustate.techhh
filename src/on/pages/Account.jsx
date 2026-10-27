@@ -134,7 +134,7 @@ export function Settings() {
           </div>
         </Card>
         <Card className="grid gap-3 p-5">
-          <Input label="Handle" dir="ltr" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))} hint={`on.aboustate.tech/@${handle}`} />
+          <Input label="Handle" dir="ltr" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))} hint={`on.aboustate.tech/${handle}`} />
           <div className="flex items-center gap-3">
             <Button size="sm" variant="secondary" disabled={handle === profile.handle} onClick={saveHandle}>
               {tr("Change handle")}

@@ -72,7 +72,7 @@ export function Home() {
 
 function TalentHome({ profile, t, media }) {
   const { score, missing } = profileStrength(profile, t, media);
-  const url = `on.aboustate.tech/@${profile.handle}`;
+  const url = `on.aboustate.tech/${profile.handle}`;
   const [copied, setCopied] = useState(false);
   return (
     <>
@@ -134,7 +134,7 @@ function TalentHome({ profile, t, media }) {
           >
             <Icon name="share" size={16} /> {copied ? tr("Copied") : tr("Copy link")}
           </Button>
-          <Button variant="ghost" size="sm" to={`/@${profile.handle}`} className="!text-mint-300">
+          <Button variant="ghost" size="sm" to={`/${profile.handle}`} className="!text-mint-300">
             {tr("View")}
           </Button>
         </div>

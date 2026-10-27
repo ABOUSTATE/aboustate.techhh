@@ -137,8 +137,8 @@ export function EditProfile() {
           <Avatar profile={p} size={48} />
           <div>
             <h1 className="m-0 font-display text-h2 font-bold tracking-tight text-text-primary">{tr("Edit profile")}</h1>
-            <Link to={`/@${p.handle}`} className="font-mono text-small text-text-secondary hover:text-text-primary" dir="ltr">
-              on.aboustate.tech/@{p.handle}
+            <Link to={`/${p.handle}`} className="font-mono text-small text-text-secondary hover:text-text-primary" dir="ltr">
+              on.aboustate.tech/{p.handle}
             </Link>
           </div>
         </div>
@@ -147,7 +147,7 @@ export function EditProfile() {
             <div className="font-mono text-micro uppercase tracking-mono text-text-secondary">{tr("Strength")}</div>
             <div className="font-display text-h3 font-bold text-text-primary" dir="ltr">{score}%</div>
           </div>
-          <Button variant="secondary" to={`/@${p.handle}`}>
+          <Button variant="secondary" to={`/${p.handle}`}>
             {tr("View profile")}
           </Button>
         </div>

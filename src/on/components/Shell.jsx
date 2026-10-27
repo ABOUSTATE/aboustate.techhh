@@ -12,7 +12,7 @@ function useNavItems() {
     { to: "/", label: tr("Home"), icon: "home", end: true },
     { to: "/explore", label: tr("Explore"), icon: "search" },
   ];
-  if (profile.role === "talent") items.push({ to: `/@${profile.handle}`, label: tr("Profile"), icon: "user" });
+  if (profile.role === "talent") items.push({ to: `/${profile.handle}`, label: tr("Profile"), icon: "user" });
   if (profile.role === "guardian") items.push({ to: "/family", label: tr("Family"), icon: "shield" });
   if (profile.role === "director") items.push({ to: "/studio", label: tr("Studio"), icon: "film" });
   if (profile.is_admin) items.push({ to: "/admin", label: tr("Admin"), icon: "lock" });

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient.js";
 import { PRIVATE_COLUMNS } from "../lib/options.js";
 import { isApprovedDirector, useAuth } from "../lib/auth.jsx";
@@ -13,7 +13,10 @@ import { WorkCard } from "../components/WorkCard.jsx";
 
 export function ProfilePage() {
   const { slug } = useParams();
-  const handle = slug?.startsWith("@") ? slug.slice(1).toLowerCase() : null;
+  // Profiles live at /handle. Older /@handle links still work and redirect.
+  const legacy = slug?.startsWith("@");
+  const raw = (legacy ? slug.slice(1) : slug || "").toLowerCase();
+  const handle = /^[a-z0-9_.]{3,24}$/.test(raw) ? raw : null;
   const { profile: me } = useAuth();
   const [state, setState] = useState({ loading: true });
   const [tab, setTab] = useState("photos");
@@ -38,6 +41,7 @@ export function ProfilePage() {
     };
   }, [handle]);
 
+  if (legacy && handle) return <Navigate to={`/${handle}`} replace />;
   if (!handle) return <NotFoundPage />;
   if (state.loading) return <Spinner />;
   if (state.missing) {
@@ -72,7 +76,7 @@ export function ProfilePage() {
   ].filter(Boolean);
 
   const share = async () => {
-    const url = `${window.location.origin}/@${p.handle}`;
+    const url = `${window.location.origin}/${p.handle}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: tr("{name} on ON", { name: p.display_name }), url });

@@ -14,7 +14,7 @@ export function TalentCard({ p }) {
   const img = mediaUrl(p.avatar_path);
   return (
     <Link
-      to={`/@${p.handle}`}
+      to={`/${p.handle}`}
       className="group block overflow-hidden rounded-lg border border-border-subtle bg-surface-card transition-shadow duration-200 hover:shadow-md"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-mint-100">

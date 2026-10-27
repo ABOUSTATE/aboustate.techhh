@@ -270,7 +270,7 @@ function Row({ r, busy, onPublish, onVerify, onDirector, onHandover, onDelete })
       <Avatar profile={r} size={48} />
       <div className="min-w-[220px] flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <Link to={`/@${r.handle}`} className="font-body text-body font-semibold text-text-primary hover:underline">
+          <Link to={`/${r.handle}`} className="font-body text-body font-semibold text-text-primary hover:underline">
             <bdi>{r.display_name}</bdi>
           </Link>
           {r.verified && <Verified size={14} />}
@@ -297,7 +297,7 @@ function Row({ r, busy, onPublish, onVerify, onDirector, onHandover, onDelete })
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" variant="secondary" to={`/@${r.handle}`}>
+        <Button size="sm" variant="secondary" to={`/${r.handle}`}>
           {tr("View")}
         </Button>
         <Button size="sm" variant="secondary" to={`/edit/${r.id}`}>
@@ -394,7 +394,7 @@ function CreateDialog({ onClose, onCreated }) {
           dir="ltr"
           value={handle}
           onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))}
-          hint={`on.aboustate.tech/@${handle || "handle"}`}
+          hint={`on.aboustate.tech/${handle || "handle"}`}
         />
         <Input label="Their email (optional)" type="email" dir="ltr" value={email} onChange={(e) => setEmail(e.target.value)} hint="Leave empty to use a studio address until hand-over." />
         <Toggle label="Public right away" checked={published} onChange={setPublished} />

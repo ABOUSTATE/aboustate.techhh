@@ -132,7 +132,7 @@ export function Onboarding() {
             setHandleTouched(true);
             setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""));
           }}
-          hint={`on.aboustate.tech/@${handle || "you"}`}
+          hint={`on.aboustate.tech/${handle || "you"}`}
           error={handleOk === false ? tr("Taken or not allowed. Use 3 to 24 letters, numbers, dots or underscores.") : ""}
         />
 

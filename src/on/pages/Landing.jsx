@@ -177,7 +177,7 @@ function HeroCollage({ faces }) {
         </div>
         <div className="absolute -bottom-4 right-0 rotate-[4deg] rounded-lg bg-beige-100 px-4 py-3 shadow-lg">
           <div className="font-mono text-micro uppercase tracking-mono text-text-secondary">{tr("Your profile")}</div>
-          <div className="font-display text-h3 font-bold text-text-primary" dir="ltr">on.aboustate.tech/@you</div>
+          <div className="font-display text-h3 font-bold text-text-primary" dir="ltr">on.aboustate.tech/you</div>
         </div>
       </div>
     );
@@ -187,7 +187,7 @@ function HeroCollage({ faces }) {
       {shown.map((p, i) => (
         <Link
           key={p.id}
-          to={`/@${p.handle}`}
+          to={`/${p.handle}`}
           className="absolute w-[58%] overflow-hidden rounded-lg border-4 border-beige-100 bg-beige-100 shadow-lg transition-transform duration-300 hover:z-10 hover:scale-105"
           style={{
             left: ["0%", "40%", "18%"][i],
