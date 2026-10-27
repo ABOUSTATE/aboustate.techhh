@@ -61,6 +61,11 @@ async function handlePost(req, res) {
   }
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
+  if (body.action === "admin-create-talent" || body.action === "admin-handover") {
+    await handleAdmin(supabase, req, body, res);
+    return;
+  }
+
   if (body.action === "reserve-uid") {
     await handleReserveUid(supabase, res);
     return;
@@ -461,4 +466,93 @@ async function sendDirectorConfirmation({ name, email, roleNeeded }) {
 function escapeHtml(value) {
   const escapeMap = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
   return String(value).replace(/[&<>"']/g, (match) => escapeMap[match]);
+}
+
+// ----------------------------------------------------------------
+// ON admin tools (v2 accounts). The caller proves who they are with
+// their Supabase session token; only profiles marked is_admin pass.
+//
+// admin-create-talent: a managed talent profile for someone who hasn't
+//   signed up yet (agency rosters, featured talent). Its login email is a
+//   studio alias until it's handed over.
+// admin-handover: points a profile's login at the talent's real email
+//   and returns a one-time sign-in link the admin can send them.
+// ----------------------------------------------------------------
+const HANDLE_RE = /^[a-z0-9_.]{3,24}$/;
+const ON_ORIGIN = "https://on.aboustate.tech";
+
+async function handleAdmin(supabase, req, body, res) {
+  const token = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+  const { data: auth } = token ? await supabase.auth.getUser(token) : { data: null };
+  const caller = auth?.user;
+  if (!caller) {
+    res.status(401).json({ error: "not_signed_in" });
+    return;
+  }
+  const { data: me } = await supabase.from("on_profiles").select("is_admin").eq("id", caller.id).maybeSingle();
+  if (!me?.is_admin) {
+    res.status(403).json({ error: "admins_only" });
+    return;
+  }
+
+  if (body.action === "admin-create-talent") {
+    const handle = String(body.handle || "").toLowerCase().trim();
+    const name = String(body.name || "").trim().slice(0, 80);
+    if (!HANDLE_RE.test(handle) || !name) {
+      res.status(400).json({ error: "Handle (3 to 24 letters, numbers, dots, underscores) and name are required." });
+      return;
+    }
+    const { data: free } = await supabase.rpc("on_handle_available", { h: handle });
+    if (!free) {
+      res.status(409).json({ error: "That handle is taken" });
+      return;
+    }
+    const email = String(body.email || "").trim() || `talent+${handle}@aboustate.tech`;
+    const { data: created, error: createError } = await supabase.auth.admin.createUser({
+      email,
+      email_confirm: true,
+      user_metadata: { on_role: "talent", managed: true },
+    });
+    if (createError) {
+      res.status(400).json({ error: createError.message });
+      return;
+    }
+    const id = created.user.id;
+    const { error: profileError } = await supabase.from("on_profiles").insert({
+      id, role: "talent", handle, display_name: name, managed: true, published: body.published !== false,
+    });
+    if (profileError) {
+      await supabase.auth.admin.deleteUser(id);
+      res.status(400).json({ error: profileError.message });
+      return;
+    }
+    await supabase.from("on_talent").insert({ profile_id: id });
+    await supabase.from("on_talent_private").insert({ profile_id: id });
+    res.status(200).json({ id, handle, email });
+    return;
+  }
+
+  // admin-handover
+  const email = String(body.email || "").trim().toLowerCase();
+  if (!body.profileId || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    res.status(400).json({ error: "A profile and a valid email are required." });
+    return;
+  }
+  const { error: updateError } = await supabase.auth.admin.updateUserById(body.profileId, { email, email_confirm: true });
+  if (updateError) {
+    res.status(400).json({ error: updateError.message });
+    return;
+  }
+  const { data: link, error: linkError } = await supabase.auth.admin.generateLink({
+    type: "magiclink",
+    email,
+    options: { redirectTo: `${ON_ORIGIN}/settings` },
+  });
+  if (linkError) {
+    res.status(400).json({ error: linkError.message });
+    return;
+  }
+  await supabase.from("on_profiles").update({ managed: false }).eq("id", body.profileId);
+  await supabase.from("on_talent_private").update({ contact_email: email }).eq("profile_id", body.profileId);
+  res.status(200).json({ link: link.properties.action_link, email });
 }

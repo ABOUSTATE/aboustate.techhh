@@ -16,7 +16,8 @@ import { Onboarding } from "./pages/Onboarding.jsx";
 import { NotFoundPage, ProfilePage } from "./pages/Profile.jsx";
 import { EditProfile } from "./pages/EditProfile.jsx";
 import { Explore } from "./pages/Explore.jsx";
-import { Admin, Family, Privacy, Safety, Settings, Studio } from "./pages/Account.jsx";
+import { Family, Privacy, Safety, Settings, Studio } from "./pages/Account.jsx";
+import { Admin } from "./pages/Admin.jsx";
 
 // Signed in but not onboarded → /welcome. Signed out → /login.
 function RequireProfile({ children, role, admin }) {

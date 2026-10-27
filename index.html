@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      // ON (on.aboustate.tech) shares this Supabase project. If a sign-in
+      // started on ON lands here (redirect not allow-listed yet), send the
+      // visitor back to ON with the session in the URL.
+      (function () {
+        try {
+          var fromOn = /(?:^|; )on_return=1/.test(document.cookie);
+          var hasSession = /access_token=|error_description=/.test(location.hash) || /[?&](code|error_description)=/.test(location.search);
+          if (fromOn && hasSession) {
+            document.cookie = "on_return=; domain=.aboustate.tech; path=/; max-age=0";
+            location.replace("https://on.aboustate.tech/welcome" + location.search + location.hash);
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

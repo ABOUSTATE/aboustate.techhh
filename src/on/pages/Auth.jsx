@@ -25,9 +25,18 @@ function AuthFrame({ title, sub, children }) {
   );
 }
 
+// Until on.aboustate.tech is on Supabase's redirect allow-list, sign-in can
+// land on www.aboustate.tech instead. This short-lived cookie (shared by
+// all aboustate.tech subdomains) tells the main site to send the visitor
+// straight back here with their session (see index.html).
+export function markReturnToOn() {
+  document.cookie = "on_return=1; domain=.aboustate.tech; path=/; max-age=900; samesite=lax; secure";
+}
+
 function GoogleButton({ role }) {
   const go = async () => {
     if (role) localStorage.setItem("on:role", role);
+    markReturnToOn();
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/welcome` },
@@ -111,6 +120,7 @@ export function Join() {
     if (password.length < 8) return setError(tr("Use at least 8 characters for your password."));
     setBusy(true);
     localStorage.setItem("on:role", role);
+    markReturnToOn();
     const { data, error: err } = await supabase.auth.signUp({
       email,
       password,
@@ -221,6 +231,7 @@ export function Forgot() {
 
   const submit = async (e) => {
     e.preventDefault();
+    markReturnToOn();
     const { error: err } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset` });
     if (err) return setError(tr(err.message));
     setSent(true);
