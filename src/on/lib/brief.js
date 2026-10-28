@@ -44,12 +44,16 @@ export async function pdfToText(file) {
 
 // ---- Text clean-up ----------------------------------------------------
 const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
-function normalize(text) {
+// For display: tidy spacing and digits, keep the brief's own spelling.
+function tidy(text) {
   return text
     .replace(/[٠-٩]/g, (d) => String(ARABIC_DIGITS.indexOf(d)))
-    .replace(/[إأآ]/g, "ا")
     .replace(/\r/g, "")
     .replace(/[ \t]+/g, " ");
+}
+// For matching only: also fold the alef forms (أ إ آ → ا).
+function normalize(text) {
+  return tidy(text).replace(/[إأآ]/g, "ا");
 }
 
 // ---- Splitting into roles --------------------------------------------
@@ -251,7 +255,7 @@ export function readTraits(block) {
 }
 
 export function readBrief(text) {
-  const blocks = splitRoles(normalize(text));
+  const blocks = splitRoles(tidy(text));
   const roles = blocks.map((b, i) => ({
     id: crypto.randomUUID(),
     name: b.name || `Role ${i + 1}`,
@@ -260,11 +264,11 @@ export function readBrief(text) {
     picks: [],
   }));
   if (roles.length) return roles;
-  return [{ id: crypto.randomUUID(), name: "Main role", notes: normalize(text).slice(0, 600), traits: readTraits(text), picks: [] }];
+  return [{ id: crypto.randomUUID(), name: "Main role", notes: tidy(text).slice(0, 600), traits: readTraits(text), picks: [] }];
 }
 
 export function briefTitle(text, fallback) {
-  const first = normalize(text)
+  const first = tidy(text)
     .split("\n")
     .map((l) => l.trim())
     .find((l) => l.length > 3 && l.length < 90 && !ROLE_HEAD.test(l));
