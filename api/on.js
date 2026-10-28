@@ -61,7 +61,7 @@ async function handlePost(req, res) {
   }
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-  if (body.action === "admin-create-talent" || body.action === "admin-handover") {
+  if (["admin-create-talent", "admin-handover", "admin-delete-seed"].includes(body.action)) {
     await handleAdmin(supabase, req, body, res);
     return;
   }
@@ -529,6 +529,20 @@ async function handleAdmin(supabase, req, body, res) {
     await supabase.from("on_talent").insert({ profile_id: id });
     await supabase.from("on_talent_private").insert({ profile_id: id });
     res.status(200).json({ id, handle, email });
+    return;
+  }
+
+  // admin-delete-seed: removes every test profile, its photos and its login.
+  if (body.action === "admin-delete-seed") {
+    const { data: seeds } = await supabase.from("on_profiles").select("id").eq("seed", true);
+    let removed = 0;
+    for (const { id } of seeds || []) {
+      const { data: files } = await supabase.storage.from("on-media").list(id, { limit: 100 });
+      if (files?.length) await supabase.storage.from("on-media").remove(files.map((f) => `${id}/${f.name}`));
+      const { error } = await supabase.auth.admin.deleteUser(id);
+      if (!error) removed++;
+    }
+    res.status(200).json({ removed });
     return;
   }
 

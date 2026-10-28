@@ -563,6 +563,12 @@ export const AR = {
   "Add a trait": "ضيف صفة",
   "What they do": "بيعمل إيه",
 
+  // Test profiles
+  "Test profiles": "بروفايلات تجريبية",
+  "Test profile": "بروفايل تجريبي",
+  "Delete all test profiles": "امسح كل البروفايلات التجريبية",
+  "Delete all {n} test profiles, their photos and their logins? This can't be undone.": "تمسح الـ {n} بروفايل التجريبيين بصورهم وحساباتهم؟ مش هينفع ترجعهم.",
+
   // Safety and privacy pages
   "Safety and minors": "الأمان والقُصّر",
   "Anyone under 18 joins ON with a parent or guardian. The guardian creates their own account with the email the child gave us, and confirms the profile from there. Until they do, nobody else can see it.":

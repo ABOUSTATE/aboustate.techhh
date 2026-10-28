@@ -123,6 +123,7 @@ export function ProfilePage() {
               {t?.available && <Badge tone="accent">{tr("Available")}</Badge>}
               {t?.will_travel && <Badge tone="outline">{tr("Will travel")}</Badge>}
               {p.is_minor && <Badge tone="inverse">{tr("Under 18")}</Badge>}
+              {p.seed && <Badge>{tr("Test profile")}</Badge>}
               {p.role === "director" && <Badge tone="inverse">{tr("Casting director")}</Badge>}
               {(t?.categories || []).map((c) => (
                 <Badge key={c}>{opt(c)}</Badge>

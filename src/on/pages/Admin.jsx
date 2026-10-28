@@ -18,6 +18,7 @@ const VIEWS = [
   ["minors", "Under 18"],
   ["managed", "Managed"],
   ["hidden", "Hidden"],
+  ["seed", "Test profiles"],
 ];
 
 function inView(r, view) {
@@ -36,6 +37,8 @@ function inView(r, view) {
       return r.managed;
     case "hidden":
       return !r.published;
+    case "seed":
+      return r.seed;
     default:
       return true;
   }
@@ -157,9 +160,29 @@ export function Admin() {
           <Label>ON</Label>
           <h1 className="m-0 mt-1 font-display text-h1 font-bold tracking-tight text-text-primary">{tr("Admin")}</h1>
         </div>
-        <Button onClick={() => setCreating(true)}>
-          <Icon name="plus" size={16} /> {tr("New managed profile")}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          {rows?.some((r) => r.seed) && (
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                const n = rows.filter((r) => r.seed).length;
+                if (!confirm(tr("Delete all {n} test profiles, their photos and their logins? This can't be undone.", { n }))) return;
+                setError("");
+                try {
+                  await callApi({ action: "admin-delete-seed" });
+                  await load();
+                } catch (e) {
+                  setError(tr(e.message));
+                }
+              }}
+            >
+              <Icon name="trash" size={16} /> {tr("Delete all test profiles")}
+            </Button>
+          )}
+          <Button onClick={() => setCreating(true)}>
+            <Icon name="plus" size={16} /> {tr("New managed profile")}
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -277,6 +300,7 @@ function Row({ r, busy, onPublish, onVerify, onDirector, onHandover, onDelete })
           <Badge tone="outline">{tr(roleName)}</Badge>
           {r.is_admin && <Badge tone="inverse">{tr("Admin")}</Badge>}
           {r.managed && <Badge>{tr("Managed")}</Badge>}
+          {r.seed && <Badge tone="accent">{tr("Test profile")}</Badge>}
           {!r.published && <Badge>{tr("Hidden")}</Badge>}
           {r.role === "director" && <Badge tone={r.director_status === "approved" ? "accent" : "neutral"}>{tr(r.director_status)}</Badge>}
           {r.is_minor && <Badge tone="inverse">{r.guardian_approved_at ? tr("Under 18 · confirmed") : tr("Under 18 · waiting for a parent")}</Badge>}

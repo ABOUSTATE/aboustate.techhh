@@ -6,7 +6,7 @@ import { Icon } from "./icons.jsx";
 import { opt, tr } from "../lib/i18n.jsx";
 
 export const CARD_SELECT =
-  "id, handle, display_name, headline, city, avatar_path, verified, is_minor, created_at, on_talent(playing_age_min, playing_age_max, categories, available, gender, height_cm)";
+  "id, handle, display_name, headline, city, avatar_path, verified, is_minor, seed, created_at, on_talent(playing_age_min, playing_age_max, categories, available, gender, height_cm)";
 
 export function TalentCard({ p }) {
   const t = Array.isArray(p.on_talent) ? p.on_talent[0] : p.on_talent;
@@ -28,6 +28,7 @@ export function TalentCard({ p }) {
         <div className="absolute start-2 top-2 flex gap-1">
           {t?.available && <Badge tone="accent">{tr("Available")}</Badge>}
           {p.is_minor && <Badge tone="inverse">{tr("Under 18")}</Badge>}
+          {p.seed && <Badge>{tr("Test profile")}</Badge>}
         </div>
       </div>
       <div className="p-3">
