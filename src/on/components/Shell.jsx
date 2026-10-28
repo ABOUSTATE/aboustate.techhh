@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../lib/auth.jsx";
+import { isApprovedDirector, useAuth } from "../lib/auth.jsx";
 import { Avatar, Button, Wordmark } from "./ui.jsx";
 import { Icon } from "./icons.jsx";
 import { tr, useLang } from "../lib/i18n.jsx";
@@ -15,6 +15,7 @@ function useNavItems() {
   if (profile.role === "talent") items.push({ to: `/${profile.handle}`, label: tr("Profile"), icon: "user" });
   if (profile.role === "guardian") items.push({ to: "/family", label: tr("Family"), icon: "shield" });
   if (profile.role === "director") items.push({ to: "/studio", label: tr("Studio"), icon: "film" });
+  if (isApprovedDirector(profile) || profile.is_admin) items.push({ to: "/boards", label: tr("Boards"), icon: "filter" });
   if (profile.is_admin) items.push({ to: "/admin", label: tr("Admin"), icon: "lock" });
   items.push({ to: "/settings", label: tr("Settings"), icon: "settings" });
   return items;
@@ -147,7 +148,7 @@ export function Shell() {
                 to={i.to}
                 end={i.end}
                 className={({ isActive }) =>
-                  `flex min-w-[64px] flex-col items-center gap-1 px-2 pb-3 pt-2 font-body text-[11px] font-medium ${
+                  `flex min-w-[56px] flex-col items-center gap-1 px-2 pb-3 pt-2 font-body text-[11px] font-medium ${
                     isActive ? "text-text-primary" : "text-text-secondary"
                   }`
                 }

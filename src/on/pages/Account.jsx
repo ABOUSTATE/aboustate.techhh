@@ -186,6 +186,9 @@ export function Studio() {
           <div>
             <Button to="/explore">
               <Icon name="search" size={16} /> {tr("Search talent")}
+            </Button>{" "}
+            <Button variant="secondary" to="/boards">
+              <Icon name="filter" size={16} /> {tr("Brief boards")}
             </Button>
           </div>
         </Card>

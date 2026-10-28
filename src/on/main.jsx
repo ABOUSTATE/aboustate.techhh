@@ -18,6 +18,7 @@ import { EditProfile } from "./pages/EditProfile.jsx";
 import { Explore } from "./pages/Explore.jsx";
 import { Family, Privacy, Safety, Settings, Studio } from "./pages/Account.jsx";
 import { Admin } from "./pages/Admin.jsx";
+import { Board, Boards } from "./pages/Boards.jsx";
 
 // Signed in but not onboarded → /welcome. Signed out → /login.
 function RequireProfile({ children, role, admin }) {
@@ -56,6 +57,8 @@ function App() {
         <Route path="studio" element={<RequireProfile role="director"><Studio /></RequireProfile>} />
         <Route path="settings" element={<RequireProfile><Settings /></RequireProfile>} />
         <Route path="admin" element={<RequireProfile admin><Admin /></RequireProfile>} />
+        <Route path="boards" element={<RequireProfile><Boards /></RequireProfile>} />
+        <Route path="boards/:id" element={<RequireProfile><Board /></RequireProfile>} />
         <Route path=":slug" element={<ProfilePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
