@@ -102,7 +102,7 @@ export function InstallPrompt() {
 
   return (
     <div
-      className={`fixed inset-x-0 z-40 px-4 md:bottom-5 ${profile ? "bottom-[calc(72px+env(safe-area-inset-bottom))]" : "bottom-[calc(16px+env(safe-area-inset-bottom))]"}`} role="dialog" aria-label={tr("Get the ON app")}>
+      className={`fixed inset-x-0 z-40 px-4 print:hidden md:bottom-5 ${profile ? "bottom-[calc(72px+env(safe-area-inset-bottom))]" : "bottom-[calc(16px+env(safe-area-inset-bottom))]"}`} role="dialog" aria-label={tr("Get the ON app")}>
       <div className="mx-auto flex max-w-[480px] items-start gap-3 rounded-lg border border-border-subtle bg-surface-card p-4 shadow-lg">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-green-950">
           <Wordmark light className="!text-small" />

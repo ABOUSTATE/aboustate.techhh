@@ -145,6 +145,11 @@ export function ProfilePage() {
               <Button variant="secondary" size="sm" onClick={share}>
                 <Icon name="share" size={16} /> {state.copied ? tr("Link copied") : tr("Share")}
               </Button>
+              {p.role === "talent" && (
+                <Button variant="secondary" size="sm" to={`/${p.handle}/card`}>
+                  <Icon name="camera" size={16} /> {tr("Comp card")}
+                </Button>
+              )}
             </div>
 
             {isOwner && p.role === "talent" && <StrengthCard p={p} t={t} media={media} />}

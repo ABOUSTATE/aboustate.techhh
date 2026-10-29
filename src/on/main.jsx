@@ -19,6 +19,9 @@ import { Explore } from "./pages/Explore.jsx";
 import { Family, Privacy, Safety, Settings, Studio } from "./pages/Account.jsx";
 import { Admin } from "./pages/Admin.jsx";
 import { Board, Boards } from "./pages/Boards.jsx";
+import { CallPage, Castings } from "./pages/Castings.jsx";
+import { Shortlist } from "./pages/Shortlist.jsx";
+import { CompCard } from "./pages/CompCard.jsx";
 
 // Signed in but not onboarded → /welcome. Signed out → /login.
 function RequireProfile({ children, role, admin }) {
@@ -41,6 +44,8 @@ function Index() {
 function App() {
   return (
     <Routes>
+      <Route path="shortlist/:token" element={<Shortlist />} />
+      <Route path=":slug/card" element={<CompCard />} />
       <Route element={<Shell />}>
         <Route index element={<Index />} />
         <Route path="join" element={<Join />} />
@@ -59,6 +64,9 @@ function App() {
         <Route path="admin" element={<RequireProfile admin><Admin /></RequireProfile>} />
         <Route path="boards" element={<RequireProfile><Boards /></RequireProfile>} />
         <Route path="boards/:id" element={<RequireProfile><Board /></RequireProfile>} />
+        <Route path="calls" element={<RequireProfile><Castings /></RequireProfile>} />
+        <Route path="calls/:id" element={<CallPage />} />
+        <Route path="requests" element={<Navigate to="/calls?tab=requests" replace />} />
         <Route path=":slug" element={<ProfilePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

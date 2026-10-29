@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient.js";
 import { isApprovedDirector, useAuth } from "../lib/auth.jsx";
@@ -6,23 +6,13 @@ import { briefTitle, pdfToText, readBrief } from "../lib/brief.js";
 import { matchesFor, rankForRole, TRAIT_TYPES } from "../lib/match.js";
 import { ACCENTS, BUILDS, CATEGORIES, CITIES, EYES, GENDERS, HAIR, LANGUAGES, SKILLS } from "../lib/options.js";
 import { opt, tr } from "../lib/i18n.jsx";
+import { TALENT_SELECT, TYPE_LABEL, VERDICTS, traitText, withTalent } from "../lib/castings.js";
 import { Avatar, Badge, Button, Card, Empty, Label, Notice, Spinner, Verified } from "../components/ui.jsx";
 import { Icon } from "../components/icons.jsx";
 import { Page } from "../components/Shell.jsx";
+import { TapePlayer } from "../components/TapePlayer.jsx";
+import { AskTapesDialog, PostCallDialog, ShareDialog } from "../components/BoardDialogs.jsx";
 
-const TYPE_LABEL = {
-  gender: "Gender",
-  age: "Playing age",
-  height: "Height",
-  build: "Build",
-  hair: "Hair",
-  eyes: "Eyes",
-  categories: "What they do",
-  languages: "Languages",
-  accents: "Accents",
-  skills: "Skills",
-  city: "City",
-};
 const TYPE_OPTIONS = {
   gender: GENDERS,
   build: BUILDS,
@@ -34,12 +24,6 @@ const TYPE_OPTIONS = {
   skills: SKILLS,
   city: CITIES,
 };
-
-function traitText(trait) {
-  if (trait.type === "age") return `⁦${trait.value.min}–${trait.value.max}⁩`;
-  if (trait.type === "height") return tr("{n} cm", { n: `⁦${trait.value.min}–${trait.value.max}⁩` });
-  return opt(trait.value);
-}
 
 function canUseBoards(profile) {
   return isApprovedDirector(profile) || profile?.is_admin;
@@ -182,7 +166,30 @@ export function Board() {
   const [talents, setTalents] = useState(null);
   const [saved, setSaved] = useState(true);
   const [showBrief, setShowBrief] = useState(false);
+  const [extras, setExtras] = useState({ requests: [], shares: [], votes: [], calls: [] });
+  const [dialog, setDialog] = useState(null);
+  const [playing, setPlaying] = useState(null);
   const first = useRef(true);
+
+  // Self-tape requests, client links (with their votes) and open calls
+  // made from this board.
+  const loadExtras = useCallback(async () => {
+    const [{ data: requests }, { data: shares }, { data: calls }] = await Promise.all([
+      supabase.rpc("on_board_requests", { bid: id }),
+      supabase.from("on_shares").select("*").eq("board_id", id).order("created_at", { ascending: false }),
+      supabase.from("on_calls").select("id, role_id, status").eq("board_id", id),
+    ]);
+    let votes = [];
+    if (shares?.length) {
+      const { data } = await supabase.from("on_share_votes").select("*").in("share_id", shares.map((x) => x.id));
+      votes = data || [];
+    }
+    setExtras({ requests: requests || [], shares: shares || [], votes, calls: calls || [] });
+  }, [id]);
+
+  useEffect(() => {
+    loadExtras();
+  }, [loadExtras]);
 
   useEffect(() => {
     supabase
@@ -193,11 +200,11 @@ export function Board() {
       .then(({ data }) => setBoard(data || false));
     supabase
       .from("on_profiles")
-      .select("id, handle, display_name, avatar_path, city, verified, is_minor, on_talent!inner(*)")
+      .select(TALENT_SELECT)
       .eq("role", "talent")
       .eq("published", true)
       .limit(2000)
-      .then(({ data }) => setTalents((data || []).map((p) => ({ ...p, t: Array.isArray(p.on_talent) ? p.on_talent[0] : p.on_talent }))));
+      .then(({ data }) => setTalents(withTalent(data)));
   }, [id]);
 
   // Save edits a moment after they stop.
@@ -225,7 +232,9 @@ export function Board() {
   }
 
   const setRoles = (fn) => setBoard((b) => ({ ...b, roles: fn(b.roles) }));
-  const setRole = (rid, patch) => setRoles((rs) => rs.map((r) => (r.id === rid ? { ...r, ...patch } : r)));
+  // `patch` can be a function of the current role, so quick clicks in a
+  // row don't overwrite each other.
+  const setRole = (rid, patch) => setRoles((rs) => rs.map((r) => (r.id === rid ? { ...r, ...(typeof patch === "function" ? patch(r) : patch) } : r)));
 
   return (
     <Page className="!max-w-none">
@@ -252,7 +261,10 @@ export function Board() {
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button variant="dark" onClick={() => setDialog({ kind: "share" })}>
+            <Icon name="share" size={16} /> {tr("Share with client")}
+          </Button>
           <Button
             variant="secondary"
             onClick={() => setRoles((rs) => [...rs, { id: crypto.randomUUID(), name: tr("New role"), notes: "", traits: [], picks: [] }])}
@@ -292,22 +304,37 @@ export function Board() {
             key={role.id}
             role={role}
             talents={talents}
+            requests={extras.requests.filter((r) => r.role_id === role.id)}
+            votes={extras.votes.filter((v) => v.role_id === role.id)}
+            call={extras.calls.find((c) => c.role_id === role.id)}
+            onAskTapes={() => setDialog({ kind: "tapes", role })}
+            onPostCall={() => setDialog({ kind: "call", role })}
+            onPlay={setPlaying}
+            onVerdict={async (rid, v) => {
+              await supabase.rpc("on_request_verdict", { rid, v });
+              loadExtras();
+            }}
             onChange={(patch) => setRole(role.id, patch)}
             onRemove={() => confirm(tr("Remove this role?")) && setRoles((rs) => rs.filter((r) => r.id !== role.id))}
           />
         ))}
       </div>
+
+      {dialog?.kind === "tapes" && <AskTapesDialog board={board} role={dialog.role} talents={talents} requests={extras.requests} onClose={() => setDialog(null)} onDone={loadExtras} />}
+      {dialog?.kind === "call" && <PostCallDialog board={board} role={dialog.role} onClose={() => setDialog(null)} />}
+      {dialog?.kind === "share" && <ShareDialog board={board} shares={extras.shares} votes={extras.votes} onClose={() => setDialog(null)} onDone={loadExtras} />}
+      {playing && <TapePlayer url={playing.url} title={playing.title} onClose={() => setPlaying(null)} />}
     </Page>
   );
 }
 
-function RoleColumn({ role, talents, onChange, onRemove }) {
+function RoleColumn({ role, talents, requests, votes, call, onAskTapes, onPostCall, onPlay, onVerdict, onChange, onRemove }) {
   const ranked = useMemo(() => rankForRole(talents, role), [talents, role]);
   const byId = useMemo(() => Object.fromEntries(talents.map((p) => [p.id, p])), [talents]);
   const groups = TRAIT_TYPES.map((type) => [type, role.traits.filter((t) => t.type === type)]).filter(([, list]) => list.length);
   const removeTrait = (trait) => onChange({ traits: role.traits.filter((t) => t !== trait) });
   const addTrait = (trait) => onChange({ traits: [...role.traits, trait] });
-  const pick = (pid) => onChange({ picks: role.picks?.includes(pid) ? role.picks.filter((x) => x !== pid) : [...(role.picks || []), pid] });
+  const pick = (pid) => onChange((r) => ({ picks: r.picks?.includes(pid) ? r.picks.filter((x) => x !== pid) : [...(r.picks || []), pid] }));
 
   return (
     <section className="w-[340px] shrink-0 snap-start rounded-lg border border-border-subtle bg-surface-card">
@@ -357,11 +384,64 @@ function RoleColumn({ role, talents, onChange, onRemove }) {
       {(role.picks || []).length > 0 && (
         <div className="border-t border-border-subtle bg-mint-100 p-4">
           <Label>{tr("Picks")}</Label>
-          <ul className="m-0 mt-2 grid list-none gap-2 p-0">
-            {role.picks.map((pid) => byId[pid] && <li key={pid}><TalentRow p={byId[pid]} picked onPick={() => pick(pid)} /></li>)}
+          <ul className="m-0 mt-2 grid list-none gap-3 p-0">
+            {role.picks.map((pid) => {
+              if (!byId[pid]) return null;
+              const req = requests.find((r) => r.talent === pid);
+              return (
+                <li key={pid}>
+                  <TalentRow p={byId[pid]} picked onPick={() => pick(pid)} right={<PickStatus req={req} votes={votes.filter((v) => v.talent === pid)} />} />
+                  {req?.status === "submitted" && (
+                    <div className="mt-1 flex flex-wrap items-center gap-1 ps-[40px]">
+                      <Button size="sm" variant="dark" onClick={() => onPlay({ url: req.tape_url, title: byId[pid].display_name })}>
+                        <Icon name="play" size={12} fill /> {tr("Watch tape")}
+                      </Button>
+                      {VERDICTS.map(([v, label]) => (
+                        <button
+                          key={v}
+                          type="button"
+                          aria-pressed={req.verdict === v}
+                          onClick={() => onVerdict(req.id, req.verdict === v ? null : v)}
+                          className={`rounded-pill border px-2 py-1 font-body text-micro ${
+                            req.verdict === v ? "border-green-900 bg-green-900 text-beige-100" : "border-border-subtle bg-surface-card text-text-primary"
+                          }`}
+                        >
+                          {tr(label)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {req?.tape_note && (
+                    <p dir="auto" className="mb-0 mt-1 ps-[40px] font-body text-micro text-text-secondary">
+                      {req.tape_note}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
+          <div className="mt-3">
+            <Button size="sm" variant="dark" onClick={onAskTapes}>
+              <Icon name="camera" size={14} /> {tr("Ask for self-tapes")}
+            </Button>
+          </div>
         </div>
       )}
+
+      <div className="border-t border-border-subtle p-4">
+        {call ? (
+          <Link to={`/calls/${call.id}`} className="flex items-center justify-between gap-2 font-body text-small font-semibold text-text-primary hover:underline">
+            <span className="inline-flex items-center gap-2">
+              <Icon name="bolt" size={16} /> {tr(call.status === "open" ? "Open call is live" : "Open call closed")}
+            </span>
+            <Icon name="arrow" size={16} />
+          </Link>
+        ) : (
+          <Button size="sm" variant="secondary" onClick={onPostCall}>
+            <Icon name="bolt" size={14} /> {tr("Post as open call")}
+          </Button>
+        )}
+      </div>
     </section>
   );
 }
@@ -460,6 +540,21 @@ function TalentRow({ p, right, picked, onPick }) {
         <Icon name={picked ? "check" : "star"} size={14} />
       </button>
     </div>
+  );
+}
+
+function PickStatus({ req, votes }) {
+  const yes = votes.filter((v) => v.vote === "yes").length;
+  const label = !req ? null : req.status === "submitted" ? "Tape in" : req.status === "declined" ? "Declined" : "Tape asked";
+  return (
+    <span className="flex shrink-0 items-center gap-1">
+      {votes.length > 0 && (
+        <span className="font-mono text-[10px] text-text-accent" title={votes.map((v) => `${v.voter}: ${tr(v.vote ? v.vote[0].toUpperCase() + v.vote.slice(1) : "No vote")}${v.comment ? ` · ${v.comment}` : ""}`).join("\n")}>
+          {tr("Client {n} yes", { n: yes })}
+        </span>
+      )}
+      {label && <Badge tone={req.status === "submitted" ? "accent" : "outline"}>{tr(label)}</Badge>}
+    </span>
   );
 }
 

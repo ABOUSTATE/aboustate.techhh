@@ -182,13 +182,18 @@ export function Studio() {
       <p className="mb-6 mt-1 font-body text-body text-text-secondary">{profile.company}</p>
       {profile.director_status === "approved" ? (
         <Card className="grid gap-4 p-5">
-          <p className="m-0 font-body text-body text-text-primary">{tr("Castings, shortlists and self-tape requests are being built now and will land here first.")}</p>
-          <div>
-            <Button to="/explore">
-              <Icon name="search" size={16} /> {tr("Search talent")}
-            </Button>{" "}
-            <Button variant="secondary" to="/boards">
+          <p className="m-0 font-body text-body text-text-primary">
+            {tr("Turn a brief into a board, pick talent, ask your picks for self-tapes, share a shortlist link with your client, and post roles as open calls.")}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button to="/boards">
               <Icon name="filter" size={16} /> {tr("Brief boards")}
+            </Button>
+            <Button variant="secondary" to="/calls">
+              <Icon name="bolt" size={16} /> {tr("Open calls")}
+            </Button>
+            <Button variant="secondary" to="/explore">
+              <Icon name="search" size={16} /> {tr("Search talent")}
             </Button>
           </div>
         </Card>

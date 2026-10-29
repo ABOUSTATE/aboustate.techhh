@@ -46,7 +46,7 @@ export function LangPicker() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="on-lang-title"
-      className={`on-lang fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-green-950 px-4 py-8 ${leaving ? "on-lang--out" : ""}`}
+      className={`on-lang fixed inset-0 z-[60] print:hidden flex items-center justify-center overflow-y-auto bg-green-950 px-4 py-8 ${leaving ? "on-lang--out" : ""}`}
     >
       <div className="bg-pattern-dots-dark pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
       <div className="on-lang__glow pointer-events-none absolute inset-0" aria-hidden="true" />

@@ -50,6 +50,7 @@ export function Home() {
         {profile.role === "talent" && mine && <TalentHome profile={profile} {...mine} />}
         {profile.role === "director" && <DirectorHome profile={profile} />}
         {profile.role === "guardian" && <GuardianHome />}
+        {profile.role !== "director" && <CastingsCard profile={profile} />}
       </div>
 
       {faces.length > 0 && (
@@ -172,6 +173,38 @@ function DirectorHome({ profile }) {
           </Button>
         </div>
       )}
+    </Card>
+  );
+}
+
+// Self-tape requests waiting for an answer, and how many roles are open.
+function CastingsCard({ profile }) {
+  const [counts, setCounts] = useState(null);
+  useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    Promise.all([
+      supabase.from("on_requests").select("id", { count: "exact", head: true }).eq("status", "sent").neq("director", profile.id),
+      supabase.from("on_calls").select("id", { count: "exact", head: true }).eq("status", "open").or(`deadline.is.null,deadline.gte.${today}`),
+    ]).then(([r, c]) => setCounts({ requests: r.count || 0, calls: c.count || 0 }));
+  }, [profile.id]);
+  if (!counts) return null;
+  return (
+    <Card className="flex flex-wrap items-center justify-between gap-4 p-5 lg:col-span-3">
+      <div>
+        <Label>{tr("Castings")}</Label>
+        <p className="mb-0 mt-1 font-display text-h3 font-semibold text-text-primary">
+          {counts.requests
+            ? counts.requests === 1
+              ? tr("A casting director asked you for a self-tape.")
+              : tr("{n} casting directors asked you for a self-tape.", { n: counts.requests })
+            : counts.calls === 1
+              ? tr("1 open call right now.")
+              : tr("{n} open calls right now.", { n: counts.calls })}
+        </p>
+      </div>
+      <Button to={counts.requests ? "/calls?tab=requests" : "/calls"}>
+        <Icon name="bolt" size={16} /> {tr(counts.requests ? "Answer now" : "See open calls")}
+      </Button>
     </Card>
   );
 }

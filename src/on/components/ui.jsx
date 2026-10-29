@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Icon } from "./icons.jsx";
 import { mediaUrl } from "../lib/media.js";
 import { opt, tr } from "../lib/i18n.jsx";
 
@@ -210,5 +212,26 @@ export function Wordmark({ light = false, className = "" }) {
         <span className="absolute inset-0 animate-ping rounded-pill bg-accent opacity-60" />
       </span>
     </span>
+  );
+}
+
+export function Dialog({ title, onClose, children, wide = false }) {
+  useEffect(() => {
+    const key = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", key);
+    return () => document.removeEventListener("keydown", key);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-green-950/60 p-4" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className={`max-h-[90vh] w-full overflow-y-auto rounded-lg bg-surface-card p-5 shadow-lg ${wide ? "max-w-[720px]" : "max-w-[480px]"}`} onClick={(e) => e.stopPropagation()}>
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <h2 className="m-0 font-display text-h3 font-semibold text-text-primary">{tr(title)}</h2>
+          <button type="button" aria-label={tr("Close")} onClick={onClose} className="text-text-secondary hover:text-text-primary">
+            <Icon name="close" />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
   );
 }

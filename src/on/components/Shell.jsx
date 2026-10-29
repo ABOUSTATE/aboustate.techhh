@@ -13,6 +13,7 @@ function useNavItems() {
     { to: "/explore", label: tr("Explore"), icon: "search" },
   ];
   if (profile.role === "talent") items.push({ to: `/${profile.handle}`, label: tr("Profile"), icon: "user" });
+  if (profile.role !== "director" || isApprovedDirector(profile)) items.push({ to: "/calls", label: tr("Castings"), icon: "bolt" });
   if (profile.role === "guardian") items.push({ to: "/family", label: tr("Family"), icon: "shield" });
   if (profile.role === "director") items.push({ to: "/studio", label: tr("Studio"), icon: "film" });
   if (isApprovedDirector(profile) || profile.is_admin) items.push({ to: "/boards", label: tr("Boards"), icon: "filter" });
@@ -148,7 +149,7 @@ export function Shell() {
                 to={i.to}
                 end={i.end}
                 className={({ isActive }) =>
-                  `flex min-w-[56px] flex-col items-center gap-1 px-2 pb-3 pt-2 font-body text-[11px] font-medium ${
+                  `flex min-w-[48px] flex-col items-center gap-1 px-1 pb-3 pt-2 font-body text-[11px] font-medium ${
                     isActive ? "text-text-primary" : "text-text-secondary"
                   }`
                 }
