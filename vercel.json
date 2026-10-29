@@ -25,6 +25,10 @@
       "destination": "/ilovenona/whenuneedme.html"
     },
     {
+      "source": "/anawdameery/",
+      "destination": "/anawdameery/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
@@ -38,6 +42,11 @@
     {
       "source": "/on/",
       "destination": "https://on.aboustate.tech/",
+      "permanent": false
+    },
+    {
+      "source": "/anawdameery",
+      "destination": "/anawdameery/",
       "permanent": false
     }
   ],
@@ -63,6 +72,28 @@
     },
     {
       "source": "/on-manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/anawdameery/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/anawdameery/manifest.webmanifest",
       "headers": [
         {
           "key": "Content-Type",

@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#C84E27" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Ana w Damere" />
+<title>Ana w Damere Timer</title>
+<link rel="manifest" href="/anawdameery/manifest.webmanifest" />
+<link rel="icon" type="image/png" href="/anawdameery/icon-192.png" />
+<link rel="apple-touch-icon" href="/anawdameery/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@600;700;900&family=Inter:wght@500;600;700&display=block" rel="stylesheet">
+<style>
+  /* Ana w Damere brand (palette sampled from the Endorphins Art Labs branding) */
+  :root{
+    --sun:#FF9304; --rust:#C84E27; --gold:#FEC119; --amber:#FFA80E;
+    --highlight:#FEE48A; --brick:#A73F24; --ink:#111; --cream:#FDF3EA;
+    --dock-h:88px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--rust);color:var(--cream);
+    font-family:Inter,system-ui,sans-serif;-webkit-user-select:none;user-select:none;touch-action:manipulation;
+    overscroll-behavior:none}
+  body[data-ui="hidden"]{cursor:none}
+  [hidden]{display:none!important}
+  button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+  .ar{font-family:Cairo,sans-serif}
+
+  /* ---------- background ---------- */
+  .bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+  body[data-bg="burst"] .bg{
+    background:repeating-conic-gradient(from -4deg at 50% 52%,
+      var(--sun) 0 9deg, var(--rust) 9deg 15deg, var(--amber) 15deg 21deg, var(--rust) 21deg 30deg)}
+  body[data-bg="burst"] .bg::before{content:"";position:absolute;inset:0;
+    background-image:radial-gradient(circle, rgba(254,193,25,.75) 0 32%, transparent 34%);
+    background-size:1.7vmin 1.7vmin;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 52%, #000 0 22%, transparent 62%);
+            mask-image:radial-gradient(ellipse at 50% 52%, #000 0 22%, transparent 62%)}
+  body[data-bg="burst"] .bg::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse at 50% 52%, transparent 40%, rgba(167,63,36,.55) 100%)}
+  body[data-bg="orange"] .bg{background:var(--sun)}
+  body[data-bg="ink"] .bg{background:var(--ink)}
+
+  /* ---------- stage ---------- */
+  .stage{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2.5vmin;padding:max(16px,env(safe-area-inset-top)) 16px calc(var(--dock-h) + max(24px,env(safe-area-inset-bottom)))}
+  .logo{height:27vmin;max-width:70vw;object-fit:contain;filter:drop-shadow(0 1vmin 1.4vmin rgba(0,0,0,.25));
+    pointer-events:none}
+  body[data-logo="off"] .logo{display:none}
+
+  .clock{font-family:Anton,Impact,sans-serif;line-height:1;white-space:nowrap;direction:ltr;
+    font-size:min(30vw,50vh);color:var(--gold);
+    -webkit-text-stroke:.05em var(--ink);paint-order:stroke fill;
+    text-shadow:
+      .012em .012em 0 var(--ink), .024em .024em 0 var(--ink), .036em .036em 0 var(--ink),
+      .048em .048em 0 var(--ink), .06em .06em 0 var(--ink), .072em .072em 0 var(--ink),
+      .084em .084em 0 var(--brick), .096em .096em 0 var(--brick), .108em .108em 0 var(--brick);
+    transition:color .25s, transform .25s; transform-origin:50% 55%}
+  body[data-logo="off"] .clock{font-size:min(34vw,64vh)}
+  .clock .ch{display:inline-block;width:.5em;text-align:center}
+  .clock .ch.sep{width:.26em;transform:translateY(-.04em)}
+  .clock .ch.sep.blink{opacity:.25}
+  body[data-warn="on"][data-state="running"].final .clock{color:var(--cream);animation:beat 1s ease-out infinite}
+  @keyframes beat{0%{transform:scale(1.06)}35%{transform:scale(1)}}
+
+  .bar{width:min(78vw,140vh);height:3.2vmin;min-height:14px;border-radius:999px;background:var(--cream);
+    border:.6vmin solid var(--ink);box-shadow:.6vmin .6vmin 0 var(--ink);overflow:hidden}
+  .bar i{display:block;height:100%;width:100%;transform-origin:0 50%;
+    background:linear-gradient(90deg,var(--gold),var(--sun));border-right:.5vmin solid var(--ink)}
+  body[data-bar="off"] .bar, body[data-mode="up"] .bar{display:none}
+
+  /* time's up */
+  .done{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;
+    opacity:0;transition:opacity .2s}
+  body[data-state="done"] .done{opacity:1}
+  body[data-state="done"] .stage{opacity:.18;filter:blur(.6vmin)}
+  .done span{font-family:Cairo,sans-serif;font-weight:900;font-size:min(16vw,26vh);line-height:1.1;color:var(--gold);
+    -webkit-text-stroke:.06em var(--ink);paint-order:stroke fill;
+    text-shadow:.03em .03em 0 var(--ink),.06em .06em 0 var(--ink),.08em .08em 0 var(--brick),.1em .1em 0 var(--brick);
+    animation:shake .5s ease-in-out infinite alternate}
+  @keyframes shake{from{transform:rotate(-3deg) scale(1)}to{transform:rotate(3deg) scale(1.05)}}
+  body[data-state="done"] .bg{animation:flash .5s steps(1) 6}
+  @keyframes flash{50%{filter:brightness(1.35) saturate(1.2)}}
+
+  /* ---------- dock ---------- */
+  .dock{position:fixed;z-index:5;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);
+    display:flex;align-items:center;gap:10px;padding:10px;border-radius:999px;background:var(--ink);
+    border:3px solid var(--cream);box-shadow:0 10px 30px rgba(0,0,0,.35);transition:opacity .3s, transform .3s}
+  body[data-ui="hidden"] .dock{opacity:0;transform:translate(-50%,24px);pointer-events:none}
+  .btn{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#2a2a2a;color:var(--cream);
+    transition:transform .1s, background .2s}
+  .btn:active{transform:scale(.93)}
+  .btn svg{width:28px;height:28px}
+  .btn.go{width:76px;height:76px;background:var(--gold);color:var(--ink);border:3px solid var(--cream)}
+  .btn.go svg{width:36px;height:36px}
+  .hint{position:fixed;z-index:4;top:max(14px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+    font-size:14px;font-weight:600;background:rgba(17,17,17,.75);padding:8px 14px;border-radius:999px;
+    transition:opacity .4s;pointer-events:none}
+  body[data-ui="hidden"] .hint{opacity:0}
+
+  /* ---------- sheet ---------- */
+  .scrim{position:fixed;inset:0;z-index:8;background:rgba(17,17,17,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+  .sheet{position:fixed;z-index:9;left:50%;bottom:0;width:min(720px,100vw);max-height:92vh;overflow:auto;
+    transform:translate(-50%,105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);
+    background:var(--cream);color:var(--ink);border-radius:26px 26px 0 0;border:3px solid var(--ink);border-bottom:0;
+    padding:22px 22px max(22px,env(safe-area-inset-bottom))}
+  body.sheet-open .scrim{opacity:1;pointer-events:auto}
+  body.sheet-open .sheet{transform:translate(-50%,0)}
+  .sheet h2{margin:0 0 4px;font:400 34px/1 Anton,Impact,sans-serif;letter-spacing:.01em;color:var(--gold);
+    -webkit-text-stroke:5px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+  .sheet .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .sheet h3{margin:20px 0 10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brick)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{min-width:74px;height:52px;padding:0 16px;border-radius:14px;border:2.5px solid var(--ink);background:#fff;
+    font-weight:700;font-size:18px;box-shadow:3px 3px 0 var(--ink)}
+  .chip:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .chip.on{background:var(--gold)}
+  .custom{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .stepper{display:flex;align-items:center;border:2.5px solid var(--ink);border-radius:14px;background:#fff;
+    box-shadow:3px 3px 0 var(--ink);overflow:hidden}
+  .stepper button{width:56px;height:60px;font-size:28px;font-weight:700}
+  .stepper button:active{background:var(--highlight)}
+  .stepper output{min-width:76px;text-align:center;font:400 38px/1 Anton,Impact,sans-serif}
+  .stepper small{display:block;font:600 11px Inter,sans-serif;color:#7a5a4a;margin-top:2px}
+  .colon{font:400 38px Anton,Impact,sans-serif}
+  .seg{display:inline-flex;border:2.5px solid var(--ink);border-radius:14px;overflow:hidden;box-shadow:3px 3px 0 var(--ink);background:#fff}
+  .seg button{height:48px;padding:0 18px;font-weight:700;font-size:16px}
+  .seg button+button{border-left:2.5px solid var(--ink)}
+  .seg button.on{background:var(--gold)}
+  .rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px 22px}
+  .rows label{display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px}
+  .apply{margin-top:24px;width:100%;height:62px;border-radius:16px;border:3px solid var(--ink);background:var(--ink);
+    color:var(--gold);font:400 26px/1 Anton,Impact,sans-serif;letter-spacing:.03em;box-shadow:4px 4px 0 var(--rust)}
+  .close{width:46px;height:46px;border-radius:50%;border:2.5px solid var(--ink);font-size:24px;font-weight:700;background:#fff}
+  .note{margin:18px 0 0;font-size:13px;line-height:1.5;color:#6b4c3e}
+
+  @media (orientation:portrait){ .clock{font-size:min(38vw,40vh)} }
+  @media (max-height:520px){ .logo{height:20vmin} .clock{font-size:min(28vw,46vh)} }
+</style>
+</head>
+<body data-state="idle" data-ui="shown" data-bg="burst" data-logo="on" data-bar="on" data-warn="on" data-mode="down">
+  <div class="bg"></div>
+
+  <main class="stage" id="stage">
+    <img class="logo" src="/anawdameery/logo.png" alt="أنا وضميري" />
+    <div class="clock" id="clock" aria-live="off"></div>
+    <div class="bar"><i id="fill"></i></div>
+  </main>
+
+  <div class="done"><span dir="rtl">خلص الوقت!</span></div>
+  <div class="hint" id="hint">Tap anywhere to show the controls</div>
+
+  <nav class="dock" id="dock">
+    <button class="btn" id="reset" title="Reset (R)" aria-label="Reset">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+    </button>
+    <button class="btn go" id="go" title="Start / pause (Space)" aria-label="Start">
+      <svg id="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>
+      <svg id="ico-pause" viewBox="0 0 24 24" fill="currentColor" hidden><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg>
+    </button>
+    <button class="btn" id="open" title="Set time & options (S)" aria-label="Set time and options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>
+    </button>
+    <button class="btn" id="fs" title="Full screen (F)" aria-label="Full screen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    </button>
+  </nav>
+
+  <div class="scrim" id="scrim"></div>
+  <section class="sheet" id="sheet" aria-label="Timer setup">
+    <div class="top"><h2>TIMER SETUP</h2><button class="close" id="close" aria-label="Close">×</button></div>
+
+    <h3>Mode</h3>
+    <div class="seg" data-key="mode">
+      <button data-v="down">Countdown</button><button data-v="up">Count up</button>
+    </div>
+
+    <div id="dur-block">
+      <h3>Quick times</h3>
+      <div class="chips" id="presets"></div>
+
+      <h3>Custom</h3>
+      <div class="custom">
+        <div class="stepper"><button data-step="m" data-d="-1">−</button><output id="mm">03<small>MIN</small></output><button data-step="m" data-d="1">+</button></div>
+        <span class="colon">:</span>
+        <div class="stepper"><button data-step="s" data-d="-5">−</button><output id="ss">00<small>SEC</small></output><button data-step="s" data-d="5">+</button></div>
+      </div>
+    </div>
+
+    <h3>Look &amp; sound</h3>
+    <div class="rows">
+      <label>Background
+        <div class="seg" data-key="bg"><button data-v="burst">Burst</button><button data-v="orange">Orange</button><button data-v="ink">Black</button></div>
+      </label>
+      <label>Logo
+        <div class="seg" data-key="logo"><button data-v="on">Show</button><button data-v="off">Hide</button></div>
+      </label>
+      <label>Progress bar
+        <div class="seg" data-key="bar"><button data-v="on">Show</button><button data-v="off">Hide</button></div>
+      </label>
+      <label>Last 10 seconds
+        <div class="seg" data-key="warn"><button data-v="on">Pulse</button><button data-v="off">Calm</button></div>
+      </label>
+      <label>Alarm at zero
+        <div class="seg" data-key="sound"><button data-v="off">Silent</button><button data-v="on">Beep</button></div>
+      </label>
+    </div>
+
+    <button class="apply" id="apply">SET TIMER</button>
+    <p class="note">On camera, use Black or Orange if the halftone dots shimmer (moiré). Add this page to the Home Screen
+      for a full-screen app that also works offline, and set Auto-Lock to Never for the shoot.
+      Keys: Space start/pause, R reset, S setup, F full screen.</p>
+  </section>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const body = document.body;
+  const PRESETS = [30, 60, 120, 180, 300, 600, 900, 1800];
+  const KEY = "anawdameery-timer";
+  const DEFAULTS = { mode: "down", dur: 180, bg: "burst", logo: "on", bar: "on", warn: "on", sound: "off" };
+
+  let cfg = { ...DEFAULTS };
+  try { Object.assign(cfg, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch {} };
+
+  // ---- timer state: elapsed time is measured, never counted, so it can't drift ----
+  let acc = 0, t0 = 0, running = false, raf = 0, lastShown = "";
+  const elapsed = () => acc + (running ? performance.now() - t0 : 0);
+
+  const pad = (n) => String(n).padStart(2, "0");
+  function fmt(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor(sec / 60) % 60, s = sec % 60;
+    return h ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+  }
+
+  const clock = $("#clock"), fill = $("#fill");
+  function render() {
+    const ms = elapsed();
+    let sec, frac;
+    if (cfg.mode === "down") {
+      const left = Math.max(0, cfg.dur * 1000 - ms);
+      sec = Math.ceil(left / 1000);
+      frac = cfg.dur ? left / (cfg.dur * 1000) : 0;
+      body.classList.toggle("final", sec <= 10 && sec > 0);
+      if (left <= 0 && running) finish();
+    } else {
+      sec = Math.floor(ms / 1000);
+      frac = 1;
+      body.classList.remove("final");
+    }
+    const txt = fmt(sec);
+    // blink the colon while paused mid-run
+    const blink = !running && ms > 0 && body.dataset.state !== "done" && Math.floor(performance.now() / 600) % 2 === 0;
+    const key = txt + blink;
+    if (key !== lastShown) {
+      lastShown = key;
+      clock.innerHTML = [...txt].map((c) => `<span class="ch${c === ":" ? " sep" + (blink ? " blink" : "") : ""}">${c}</span>`).join("");
+    }
+    fill.style.transform = `scaleX(${frac})`;
+  }
+  function loop() { render(); raf = requestAnimationFrame(loop); }
+
+  function setState(s) {
+    body.dataset.state = s;
+    // SVG elements have no .hidden property, so set the attribute
+    $("#ico-play").toggleAttribute("hidden", s === "running");
+    $("#ico-pause").toggleAttribute("hidden", s !== "running");
+    $("#go").setAttribute("aria-label", s === "running" ? "Pause" : "Start");
+  }
+
+  function start() {
+    if (body.dataset.state === "done") reset();
+    if (cfg.mode === "down" && elapsed() >= cfg.dur * 1000) return;
+    unlockAudio();
+    t0 = performance.now(); running = true;
+    setState("running"); wake(true); bump();
+  }
+  function pause() {
+    if (!running) return;
+    acc = elapsed(); running = false;
+    setState("paused"); wake(false); bump();
+  }
+  function reset() {
+    acc = 0; running = false; stopAlarm();
+    setState("idle"); wake(false); render();
+  }
+  function finish() {
+    acc = cfg.dur * 1000; running = false;
+    setState("done"); wake(false);
+    if (cfg.sound === "on") alarm();
+    showUI();
+  }
+
+  // ---- alarm (Web Audio; iOS needs the context unlocked from a tap) ----
+  let actx = null, alarmTimer = 0;
+  function unlockAudio() {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+    } catch {}
+  }
+  function beep(at, f) {
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = "square"; o.frequency.value = f;
+    g.gain.setValueAtTime(0, at);
+    g.gain.linearRampToValueAtTime(.18, at + .01);
+    g.gain.setValueAtTime(.18, at + .12);
+    g.gain.linearRampToValueAtTime(0, at + .14);
+    o.connect(g).connect(actx.destination); o.start(at); o.stop(at + .16);
+  }
+  function alarm() {
+    if (!actx) return;
+    let rounds = 0;
+    const ring = () => {
+      const t = actx.currentTime;
+      for (let i = 0; i < 4; i++) beep(t + i * .18, 1320);
+      if (++rounds < 4) alarmTimer = setTimeout(ring, 1000);
+    };
+    ring();
+  }
+  function stopAlarm() { clearTimeout(alarmTimer); }
+
+  // ---- keep the screen on while running ----
+  let lock = null;
+  async function wake(on) {
+    try {
+      if (on && "wakeLock" in navigator && !lock) {
+        lock = await navigator.wakeLock.request("screen");
+        lock.addEventListener("release", () => { lock = null; });
+      } else if (!on && lock) { await lock.release(); lock = null; }
+    } catch {}
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && running) wake(true);
+  });
+
+  // ---- controls hide themselves so the frame stays clean on camera ----
+  let hideTimer = 0;
+  function showUI() { body.dataset.ui = "shown"; bump(); }
+  function bump() {
+    clearTimeout(hideTimer);
+    if (body.classList.contains("sheet-open")) return;
+    hideTimer = setTimeout(() => { body.dataset.ui = "hidden"; }, running ? 2500 : 5000);
+  }
+  document.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".sheet")) return;
+    // the hidden dock ignores taps, so the first tap on the screen only brings it back
+    showUI();
+    $("#hint").style.display = "none";
+  }, true);
+
+  $("#go").addEventListener("click", () => (running ? pause() : start()));
+  $("#reset").addEventListener("click", () => { reset(); bump(); });
+
+  // ---- full screen (Android; iPad uses Add to Home Screen) ----
+  const fsEl = document.documentElement;
+  const canFs = !!(fsEl.requestFullscreen || fsEl.webkitRequestFullscreen);
+  const standalone = matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches || navigator.standalone;
+  if (!canFs || standalone) $("#fs").hidden = true;
+  function toggleFs() {
+    const cur = document.fullscreenElement || document.webkitFullscreenElement;
+    if (cur) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else (fsEl.requestFullscreen || fsEl.webkitRequestFullscreen).call(fsEl);
+  }
+  $("#fs").addEventListener("click", toggleFs);
+
+  // ---- setup sheet ----
+  let draft = {};
+  function paintSheet() {
+    document.querySelectorAll(".seg[data-key]").forEach((seg) => {
+      seg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === draft[seg.dataset.key]));
+    });
+    $("#dur-block").style.display = draft.mode === "up" ? "none" : "";
+    $("#mm").firstChild.nodeValue = pad(Math.floor(draft.dur / 60));
+    $("#ss").firstChild.nodeValue = pad(draft.dur % 60);
+    document.querySelectorAll("#presets .chip").forEach((c) => c.classList.toggle("on", +c.dataset.v === draft.dur));
+  }
+  $("#presets").innerHTML = PRESETS.map((s) =>
+    `<button class="chip" data-v="${s}">${s < 60 ? s + "s" : s / 60 + " min"}</button>`).join("");
+  $("#presets").addEventListener("click", (e) => {
+    const c = e.target.closest(".chip"); if (!c) return;
+    draft.dur = +c.dataset.v; paintSheet();
+  });
+  document.querySelectorAll(".seg[data-key]").forEach((seg) => seg.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    draft[seg.dataset.key] = b.dataset.v; paintSheet();
+  }));
+  // press and hold a stepper to repeat
+  document.querySelectorAll("[data-step]").forEach((b) => {
+    let rep = 0;
+    const step = () => {
+      const m = Math.floor(draft.dur / 60), s = draft.dur % 60, d = +b.dataset.d;
+      if (b.dataset.step === "m") draft.dur = Math.min(599, Math.max(0, m + d)) * 60 + s;
+      else draft.dur = m * 60 + ((s + d + 60) % 60);
+      if (draft.dur < 5) draft.dur = 5;
+      paintSheet();
+    };
+    const stop = () => clearInterval(rep);
+    b.addEventListener("pointerdown", (e) => { e.preventDefault(); step(); stop(); rep = setTimeout(() => { rep = setInterval(step, 110); }, 400); });
+    ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => b.addEventListener(ev, () => { clearTimeout(rep); stop(); }));
+  });
+
+  function openSheet() {
+    draft = { ...cfg };
+    paintSheet();
+    body.classList.add("sheet-open"); clearTimeout(hideTimer); body.dataset.ui = "shown";
+  }
+  function closeSheet() { body.classList.remove("sheet-open"); bump(); }
+  function applyLook() {
+    for (const k of ["bg", "logo", "bar", "warn", "mode"]) body.dataset[k] = cfg[k];
+    lastShown = ""; render();
+  }
+  $("#open").addEventListener("click", openSheet);
+  $("#close").addEventListener("click", closeSheet);
+  $("#scrim").addEventListener("click", closeSheet);
+  $("#apply").addEventListener("click", () => {
+    const timingChanged = draft.mode !== cfg.mode || draft.dur !== cfg.dur;
+    cfg = { ...draft }; save(); applyLook();
+    if (timingChanged) reset();
+    closeSheet();
+  });
+
+  // ---- keyboard (for testing on a laptop) ----
+  addEventListener("keydown", (e) => {
+    if (e.repeat) return;
+    const open = body.classList.contains("sheet-open");
+    if (e.key === "Escape" && open) return closeSheet();
+    if (open) return;
+    if (e.code === "Space") { e.preventDefault(); running ? pause() : start(); showUI(); }
+    else if (e.key === "r" || e.key === "R") { reset(); showUI(); }
+    else if (e.key === "s" || e.key === "S") openSheet();
+    else if ((e.key === "f" || e.key === "F") && canFs) toggleFs();
+  });
+
+  // ---- boot ----
+  applyLook(); setState("idle");
+  document.fonts && document.fonts.ready.then(() => { lastShown = ""; render(); });
+  loop(); bump();
+  setTimeout(() => { $("#hint").style.display = "none"; }, 6000);
+
+  if ("serviceWorker" in navigator) {
+    addEventListener("load", () => navigator.serviceWorker.register("/anawdameery/sw.js", { scope: "/anawdameery/" }).catch(() => {}));
+  }
+})();
+</script>
+</body>
+</html>
