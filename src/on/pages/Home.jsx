@@ -154,9 +154,14 @@ function DirectorHome({ profile }) {
             <Label>{tr("Director access")}</Label>
             <p className="mb-0 mt-1 font-display text-h3 font-semibold text-text-primary">{tr("You're approved. Search everyone, open contacts.")}</p>
           </div>
-          <Button to="/explore">
-            <Icon name="search" size={16} /> {tr("Search talent")}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button to="/boards">
+              <Icon name="filter" size={16} /> {tr("Brief boards")}
+            </Button>
+            <Button variant="secondary" to="/explore">
+              <Icon name="search" size={16} /> {tr("Search talent")}
+            </Button>
+          </div>
         </div>
       ) : profile.director_status === "rejected" ? (
         <Notice>{tr("We couldn't approve this account. Reply to studio@aboustate.tech if you think that's a mistake.")}</Notice>
@@ -197,9 +202,11 @@ function CastingsCard({ profile }) {
             ? counts.requests === 1
               ? tr("A casting director asked you for a self-tape.")
               : tr("{n} casting directors asked you for a self-tape.", { n: counts.requests })
-            : counts.calls === 1
-              ? tr("1 open call right now.")
-              : tr("{n} open calls right now.", { n: counts.calls })}
+            : counts.calls === 0
+              ? tr("New roles from casting directors show up here.")
+              : counts.calls === 1
+                ? tr("1 open call right now.")
+                : tr("{n} open calls right now.", { n: counts.calls })}
         </p>
       </div>
       <Button to={counts.requests ? "/calls?tab=requests" : "/calls"}>

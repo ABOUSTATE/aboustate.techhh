@@ -71,7 +71,7 @@ export function ProfilePage() {
     t?.build && ["Build", opt(t.build)],
     t?.hair_color && ["Hair", opt(t.hair_color)],
     t?.eye_color && ["Eyes", opt(t.eye_color)],
-    t?.nationality && ["Nationality", t.nationality],
+    t?.nationality && ["Nationality", opt(t.nationality)],
     t?.experience_level && ["Experience", opt(t.experience_level)],
   ].filter(Boolean);
 

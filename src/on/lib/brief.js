@@ -7,6 +7,7 @@
 
 import { ACCENTS, BUILDS, CATEGORIES, CITIES, LANGUAGES, SKILLS } from "./options.js";
 import { AR_OPT } from "./ar.js";
+import { tr } from "./i18n.jsx";
 
 // ---- PDF to text (pdf.js, loaded only when a PDF is opened) ----------
 export async function pdfToText(file) {
@@ -264,7 +265,7 @@ export function readBrief(text) {
     picks: [],
   }));
   if (roles.length) return roles;
-  return [{ id: crypto.randomUUID(), name: "Main role", notes: tidy(text).slice(0, 600), traits: readTraits(text), picks: [] }];
+  return [{ id: crypto.randomUUID(), name: tr("Main role"), notes: tidy(text).slice(0, 600), traits: readTraits(text), picks: [] }];
 }
 
 export function briefTitle(text, fallback) {

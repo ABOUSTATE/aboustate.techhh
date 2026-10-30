@@ -527,7 +527,9 @@ async function handleAdmin(supabase, req, body, res) {
       return;
     }
     await supabase.from("on_talent").insert({ profile_id: id });
-    await supabase.from("on_talent_private").insert({ profile_id: id });
+    // Managed talent are booked through the studio until they take over
+    // their profile, so directors reach the studio, not the placeholder login.
+    await supabase.from("on_talent_private").upsert({ profile_id: id, contact_email: "studio@aboustate.tech" });
     res.status(200).json({ id, handle, email });
     return;
   }

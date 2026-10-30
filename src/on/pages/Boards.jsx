@@ -390,7 +390,8 @@ function RoleColumn({ role, talents, requests, votes, call, onAskTapes, onPostCa
               const req = requests.find((r) => r.talent === pid);
               return (
                 <li key={pid}>
-                  <TalentRow p={byId[pid]} picked onPick={() => pick(pid)} right={<PickStatus req={req} votes={votes.filter((v) => v.talent === pid)} />} />
+                  <TalentRow p={byId[pid]} picked onPick={() => pick(pid)} />
+                  <PickStatus req={req} votes={votes.filter((v) => v.talent === pid)} />
                   {req?.status === "submitted" && (
                     <div className="mt-1 flex flex-wrap items-center gap-1 ps-[40px]">
                       <Button size="sm" variant="dark" onClick={() => onPlay({ url: req.tape_url, title: byId[pid].display_name })}>
@@ -546,8 +547,9 @@ function TalentRow({ p, right, picked, onPick }) {
 function PickStatus({ req, votes }) {
   const yes = votes.filter((v) => v.vote === "yes").length;
   const label = !req ? null : req.status === "submitted" ? "Tape in" : req.status === "declined" ? "Declined" : "Tape asked";
+  if (!label && !votes.length) return null;
   return (
-    <span className="flex shrink-0 items-center gap-1">
+    <span className="mt-1 flex flex-wrap items-center gap-2 ps-[40px]">
       {votes.length > 0 && (
         <span className="font-mono text-[10px] text-text-accent" title={votes.map((v) => `${v.voter}: ${tr(v.vote ? v.vote[0].toUpperCase() + v.vote.slice(1) : "No vote")}${v.comment ? ` · ${v.comment}` : ""}`).join("\n")}>
           {tr("Client {n} yes", { n: yes })}

@@ -451,8 +451,6 @@ export const AR = {
   "Change email": "غيّر الإيميل",
   "Update password": "غيّر الباسورد",
   "Delete my ON profile": "امسح البروفايل بتاعي",
-  "Castings, shortlists and self-tape requests are being built now and will land here first.":
-    "الكاستينجات والشورت ليستس وطلبات السيلف تيب بنبنيهم دلوقتي، وأول ما يخلصوا هيظهروا هنا.",
   "Your account is under review. We'll open Studio as soon as you're approved.": "حسابك تحت المراجعة. هنفتحلك الاستوديو أول ما نوافق.",
   talent: "مواهب",
   directors: "دايركتورز",
@@ -540,6 +538,7 @@ export const AR = {
   "Hide brief": "اخفي البريف",
   "Show brief": "اعرض البريف",
   "New role": "دور جديد",
+  "Main role": "الدور الأساسي",
   "Add role": "ضيف دور",
   "Delete this board?": "تمسح البورد ده؟",
   "There's no public talent to match yet. The board fills in as profiles join.": "لسه مفيش مواهب عامة نطابقها. البورد هيتملا أول ما البروفايلات تنضم.",
@@ -585,7 +584,7 @@ export const AR = {
   "Questions: studio@aboustate.tech": "أي سؤال: studio@aboustate.tech",
   // Castings: open calls, self-tape requests, client shortlists, comp card
   Castings: "الكاستينجات",
-  "Fits you {n}%": "مناسب لك {n}%",
+  "Fits you {n}%": "مناسب لك ⁦{n}%⁩",
   "Self-tape needed": "محتاج سيلف تيب",
   Closed: "مقفول",
   "1 applicant": "متقدم واحد",
@@ -749,6 +748,7 @@ export const AR = {
   Weight: "الوزن",
   Pay: "الأجر",
   "Shoot dates": "مواعيد التصوير",
+  "New roles from casting directors show up here.": "الأدوار الجديدة من الكاستينج دايركتورز بتظهر هنا.",
 };
 
 // Stored values (English in the database) and how they read in Arabic.
@@ -861,4 +861,20 @@ export const AR_OPT = {
   "Music video": "فيديو كليب",
   Campaign: "حملة إعلانية",
   Voice: "فويس أوفر",
+  // Nationalities (free text; the common ones read in Arabic)
+  Egyptian: "مصري",
+  Sudanese: "سوداني",
+  Syrian: "سوري",
+  Lebanese: "لبناني",
+  Palestinian: "فلسطيني",
+  Jordanian: "أردني",
+  Saudi: "سعودي",
+  Emirati: "إماراتي",
+  Kuwaiti: "كويتي",
+  Iraqi: "عراقي",
+  Libyan: "ليبي",
+  Tunisian: "تونسي",
+  Algerian: "جزائري",
+  Yemeni: "يمني",
+  Ukrainian: "أوكراني",
 };

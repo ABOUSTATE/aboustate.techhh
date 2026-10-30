@@ -327,7 +327,7 @@ function ImagePicker({ p, field, setProfile, round }) {
               removeIfUnused(old);
             }}
           >
-            Remove
+            {tr("Remove")}
           </Button>
         )}
       </div>
@@ -670,7 +670,7 @@ function AddCustom({ onAdd }) {
         onChange={(e) => setV(e.target.value)}
       />
       <Button type="submit" variant="secondary" size="sm">
-        Add
+        {tr("Add")}
       </Button>
     </form>
   );
@@ -696,7 +696,7 @@ function Credits({ t, setTalent }) {
       {credits.length < 30 && (
         <div>
           <Button variant="secondary" size="sm" onClick={() => setTalent("credits", [...credits, { title: "", role: "", type: "", year: "" }])}>
-            <Icon name="plus" size={16} /> Add credit
+            <Icon name="plus" size={16} /> {tr("Add credit")}
           </Button>
         </div>
       )}

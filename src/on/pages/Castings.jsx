@@ -112,7 +112,7 @@ function CallCard({ call, pct, right }) {
             <bdi>{call.title}</bdi>
           </div>
           <div className="truncate font-body text-small text-text-secondary">
-            <bdi>{[call.project, call.company].filter(Boolean).join(" · ")}</bdi>
+            <Parts items={[call.project, call.company]} />
           </div>
         </div>
         {pct != null && pct > 0 && <Badge tone={pct >= 75 ? "accent" : "neutral"}>{tr("Fits you {n}%", { n: pct })}</Badge>}
@@ -230,7 +230,7 @@ function RequestCard({ r, forName, onDone }) {
             <bdi>{r.role_name}</bdi>
           </div>
           <div className="font-body text-small text-text-secondary">
-            <bdi>{[r.project, r.from_company || r.from_name].filter(Boolean).join(" · ")}</bdi>
+            <Parts items={[r.project, r.from_company || r.from_name]} />
             {forName && (
               <>
                 {" · "}
@@ -348,7 +348,7 @@ export function CallPage() {
             <bdi>{call.title}</bdi>
           </h1>
           <div className="mt-1 font-body text-body text-text-secondary">
-            <bdi>{[call.project, call.company].filter(Boolean).join(" · ")}</bdi>
+            <Parts items={[call.project, call.company]} />
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge tone={open ? "accent" : "outline"}>{open ? deadlineText(call.deadline) : tr("Closed")}</Badge>
@@ -689,4 +689,14 @@ function Applicants({ call }) {
       {playing && <TapePlayer url={playing.url} title={playing.title} onClose={() => setPlaying(null)} />}
     </section>
   );
+}
+
+// Names in mixed languages, each kept in its own direction.
+function Parts({ items }) {
+  return items.filter(Boolean).map((x, i) => (
+    <span key={i}>
+      {i > 0 && " · "}
+      <bdi>{x}</bdi>
+    </span>
+  ));
 }
