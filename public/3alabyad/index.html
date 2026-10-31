@@ -125,6 +125,13 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 .btn.ghost{background:var(--panel);color:var(--cream)}
 @keyframes flicker{0%,18%,22%,62%,64.5%,100%{opacity:1}20%,63.5%{opacity:.5}}
 @media (prefers-reduced-motion:reduce){.neon{animation:none}}
+/* opening credit: "made for" + the forfun logo, on the logo's own black */
+.splash{position:fixed;inset:0;z-index:50;background:#0b0b0b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;cursor:pointer;transition:opacity .6s ease}
+.splash.out{opacity:0;pointer-events:none}
+.splash-made{margin:0;font-family:var(--body);font-size:13px;letter-spacing:.4em;color:#8f8f8f;opacity:0;animation:splashIn .8s .2s ease-out forwards}
+.splash img{width:min(420px,72vw);height:auto;opacity:0;animation:splashIn 1s .55s ease-out forwards}
+@keyframes splashIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.splash-made,.splash img{animation:none;opacity:1}}
 @keyframes rise{0%{opacity:0;transform:translate(-50%,-70%)}12%{opacity:1;transform:translate(-50%,-100%)}78%{opacity:1}100%{opacity:0;transform:translate(-50%,-170%)}}
 @media (prefers-reduced-motion:reduce){.quip{animation:fade 1.7s linear forwards}@keyframes fade{0%,80%{opacity:1}100%{opacity:0}}}
 .clock,.best,.icon-btn{white-space:nowrap}
@@ -136,6 +143,11 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 </style>
 </head>
 <body>
+<div class="splash" id="splash">
+  <p class="splash-made" dir="ltr">made for</p>
+  <img src="forfun.png" alt="forfun." width="632" height="176">
+</div>
+
 <header>
   <div class="brand"><b>عالابيض</b><span>القعدة</span></div>
   <div class="hud">
@@ -1146,7 +1158,12 @@ portrait(document.getElementById('giftPortrait'),'amr');
 /* boot */
 reset();showBest();buildBg();fit();
 document.getElementById('menuBest').textContent=best?'أحسن قعدة: '+dur(best):'لسه محدش قعد';
-document.getElementById('giftGo').focus();
+// the credit shows first; it fades on its own or on any tap or key
+const splash=document.getElementById('splash');
+function endSplash(){if(splash.classList.contains('out'))return;splash.classList.add('out');setTimeout(()=>{splash.hidden=true;},650);document.getElementById('giftGo').focus();}
+splash.addEventListener('click',endSplash);
+document.addEventListener('keydown',endSplash,{once:true});
+setTimeout(endSplash,3400);
 
 const signEl=document.querySelector('.sign');
 let lastT=performance.now(),clock=0,shown=-1;
