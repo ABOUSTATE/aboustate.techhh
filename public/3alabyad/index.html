@@ -442,10 +442,12 @@ function table(t){
     rects([[cx-2,67,4,20]],0,0,'#141617',P.k);
     rects([[cx-10,87,20,2]],0,0,'#141617',P.k);
   }
-  // tea glasses + steam
+  // tea for everyone, ginger with lemon for Shohdy, all steaming
   for(const f of G.friends){
     const gx=f.seat+7;
-    rects([[gx,58,3,4]],0,0,'#c4692a',P.k);R(gx,58,3,1,'#f0dcc0');R(gx-1,62,5,1,'#e8e8ee');
+    if(f.id==='shohdy'){rects([[gx,57,3,5]],0,0,'#e3b54a',P.k);R(gx,57,3,1,'#f6e7b0');R(gx+1,60,1,1,'#c98a2a');R(gx+2,55,2,2,'#f4e04d');R(gx+3,56,1,1,'#b8a22e');}
+    else{rects([[gx,58,3,4]],0,0,'#c4692a',P.k);R(gx,58,3,1,'#f0dcc0');}
+    R(gx-1,62,5,1,'#e8e8ee');
     for(let i=0;i<2;i++){const s=(t*5+i*3+gx)%6;R(gx+1+i,56-s,1,1,`rgba(255,255,255,${0.45-s*0.07})`);}
   }
   // domino board between Fady and Ezz
@@ -506,7 +508,7 @@ const TAP={
   fady:['اقفل يا فادي','قولها إنك في اجتماع','إنت اللي بتقرر… صح؟','ابعتلها "مشغول" وخلاص','فادي، إحنا بنصوّر','حطّ التليفون على الصامت','قولها إنك في لوكيشن','خلّي الخناقة بعد التصوير'],
   fadyVendor:['حطّ الفلوس في جيبك','ده بيضحك عليك يا فادي','إنت مش محتاج ده','مكنة تانية؟ ما عندك تلاتة','رجّع المحفظة يا فادي'],
   hady:['قولها خمس دقايق','قولها إنك مع الشباب','خمس دقايق بس يا هادي','سلّملي عليها وتعالى','هادي، المشهد محتاجك','قولها إن التصوير هيخلص بدري'],
-  shohdy:['كفاية يا شهدي','اقطع!','مش وقته يا سبيلبرج','الفيلم ده في دماغك بس','شهدي، أنا المخرج هنا','احكيه في البريك','مين هيموّل الفيلم ده؟','ارجع مكانك يا نجم']
+  shohdy:['كفاية يا شهدي','اقطع!','مش وقته يا سبيلبرج','الفيلم ده في دماغك بس','شهدي، أنا المخرج هنا','احكيه في البريك','مين هيموّل الفيلم ده؟','ارجع مكانك يا نجم','اشرب الجنزبيل وإنت ساكت']
 };
 // Amr reacting to what happens around the table
 const AMR={
@@ -567,7 +569,11 @@ const MINI_INFO={
   timing:{title:'اقطع في الوقت الصح',help:'دوس لما المؤشر ييجي على الأخضر، ٣ مرات'},
   choice:{title:'قول الجملة الصح',help:'اختار الجملة اللي تهدّي الدنيا'},
   fists:{title:'امسك الإيد',help:'دوس على كل إيد قبل ما تنزل'},
-  tea:{title:'الشاي طاير',help:'امسك كوبايات الشاي قبل ما تقع'}
+  tea:{title:'الشاي طاير',help:'امسك كوبايات الشاي قبل ما تقع'},
+  simon:{title:'افتكر الترتيب',help:'اتفرّج على الترتيب، وبعدين دوس عليه زي ما هو'},
+  redlight:{title:'استنى دورك',help:'دوس وهو أخضر بس… الأحمر بيبوّظ'},
+  domino:{title:'كمّل الدومينو',help:'اختار الحجر اللي فيه نفس الرقم، ٣ مرات'},
+  bubbles:{title:'فرقع الشتيمة',help:'دوس على الكلام الأحمر بس، وسيب الأخضر'}
 };
 function verdict(m){
   if(m<20)return'دي مش قعدة. دي وقفة.';
@@ -678,7 +684,7 @@ let G;
 const fr=id=>G.friends.find(f=>f.id===id);
 function reset(){
   G={t:0,running:false,paused:false,over:false,slow:0,next:1.4,farT:7,venT:28,shaT:20,saves:0,last:null,
-    walkers:[],shaaban:null,shaabanSat:false,mini:null,fightT:rand(18,28),sgWait:0,fightsWon:0,outro:null,ambT:2,newBest:false,haze:0,hazeDone:false,shisha:0,puffs:[],
+    walkers:[],shaaban:null,shaabanSat:false,mini:null,fightT:MINI_TYPES.includes(TEST_MINI)?4:rand(18,28),sgWait:0,fightsWon:0,outro:null,ambT:2,newBest:false,haze:0,hazeDone:false,shisha:0,puffs:[],
     friends:FR.map(d=>({...d,state:'seated',kind:null,p:0,fill:4,x:d.seat,timer:0,cool:1+Math.random()*2,blink:Math.random()*4,seatTaken:false}))};
 }
 const gap=()=>Math.max(0.85,2.6-G.t*0.012)*rand(0.7,1.3);
@@ -803,9 +809,12 @@ function smoke(t){
 }
 
 /* ---------- fights and their mini-games ---------- */
-const MINI_TYPES=['mash','timing','choice','fists','tea'];
+const MINI_TYPES=['mash','timing','choice','fists','tea','simon','redlight','domino','bubbles'];
 let miniBag=[],lastMini=null;
+// testing aid: ?mini=simon (or any type) makes every fight that mini-game, and the first fight comes quickly
+const TEST_MINI=new URLSearchParams(location.search).get('mini');
 function nextMini(){ // every type once before any repeats, never the same twice in a row
+  if(MINI_TYPES.includes(TEST_MINI))return TEST_MINI;
   if(!miniBag.length){miniBag=MINI_TYPES.slice().sort(()=>Math.random()-.5);if(miniBag[0]===lastMini)miniBag.push(miniBag.shift());}
   return lastMini=miniBag.shift();
 }
@@ -814,7 +823,8 @@ const inFight=id=>!!(G.mini&&G.mini.phase!=='out'&&(FIGHT[G.mini.kind].a===id||F
 function checkFights(dt){
   G.fightT-=dt;
   const sh=fr('shohdy'),hd=fr('hady');
-  if(G.fightT<=0&&sh.state==='seated'&&hd.state==='seated'&&!sh.seatTaken&&!hd.seatTaken){startFight('sh');return;}
+  const ready=f=>f.state==='seated'||(TEST_MINI&&f.state==='distracted');
+  if(G.fightT<=0&&ready(sh)&&ready(hd)&&!sh.seatTaken&&!hd.seatTaken){startFight('sh');return;}
   // Shaaban sitting right next to Ezz starts one too
   const tk=G.friends.find(f=>f.seatTaken),ez=fr('ezz');
   if(tk&&Math.abs(tk.seat-ez.seat)===32&&(ez.state==='seated'||ez.state==='distracted')){G.sgWait+=dt;if(G.sgWait>1.3){G.sgWait=0;startFight('sg');}}
@@ -837,12 +847,16 @@ function updMini(dt){
   else if(m.phase==='out'&&m.pt>0.6)endFight(m);
 }
 function initMini(m){
-  m.total=m.left={mash:6,timing:10,choice:6.5,fists:10,tea:12}[m.type];
+  m.total=m.left={mash:6,timing:10,choice:6.5,fists:10,tea:12,simon:7,redlight:9,domino:9,bubbles:10}[m.type];
   m.sparks=[];m.ok=0;m.miss=0;
   if(m.type==='mash')m.v=0;
   if(m.type==='timing'){m.mx=0;m.dir=1;m.sp=rand(70,95);newZone(m);}
   if(m.type==='fists'||m.type==='tea'){m.items=[];m.spawn=.2;}
   if(m.type==='choice')showChoice(m,pick(CHOICES[m.kind]));
+  if(m.type==='simon'){m.seq=[];const n=Math.random()<.5?3:4;for(let i=0;i<n;i++)m.seq.push(Math.random()*4|0);m.st=-.4;m.showing=true;m.inIdx=0;m.lit=-1;m.flash=0;m.beep=-1;}
+  if(m.type==='redlight'){m.v=0;m.green=true;m.lt=rand(.9,1.6);}
+  if(m.type==='domino')newDomino(m);
+  if(m.type==='bubbles'){m.items=[];m.spawn=.2;}
 }
 function newZone(m){m.zw=Math.round(rand(14,22));m.zx=Math.round(rand(0,120-m.zw));}
 function playMini(m,dt){
@@ -864,7 +878,31 @@ function playMini(m,dt){
     m.items=m.items.filter(i=>!i.dead);
     if(m.miss>=3)return finishMini(m,false);
   }
+  else if(m.type==='simon'){
+    m.flash-=dt;
+    if(m.showing){
+      m.left+=dt; // the clock only runs once it's your turn
+      m.st+=dt;const slot=.7,i=Math.floor(m.st/slot);
+      if(m.st<0)m.lit=-1;
+      else if(i>=m.seq.length){m.showing=false;m.lit=-1;document.getElementById('miniHelp').textContent='دورك… دوس بنفس الترتيب';}
+      else{m.lit=(m.st-i*slot)<.5?m.seq[i]:-1;if(m.lit>=0&&i!==m.beep){m.beep=i;tone(SIMON_NOTES[m.seq[i]],.25,'triangle',.06);}}
+    }
+  }
+  else if(m.type==='redlight'){m.lt-=dt;if(m.lt<=0){m.green=!m.green;m.lt=m.green?rand(.9,1.6):rand(.6,1.2);}}
+  else if(m.type==='bubbles'){
+    m.spawn-=dt;
+    if(m.spawn<=0&&m.items.length<4){m.items.push({x:rand(18,142),y:rand(22,82),good:Math.random()<.28,life:1.4,max:1.4});m.spawn=rand(.45,.75);}
+    for(const it of m.items){it.life-=dt;if(it.life<=0){it.dead=true;if(!it.good){m.miss++;sfx.miss();}}}
+    m.items=m.items.filter(i=>!i.dead);
+    if(m.miss>=3)return finishMini(m,false);
+  }
   if(m.left<=0)finishMini(m,false);
+}
+const SIMON_X=[12,48,84,120],SIMON_NOTES=[523,659,784,1047],DOM_X=[50,82,114];
+function newDomino(m){
+  m.need=1+(Math.random()*6|0);
+  const no=()=>{let n;do{n=1+(Math.random()*6|0);}while(n===m.need);return n;};
+  m.opts=[[m.need,no()],[no(),no()],[no(),no()]].map(t=>Math.random()<.5?t:[t[1],t[0]]).sort(()=>Math.random()-.5);
 }
 function miniTap(lx,ly){
   const m=G.mini;if(m.phase!=='play')return;
@@ -880,6 +918,30 @@ function miniTap(lx,ly){
     m.items=m.items.filter(i=>i!==hitIt);m.ok++;m.sparks.push({x:hitIt.x,y:hitIt.y,l:.3});
     m.type==='tea'?sfx.clink():sfx.block();
     if(m.ok>=6)finishMini(m,true);
+  }
+  else if(m.type==='simon'){
+    if(m.showing)return;
+    const k=SIMON_X.findIndex(x=>hit(lx,ly,x,96,26,18));if(k<0)return;
+    m.lit=k;m.flash=.2;tone(SIMON_NOTES[k],.2,'triangle',.06);
+    if(k===m.seq[m.inIdx]){m.inIdx++;if(m.inIdx>=m.seq.length)finishMini(m,true);}
+    else finishMini(m,false);
+  }
+  else if(m.type==='redlight'){
+    if(m.green){m.v=Math.min(1,m.v+.1);m.sparks.push({x:lx,y:ly,l:.25});tone(500+m.v*500,.03,'square',.03);if(m.v>=1)finishMini(m,true);}
+    else{m.miss++;m.v=Math.max(0,m.v-.15);sfx.miss();if(m.miss>=3)finishMini(m,false);}
+  }
+  else if(m.type==='domino'){
+    const k=[0,1,2].find(i=>hit(lx,ly,DOM_X[i]-1,97,26,14));if(k===undefined)return;
+    if(m.opts[k].includes(m.need)){m.ok++;sfx.domino();if(m.ok>=3)finishMini(m,true);else newDomino(m);}
+    else{sfx.miss();finishMini(m,false);}
+  }
+  else if(m.type==='bubbles'){
+    let hitIt=null,bd=11;
+    for(const it of m.items){const d=Math.hypot(it.x-lx,it.y-ly);if(d<bd){bd=d;hitIt=it;}}
+    if(!hitIt)return;
+    m.items=m.items.filter(i=>i!==hitIt);
+    if(hitIt.good){m.miss++;sfx.miss();if(m.miss>=3)finishMini(m,false);}
+    else{m.ok++;m.sparks.push({x:hitIt.x,y:hitIt.y,l:.3});sfx.block();if(m.ok>=6)finishMini(m,true);}
   }
 }
 function finishMini(m,win){
@@ -924,6 +986,16 @@ function showChoice(m,c){
     box.appendChild(b);
   });
 }
+function simonIcon(i,cx,cy){
+  if(i===0){rects([[cx-2,cy-3,4,6]],0,0,'#c4692a',P.k);R(cx-2,cy-3,4,1,'#f0dcc0');}
+  else if(i===1){rects([[cx-2,cy-4,5,8]],0,0,'#222',P.k);R(cx-1,cy-3,3,5,'#7fd3ff');}
+  else if(i===2){R(cx-5,cy-1,10,5,P.k);R(cx-5,cy-4,10,2,'#ffffff');for(const a of[-4,-1,2])R(cx+a,cy-4,1,2,P.k);}
+  else{rects([[cx-5,cy-3,10,6]],0,0,'#f4f0e6',P.k);R(cx,cy-3,1,6,P.k);R(cx-3,cy-1,1,1,P.k);R(cx+2,cy-2,1,1,P.k);R(cx+3,cy+1,1,1,P.k);}
+}
+// pips on one 12x12 half of a domino tile
+const PIP={c:[6,6],tl:[3,3],br:[9,9],tr:[9,3],bl:[3,9],ml:[3,6],mr:[9,6]};
+const PIPS={1:['c'],2:['tl','br'],3:['tl','c','br'],4:['tl','tr','bl','br'],5:['tl','tr','c','bl','br'],6:['tl','tr','ml','mr','bl','br']};
+function dominoPips(n,x,y){for(const k of PIPS[n]){const[a,b]=PIP[k];R(x+a-1,y+b-1,2,2,P.k);}}
 function fist(x,y){rects([[-3,-2,7,5]],x,y,'#d6a07c',P.k);R(x-2,y-2,1,1,'#a87652');R(x,y-2,1,1,'#a87652');R(x+2,y-2,1,1,'#a87652');R(x-3,y+3,7,1,'#2a2a2e');}
 function flyingTea(x,y){rects([[-1,-2,3,4]],x,y,'#c4692a',P.k);R(x-1,y-2,3,1,'#f0dcc0');}
 function pips(ok,need,miss){
@@ -938,6 +1010,31 @@ function drawMini(){
   if(m.type==='timing'){rects([[20,99,120,6]],0,0,'#1b2423',P.k);R(20+m.zx,99,m.zw,6,'#5fd38a');R(19+Math.round(m.mx),96,2,12,'#ffffff');pips(m.ok,3,m.miss);}
   if(m.type==='fists'){for(const it of m.items){fist(it.x,it.y);R(it.x-4,it.y+5,Math.max(1,Math.round(9*it.life/it.max)),1,'#e0533f');}pips(m.ok,6,m.miss);}
   if(m.type==='tea'){for(const it of m.items)flyingTea(it.x,it.y);pips(m.ok,6,m.miss);}
+  if(m.type==='simon'){
+    for(let i=0;i<4;i++){const x=SIMON_X[i],lit=m.lit===i&&(m.showing||m.flash>0);rects([[x,96,26,18]],0,0,lit?'#86f7c4':'#1b2423',P.k);simonIcon(i,x+13,105);}
+    for(let i=0;i<m.seq.length;i++)R(80-m.seq.length*3+i*6,90,4,2,i<m.inIdx?'#86f7c4':'#2c3a38');
+  }
+  if(m.type==='redlight'){
+    if(m.green){g.globalAlpha=.25;R(6,93,20,20,'#5fd38a');g.globalAlpha=1;}
+    rects([[10,97,12,12]],0,0,m.green?'#5fd38a':'#e0533f',P.k);R(12,99,3,2,'#ffffff');
+    rects([[30,100,110,6]],0,0,'#1b2423',P.k);R(30,100,Math.round(110*m.v),6,'#86f7c4');
+    for(let i=0;i<3;i++)R(W-26+i*6,110,4,4,i<m.miss?'#e0533f':'#2c3a38');
+  }
+  if(m.type==='domino'){
+    rects([[8,98,24,12]],0,0,'#f4f0e6',P.k);R(20,98,1,12,P.k);R(13,102,2,4,'#9aa09d');dominoPips(m.need,20,98);
+    for(let i=0;i<3;i++){const x=DOM_X[i];rects([[x,98,24,12]],0,0,'#f4f0e6',P.k);R(x+12,98,1,12,P.k);dominoPips(m.opts[i][0],x,98);dominoPips(m.opts[i][1],x+12,98);}
+    for(let i=0;i<3;i++)R(8+i*6,113,4,3,i<m.ok?'#86f7c4':'#2c3a38');
+  }
+  if(m.type==='bubbles'){
+    for(const it of m.items){
+      const c=it.good?'#5fd38a':'#e0533f';
+      rects([[it.x-6,it.y-4,12,8]],0,0,c,P.k);R(it.x-1,it.y+4,2,2,c);
+      if(it.good)HEART.forEach(([a,b])=>R(it.x-2+a,it.y-2+b,1,1,'#ffffff'));
+      else{R(it.x-4,it.y-2,1,3,'#fff');R(it.x-2,it.y-2,2,1,'#fff');R(it.x-2,it.y,2,1,'#fff');R(it.x+1,it.y-2,1,3,'#fff');R(it.x+3,it.y-2,1,2,'#fff');R(it.x+3,it.y+1,1,1,'#fff');}
+      R(it.x-5,it.y+7,Math.max(1,Math.round(10*it.life/it.max)),1,'#ffffff');
+    }
+    pips(m.ok,6,m.miss);
+  }
   for(const s of m.sparks){R(s.x-1,s.y-3,2,2,'#fff');R(s.x-3,s.y-1,2,2,'#fff');R(s.x+1,s.y-1,2,2,'#fff');R(s.x-1,s.y+1,2,2,'#fff');}
 }
 
