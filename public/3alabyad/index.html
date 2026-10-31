@@ -82,7 +82,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 .quip{position:absolute;transform:translate(-50%,-100%);font-family:var(--display);font-size:max(12px,calc(var(--s,3)*4.4px));white-space:nowrap;pointer-events:none;color:var(--cream);
   text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000,2px 2px #000,-2px 2px #000,2px -2px #000,-2px -2px #000;animation:rise 1.7s ease-out forwards;z-index:2}
 .quip.them{color:var(--tea)}.quip.npc{color:var(--mint)}.quip.bad{color:var(--chili)}
-.sign{position:absolute;left:50%;top:15.4%;transform:translate(-50%,-50%);font-family:var(--display);font-size:calc(var(--s,4)*7.5px);line-height:1;color:var(--neon);text-shadow:0 0 calc(var(--s,4)*1.5px) rgba(77,255,166,.75);pointer-events:none}
+.sign{position:absolute;left:50%;top:15.4%;transform:translate(-50%,-50%);font-family:var(--display);font-size:calc(var(--s,4)*7.5px*var(--z,1));line-height:1;color:var(--neon);text-shadow:0 0 calc(var(--s,4)*1.5px) rgba(77,255,166,.75);pointer-events:none}
 .tea-flag{position:absolute;top:8px;inset-inline-start:8px;font-family:var(--display);font-size:16px;color:#1a1208;background:var(--tea);border:2px solid #000;padding:0 8px 2px}
 .mini{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:3% 4% 0;box-sizing:border-box;text-align:center;z-index:3}
 .mini-tag{background:var(--chili);color:#fff;font-family:var(--display);font-size:max(12px,calc(var(--s,3)*4px));padding:0 10px 2px;border:2px solid #000}
@@ -92,6 +92,26 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 .mini-opts button{font:inherit;font-weight:700;font-size:max(13px,calc(var(--s,3)*3.8px));background:var(--panel);color:var(--cream);border:2px solid #000;box-shadow:3px 3px 0 #000;padding:4px 10px;cursor:pointer}
 .mini-opts button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
 .mini-opts button:focus-visible{outline:3px solid var(--cream);outline-offset:2px}
+/* main menu */
+.menu{background:radial-gradient(ellipse at center,rgba(6,12,12,.2) 0%,rgba(6,12,12,.9) 78%)}
+.menu-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.6vw,12px);text-align:center}
+.menu-logo{display:flex;flex-direction:column;align-items:center;line-height:.9}
+.neon{font-family:var(--display);font-size:clamp(52px,11vw,100px);color:#effff7;text-shadow:0 0 4px #86f7c4,0 0 14px #4dffa6,0 0 34px #2bd88a,4px 4px 0 #000;animation:flicker 7s infinite}
+.menu-sub{font-family:var(--display);font-size:clamp(18px,3.4vw,28px);color:var(--neon);border:2px solid var(--neon);box-shadow:0 0 10px rgba(77,255,166,.5),inset 0 0 8px rgba(77,255,166,.35);padding:0 14px 4px;margin-top:8px}
+.menu-tag{margin:0;color:var(--muted);font-size:clamp(12px,1.8vw,14px)}
+.menu-list{display:flex;flex-direction:column;gap:10px;width:min(260px,78vw)}
+.slate{position:relative;font-family:var(--display);font-size:clamp(18px,2.6vw,22px);line-height:1.1;background:#121a19;color:var(--cream);border:3px solid #000;box-shadow:4px 4px 0 #000;padding:16px 18px 8px;cursor:pointer}
+.slate::before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:repeating-linear-gradient(-45deg,var(--cream) 0 8px,#111 8px 16px);border-bottom:2px solid #000}
+.slate.primary{background:var(--neon);color:#0b1513}
+.slate:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 #000}
+.slate:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000}
+.slate:focus-visible{outline:3px solid var(--cream);outline-offset:3px}
+.menu-best{margin:0;font-size:13px;color:var(--tea)}
+.gift h2{font-family:var(--display);font-weight:400;font-size:clamp(28px,5vw,40px);line-height:1;margin:0;color:var(--neon);text-shadow:0 0 12px rgba(77,255,166,.6)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn.ghost{background:var(--panel);color:var(--cream)}
+@keyframes flicker{0%,18%,22%,62%,64.5%,100%{opacity:1}20%,63.5%{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.neon{animation:none}}
 @keyframes rise{0%{opacity:0;transform:translate(-50%,-70%)}12%{opacity:1;transform:translate(-50%,-100%)}78%{opacity:1}100%{opacity:0;transform:translate(-50%,-170%)}}
 @media (prefers-reduced-motion:reduce){.quip{animation:fade 1.7s linear forwards}@keyframes fade{0%,80%{opacity:1}100%{opacity:0}}}
 .clock,.best,.icon-btn{white-space:nowrap}
@@ -108,6 +128,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   <div class="hud">
     <div class="clock"><strong id="time">٠</strong><small>دقيقة قعدة</small></div>
     <span class="best" id="best"></span>
+    <button class="icon-btn" id="menuBtn" type="button">القائمة</button>
     <button class="icon-btn" id="pauseBtn" type="button" aria-label="وقف اللعبة">وقّف</button>
     <button class="icon-btn" id="muteBtn" type="button" aria-label="الصوت">صوت: آه</button>
   </div>
@@ -118,7 +139,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   <div id="stage">
     <canvas id="game" width="160" height="120" aria-label="ترابيزة القهوة"></canvas>
     <div class="sign" aria-hidden="true">عالابيض</div>
-    <div class="tea-flag" id="teaFlag" hidden>وقت الشاي</div>
+    <div class="tea-flag" id="teaFlag" hidden>الشاي وصل</div>
     <div class="mini" id="miniUI" hidden>
       <div class="mini-tag" id="miniTag"></div>
       <div class="mini-title" id="miniTitle"></div>
@@ -126,15 +147,29 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       <div class="mini-opts" id="miniOpts"></div>
     </div>
 
-    <div class="overlay" id="startOv">
+    <div class="overlay menu" id="menuOv">
+      <div class="menu-wrap">
+        <div class="menu-logo"><span class="neon">عالابيض</span><span class="menu-sub">القعدة</span></div>
+        <p class="menu-tag">لعبة عن شلة صحاب… وكرسي فاضي دايمًا</p>
+        <div class="menu-list">
+          <button class="slate primary" id="resumeMenuBtn" type="button" hidden>كمّل القعدة</button>
+          <button class="slate primary" id="startBtn" type="button">ابدأ القعدة</button>
+          <button class="slate" id="howBtn" type="button">طريقة اللعب</button>
+          <button class="slate" id="giftBtn" type="button">إهداء</button>
+        </div>
+        <p class="menu-best" id="menuBest"></p>
+      </div>
+    </div>
+
+    <div class="overlay" id="howOv" hidden>
       <div class="card">
-        <h1>عالابيض<em>القعدة</em></h1>
+        <h1 style="font-size:clamp(30px,6vw,44px)">طريقة اللعب</h1>
         <p>كل شوية واحد من صحابك هيقوم. دوس عليه قبل ما البار يتملى. لو الترابيزة فضيت، خسرت.</p>
         <div class="legend" id="legend"></div>
         <p>إنت عمرو قرملاوي، المخرج. كلامك بيظهر في الشات تحت.</p>
-        <p class="extras">عم فرج معاه شاي: دوس عليه والوقت يهدى. البياع رايح لفادي: ابعده. شعبان مش صاحبنا: متخليهوش يقعد في كرسي فاضي.</p>
+        <p class="extras">عم فرج معاه شاي: دوس عليه، الشاي بيهدّي الكل وبيرجّع اللي قام. البياع بيعدّي على فادي: ابعده بذوق. شعبان مش صاحبنا: متخليهوش يقعد في كرسي فاضي.</p>
         <p class="extras">كل شوية شهدي وهادي هيتخانقوا، ولو شعبان قعد جنب عز هيتخانقوا برضه. اكسب الميني جيم عشان تهدّيهم.</p>
-        <button class="btn" id="startBtn" type="button">ابدأ القعدة</button>
+        <button class="btn" id="howBack" type="button">رجوع</button>
       </div>
     </div>
 
@@ -157,7 +192,20 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         <div class="score" id="overScore"></div>
         <p id="overStats" style="color:var(--muted)"></p>
         <div class="verdict"><canvas id="hadyMini" width="17" height="16" class="pix" style="width:34px;height:32px"></canvas><p id="overVerdict"></p></div>
-        <button class="btn" id="againBtn" type="button">قعدة كمان</button>
+        <div class="row"><button class="btn" id="againBtn" type="button">قعدة كمان</button><button class="btn ghost" id="overMenuBtn" type="button">القائمة</button></div>
+      </div>
+    </div>
+  <div class="overlay" id="giftOv">
+      <div class="card gift">
+        <div class="interview">
+          <span class="rec">● REC</span>
+          <canvas id="giftPortrait" width="17" height="16" class="pix"></canvas>
+          <div class="lower"><b>عمرو قرملاوي</b><small>المخرج</small></div>
+        </div>
+        <h2>إهداء</h2>
+        <p class="quote">اللعبة دي هدية للعظيم عمرو قرملاوي.</p>
+        <p>شكرًا على كل «أكشن»… وعلى كل «ستوب» جه في وقته.</p>
+        <button class="btn" id="giftGo" type="button">يلا بينا</button>
       </div>
     </div>
   </div>
@@ -438,7 +486,8 @@ const TAP={
 const AMR={
   leave:['استنى! المشهد لسه مخلصش','حد يرجّعه للكادر!','كده الراكور باظ','أنا قلت ستوب؟ محدش يقوم'],
   back:['أهلًا بالنجم، ارجع مكانك','من أول المشهد يا جماعة','تمام، كمّلوا كأن مفيش حاجة حصلت'],
-  tea:['عم فرج أنقذ المشهد','استراحة شاي، دقيقة واحدة','حطّ الشاي بالراحة يا عم فرج، إحنا بنصوّر'],
+  tea:['عم فرج أنقذ المشهد','الشاي وصل، كله يرجع مكانه','حطّ الشاي بالراحة يا عم فرج، إحنا بنصوّر'],
+  noThanks:['شكرًا يا ريس، مش محتاجين','مرة تانية يا باشا','معلش يا ريس، إحنا بنصوّر'],
   vendor:['البياع داخل في الكادر','ركّز يا فادي، ده بياع','حد يطلّع البياع ده من الكادر'],
   shaabanIn:['مين اللي دخّل ده في الكادر؟','الراجل ده مش في السكريبت','حد يعرف الأستاذ ده؟'],
   shaabanSits:['هو قعد خلاص؟','تمام… بقى معانا ضيف شرف','حد يقول لشعبان إن ده تصوير'],
@@ -448,6 +497,7 @@ const AMR={
   lose:['ستوب! كده باظت','مش هنقدر نستخدم اللقطة دي','حد يلمّ الكابلات… والناس'],
   over:['ستوب. نكمّل بكرة','اقفلوا الإضاءة… وسيبوا المزيكا']
 };
+const VENDOR_PITCH=['مكنة حلاقة يا باشا؟','ولّاعة؟ مناديل؟ شاحن؟','بسعر الجملة… ومش هضايقك'];
 const LEAVE={ezz:'ثانية واحدة… راجع',fady:'حاضر حاضر، جايلك',fadyVendor:'استنى يا عم أشوف!',hady:'طالع يما',shohdy:'رايح ألحق اللوكيشن',
   shohdyFight:'أنا ماشي! والفن ماشي معايا',hadyFight:'وأنا كمان ماشي',ezzFight:'أنا ماشي، اقعد إنت مع الشباب'};
 const BACK={ezz:'رجعت. فاتني إيه؟',fady:'خلاص، سيطرت على الموقف',hady:'قالتلي أقعد شوية',shohdy:'التصوير اتأجل'};
@@ -511,7 +561,7 @@ function dur(total){
 /* ---------- sound: theme music, ambience and effects ---------- */
 // the theme sits on a ~166 BPM grid: loop from the first beat to the start of the last two bars, which are saved for the ending
 const LOOP_START=0.282,OUTRO_START=74.01,OUTRO_LEN=8.2;
-let actx=null,master=null,musicGain=null,musicBuf=null,musicSrc=null,musicLoading=false,noiseBuf=null,muted=false;
+let actx=null,master=null,musicGain=null,musicFilter=null,musicBuf=null,musicSrc=null,musicLoading=false,noiseBuf=null,muted=false;
 function tone(f,d,type='square',v=.05,slide=0,delay=0){
   if(!actx)return;
   const o=actx.createOscillator(),gn=actx.createGain(),n=actx.currentTime+delay;
@@ -531,7 +581,8 @@ function ensureAudio(){
     if(!actx){
       actx=new (window.AudioContext||window.webkitAudioContext)();
       master=actx.createGain();master.gain.value=muted?0:1;master.connect(actx.destination);
-      musicGain=actx.createGain();musicGain.gain.value=.55;musicGain.connect(master);
+      musicFilter=actx.createBiquadFilter();musicFilter.type='lowpass';musicFilter.frequency.value=20000;musicFilter.connect(master);
+      musicGain=actx.createGain();musicGain.gain.value=.55;musicGain.connect(musicFilter);
       noiseBuf=actx.createBuffer(1,actx.sampleRate*2,actx.sampleRate);
       const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
       // café murmur under everything
@@ -545,7 +596,7 @@ function ensureAudio(){
 }
 function loadMusic(){
   if(musicBuf||musicLoading)return;musicLoading=true;
-  fetch('theme.mp3').then(r=>r.arrayBuffer()).then(b=>actx.decodeAudioData(b)).then(buf=>{musicBuf=buf;if(G.running)playLoop();}).catch(()=>{musicLoading=false;});
+  fetch('theme.mp3').then(r=>r.arrayBuffer()).then(b=>actx.decodeAudioData(b)).then(buf=>{musicBuf=buf;if(G.running||menuShown)playLoop();}).catch(()=>{musicLoading=false;});
 }
 function stopMusic(){if(musicSrc){try{musicSrc.stop();}catch(e){}musicSrc=null;}}
 function playLoop(){
@@ -584,6 +635,7 @@ const sfx={
   clap:()=>noise(.07,{freq:2600,q:1.2,v:.14}),
   miss:()=>tone(160,.15,'square',.04),
   win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.12,'square',.04,0,i*.09)),
+  gurgle:()=>{for(let i=0;i<6;i++)tone(rand(110,230),.07,'sine',.07,rand(-40,40),i*.06);},
   bwomp:()=>{tone(220,.18,'sawtooth',.04,-60);tone(165,.3,'sawtooth',.04,-50,.18);}
 };
 const SFX_FOR={gf:'ring',mom:'ring',scroll:'notif',film:'clapper'};
@@ -599,13 +651,13 @@ function ambience(dt){
 let G;
 const fr=id=>G.friends.find(f=>f.id===id);
 function reset(){
-  G={t:0,running:false,paused:false,over:false,slow:0,next:1.4,farT:7,venT:12,shaT:20,saves:0,last:null,
-    walkers:[],shaaban:null,shaabanSat:false,mini:null,fightT:rand(18,28),sgWait:0,fightsWon:0,outro:null,ambT:2,newBest:false,
+  G={t:0,running:false,paused:false,over:false,slow:0,next:1.4,farT:7,venT:28,shaT:20,saves:0,last:null,
+    walkers:[],shaaban:null,shaabanSat:false,mini:null,fightT:rand(18,28),sgWait:0,fightsWon:0,outro:null,ambT:2,newBest:false,haze:0,hazeDone:false,shisha:0,puffs:[],
     friends:FR.map(d=>({...d,state:'seated',kind:null,p:0,fill:4,x:d.seat,timer:0,cool:1+Math.random()*2,blink:Math.random()*4,seatTaken:false}))};
 }
 const gap=()=>Math.max(0.85,2.6-G.t*0.012)*rand(0.7,1.3);
 const fillTime=f=>Math.max(1.7,5.2-G.t*0.02)*f.mod;
-function distract(f,kind,p0){f.state='distracted';f.kind=kind;f.p=p0;f.fill=fillTime(f);(kind==='vendor'?sfx.coin:(sfx[SFX_FOR[f.icon]]||sfx.ping))();}
+function distract(f,kind,p0){f.state='distracted';f.kind=kind;f.p=p0;f.fill=fillTime(f)*(kind==='vendor'?1.5:1);(kind==='vendor'?sfx.coin:(sfx[SFX_FOR[f.icon]]||sfx.ping))();}
 function leave(f){
   f.state='leaving';f.x=f.seat;
   const key=f.kind==='vendor'?'fadyVendor':f.kind==='fight'?f.id+'Fight':f.id;
@@ -621,13 +673,16 @@ function tapFriend(f){
 
 function update(dt){
   for(const f of G.friends){f.blink-=dt;if(f.blink<-0.14)f.blink=2+Math.random()*4;}
+  for(const pf of G.puffs){pf.l-=dt;pf.y-=9*dt;pf.x+=2*dt;}G.puffs=G.puffs.filter(pf=>pf.l>0);
   amrTalk=Math.max(0,amrTalk-dt);
   if(G.outro&&!G.outro.shown){G.outro.t+=dt;if(G.outro.t>=G.outro.len)showOverCard();}
   if(!G.running||G.paused)return;
   ambience(dt);
   if(G.mini){updMini(dt);return;}
   G.t+=dt;G.slow=Math.max(0,G.slow-dt);
-  const dts=dt*(G.slow>0?0.35:1);
+  if(G.haze>0){G.haze-=dt;if(G.haze<=0)hazeEnd();}
+  // during the shisha haze nobody gets distracted and nobody's bar moves
+  const dts=G.haze>0?0:dt;
   G.next-=dts;
   if(G.next<=0){G.next=gap();const c=G.friends.filter(f=>f.state==='seated'&&f.cool<=0);if(c.length)distract(pick(c),'main',0);}
   for(const f of G.friends){
@@ -646,15 +701,17 @@ function updWalkers(dt){
   G.farT-=dt;
   if(G.farT<=0&&!G.walkers.some(w=>w.type==='farag')){const d=Math.random()<.5?1:-1;G.walkers.push({type:'farag',x:d>0?-14:174,dir:d,served:false});G.farT=rand(15,23);}
   G.venT-=dt;
-  if(G.venT<=0&&!G.walkers.some(w=>w.type==='vendor')){G.walkers.push({type:'vendor',x:-14,st:'in'});G.venT=rand(17,26);}
+  if(G.venT<=0&&!G.walkers.some(w=>w.type==='vendor')){G.walkers.push({type:'vendor',x:-14,st:'in'});G.venT=rand(32,48);}
   for(const w of G.walkers){
     if(w.type==='farag'){w.x+=w.dir*20*dt;if(w.x<-20||w.x>180)w.dead=true;}
     else if(w.st==='in'){
-      w.x+=14*dt;
+      w.x+=12*dt;
       if(w.x>=22){w.x=22;const f=fr('fady');
-        if(f.state==='seated'){distract(f,'vendor',0.4);w.st='wait';quip('بسعر الجملة يا باشا',30,90,'npc');react(AMR.vendor,.5);}
-        else w.st='out';}
-    }else if(w.st==='wait'){const f=fr('fady');if(!(f.state==='distracted'&&f.kind==='vendor'))w.st='out';}
+        quip(pick(VENDOR_PITCH),30,90,'npc');
+        if(f.state==='seated'){distract(f,'vendor',0);w.st='wait';react(AMR.vendor,.5);}
+        else{w.st='linger';w.t=2;}}
+    }else if(w.st==='linger'){w.t-=dt;if(w.t<=0){w.st='out';quip('ماشي، المرة الجاية',22,90,'npc');}}
+    else if(w.st==='wait'){const f=fr('fady');if(!(f.state==='distracted'&&f.kind==='vendor')){w.st='out';if(f.state==='seated')quip('ولا يهمك يا باشا',22,90,'npc');}}
     else{w.x-=30*dt;if(w.x<-20)w.dead=true;}
   }
   G.walkers=G.walkers.filter(w=>!w.dead);
@@ -682,6 +739,41 @@ function updShaaban(dt){
       }
     }
   }else{s.x+=30*dt;if(s.x>=152){G.shaaban=null;G.shaT=rand(16,26);}}
+}
+
+/* ---------- Am Farag's tea and the shisha easter egg ---------- */
+function serveTea(){
+  G.slow=2.5;
+  for(const f of G.friends){
+    if(f.seatTaken)continue;
+    if(f.state==='distracted'){f.state='seated';f.p=0;}
+    else if(f.state==='leaving'||f.state==='gone'){if(f.state==='gone')f.x=150;f.state='returning';}
+    f.cool=Math.max(f.cool,3);
+  }
+}
+function shishaTap(){
+  G.shisha++;G.puffs.push({x:6,y:66,l:1.6});sfx.gurgle();
+  if(G.shisha<5||G.hazeDone)return;
+  G.hazeDone=true;G.haze=7;
+  say('مين اللي ولّع الشيشة في اللوكيشن؟!');
+  const f=G.friends.find(x=>x.state==='seated'||x.state==='distracted');
+  if(f)quip('الله… الجو ده',f.seat,38,'them');
+  for(const x of G.friends)if(x.state==='distracted'){x.state='seated';x.p=0;}
+  if(musicFilter)musicFilter.frequency.setTargetAtTime(700,actx.currentTime,.3);
+}
+function hazeEnd(){
+  if(musicFilter)musicFilter.frequency.setTargetAtTime(20000,actx.currentTime,.4);
+  say('تمام… نرجع للتصوير');
+}
+function smoke(t){
+  for(const pf of G.puffs){const a=pf.l/1.6;g.globalAlpha=a*.55;R(pf.x-2,pf.y-1,5,3,'#dfe6e3');R(pf.x-1,pf.y-2,3,1,'#dfe6e3');g.globalAlpha=1;}
+  if(G.haze>0){
+    g.globalAlpha=Math.min(1,G.haze/1.5,(7-G.haze)/1)*.3;
+    for(let i=0;i<9;i++){const x=((t*6+i*27)%200)-30,y=18+(i*13)%62;R(x,y,26,8,'#e8eeec');R(x+4,y-3,16,3,'#e8eeec');R(x+6,y+8,14,3,'#e8eeec');}
+    g.globalAlpha=1;
+  }
+  // the shisha bubbles now and then, inviting a tap
+  if(G.running&&(t*1.3|0)%5===0)R(6,86+((t*8|0)%3),1,1,'#bff3ea');
 }
 
 /* ---------- fights and their mini-games ---------- */
@@ -826,6 +918,7 @@ function drawMini(){
 /* ---------- camera: zooms in on fights, pans to the oud player at the end ---------- */
 const cam={z:1,fx:W/2,fy:H/2,ox:0,oy:0};
 function camTarget(){
+  if(menuShown&&!G.running)return[2,80+Math.sin(clock*.12)*44,50];
   if(G.outro)return[3,OUD.x+4,OUD.y+10];
   const m=G.mini;
   if(m&&(m.phase==='intro'||m.phase==='play'||m.phase==='result'))return[2,m.fx,m.fy];
@@ -875,7 +968,7 @@ function render(t){
     const x=f.seat-4;
     if(f.seatTaken){const fi=inFight('shaaban');person('shaaban',x,SEAT_Y,{expr:fi?'angry':'smile',open:fi?(t*9|0)%2:(t*3|0)%4===0,blink:f.blink<0,t});continue;}
     if(f.state!=='seated'&&f.state!=='distracted')continue;
-    const o={t,blink:f.blink<0};
+    const o={t,blink:f.blink<0,closed:G.haze>0};
     if(f.state==='distracted'){
       if(f.kind==='vendor'){o.pose='money';o.expr='smile';}
       else if(f.id==='ezz'){o.pose='phone';o.down=true;o.expr='smile';o.blink=false;}
@@ -890,7 +983,7 @@ function render(t){
   for(const w of G.walkers){
     const fr2=(w.x/3|0)%2;
     if(w.type==='farag')person('farag',w.x-4,93,{stand:true,frame:fr2,pose:'tray',empty:w.served,expr:'normal',t});
-    else person('vendor',w.x-4,93,{stand:true,frame:w.st==='wait'?0:fr2,pose:'box',expr:'smile',open:w.st==='wait'&&(t*6|0)%2,t});
+    else{const still=w.st==='wait'||w.st==='linger';person('vendor',w.x-4,93,{stand:true,frame:still?0:fr2,pose:'box',expr:'smile',open:still&&(t*6|0)%2,t});}
   }
   // the director behind his camera, front right; he points at whoever he's talking to
   rects([[128,96,9,6]],0,0,'#1b1c1f',P.k);rects([[124,97,4,4]],0,0,'#2b2d31',P.k);R(124,98,1,2,'#5c7fa0');
@@ -898,6 +991,7 @@ function render(t){
   R(132,103,1,15,'#3a3c40');R(129,108,1,10,'#3a3c40');R(135,108,1,10,'#3a3c40');R(129,107,7,1,'#3a3c40');
   person('amr',143,93,{stand:true,pose:amrTalk>0?'point':'crossed',open:amrTalk>0&&(t*8|0)%2,expr:'normal',t});
   for(const f of G.friends)if(f.state==='distracted'&&!f.seatTaken)bubble(f.seat-7,26,f.kind==='vendor'?'money':f.icon,f.p,t);
+  smoke(t);
   if(G.slow>0){g.globalAlpha=.12;R(0,0,W,H,'#ffb347');g.globalAlpha=1;}
   g.setTransform(1,0,0,1,0,0);
   drawMini();
@@ -941,11 +1035,25 @@ function fit(){
 }
 new ResizeObserver(fit).observe(document.getElementById('wrap'));
 
-const startOv=document.getElementById('startOv'),pauseOv=document.getElementById('pauseOv'),overOv=document.getElementById('overOv');
+const menuOv=document.getElementById('menuOv'),howOv=document.getElementById('howOv'),giftOv=document.getElementById('giftOv');
+const resumeMenuBtn=document.getElementById('resumeMenuBtn'),startBtn=document.getElementById('startBtn');
+let menuShown=true;
+function openMenu(){
+  if(G.running){G.paused=true;if(actx)actx.suspend().catch(()=>{});}
+  else{G.outro=null;if(actx)playLoop();}
+  pauseOv.hidden=true;overOv.hidden=true;howOv.hidden=true;
+  menuOv.hidden=false;menuShown=true;
+  resumeMenuBtn.hidden=!G.running;
+  startBtn.textContent=G.running?'قعدة جديدة':'ابدأ القعدة';
+  document.getElementById('menuBest').textContent=best?'أحسن قعدة: '+dur(best):'لسه محدش قعد';
+  (G.running?resumeMenuBtn:startBtn).focus();
+}
+function closeMenu(){menuOv.hidden=true;howOv.hidden=true;menuShown=false;}
+const pauseOv=document.getElementById('pauseOv'),overOv=document.getElementById('overOv');
 function start(){
   ensureAudio();reset();G.running=true;
   document.querySelectorAll('.quip').forEach(q=>q.remove());
-  startOv.hidden=true;overOv.hidden=true;pauseOv.hidden=true;hideMiniUI();
+  closeMenu();giftOv.hidden=true;overOv.hidden=true;pauseOv.hidden=true;hideMiniUI();
   chatLog.textContent='';say('أكشن. محدش يقوم من الترابيزة.');
   playLoop();
 }
@@ -970,19 +1078,26 @@ function showOverCard(){
   document.getElementById('overName').textContent=FR.find(f=>f.id===last.id).name;
   document.getElementById('overQuote').textContent='«'+EXCUSE[last.key]+'»';
   document.getElementById('overScore').textContent='القعدة استمرت '+dur(m)+(G.newBest&&m>0?' (رقم قياسي)':'');
-  document.getElementById('overStats').textContent=(G.saves?'رجّعت حد للترابيزة '+times(G.saves)+'.':'ولا مرة رجّعت حد. ولا مرة.')+(G.fightsWon?' وفضّيت '+fights(G.fightsWon)+'.':'');
+  document.getElementById('overStats').textContent=(G.saves?'رجّعت حد للترابيزة '+times(G.saves)+'.':'ولا مرة رجّعت حد. ولا مرة.')+(G.fightsWon?' وفضّيت '+fights(G.fightsWon)+'.':'')+(G.hazeDone?' ولقيت سر الشيشة.':'');
   document.getElementById('overVerdict').textContent='هادي: '+verdict(m);
   overOv.hidden=false;document.getElementById('againBtn').focus();
 }
 function setPause(p){if(!G.running)return;G.paused=p;pauseOv.hidden=!p;if(actx)(p?actx.suspend():actx.resume()).catch(()=>{});if(p)document.getElementById('resumeBtn').focus();}
 
-document.getElementById('startBtn').addEventListener('click',start);
+startBtn.addEventListener('click',start);
+resumeMenuBtn.addEventListener('click',()=>{closeMenu();setPause(false);});
+document.getElementById('howBtn').addEventListener('click',()=>{howOv.hidden=false;document.getElementById('howBack').focus();});
+document.getElementById('howBack').addEventListener('click',()=>{howOv.hidden=true;startBtn.focus();});
+document.getElementById('giftBtn').addEventListener('click',()=>{giftOv.hidden=false;document.getElementById('giftGo').focus();});
+document.getElementById('giftGo').addEventListener('click',()=>{giftOv.hidden=true;ensureAudio();if(menuShown&&!G.running)playLoop();(menuShown?startBtn:cv).focus();});
+document.getElementById('menuBtn').addEventListener('click',()=>{if(!giftOv.hidden)return;if(menuShown){if(G.running){closeMenu();setPause(false);}}else openMenu();});
+document.getElementById('overMenuBtn').addEventListener('click',openMenu);
 document.getElementById('againBtn').addEventListener('click',start);
 document.getElementById('resumeBtn').addEventListener('click',()=>setPause(false));
-document.getElementById('pauseBtn').addEventListener('click',()=>setPause(!G.paused));
+document.getElementById('pauseBtn').addEventListener('click',()=>{if(!menuShown)setPause(!G.paused);});
 document.getElementById('muteBtn').addEventListener('click',e=>{muted=!muted;if(master)master.gain.value=muted?0:1;e.currentTarget.textContent='صوت: '+(muted?'لأ':'آه');});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)setPause(true);});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p')setPause(!G.paused);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&!menuShown)setPause(true);});
+document.addEventListener('keydown',e=>{if(menuShown||!giftOv.hidden)return;if(e.key==='Escape'||e.key==='p')setPause(!G.paused);});
 
 const hit=(x,y,rx,ry,rw,rh)=>x>=rx&&x<=rx+rw&&y>=ry&&y<=ry+rh;
 cv.addEventListener('pointerdown',e=>{
@@ -990,12 +1105,13 @@ cv.addEventListener('pointerdown',e=>{
   if(!G.running||G.paused)return;
   const r=cv.getBoundingClientRect(),lx=(e.clientX-r.left)/r.width*W,ly=(e.clientY-r.top)/r.height*H;
   if(G.mini){miniTap(lx,ly);return;}
+  if(hit(lx,ly,0,64,15,34)){shishaTap();return;}
   const s=G.shaaban;
   if(s&&s.st==='in'&&hit(lx,ly,s.x-9,28,18,32)){s.st='out';say('المكان محجوز يا صاحبي');setTimeout(()=>quip('ماشي يا صاحبي',Math.min(150,s.x+10),40,'npc'),600);sfx.save();return;}
   for(const w of G.walkers){
     if(!hit(lx,ly,w.x-10,88,22,32))continue;
-    if(w.type==='farag'&&!w.served){w.served=true;G.slow=5;quip('الشاي يا رجالة',w.x,90,'npc');sfx.tea();react(AMR.tea,1);return;}
-    if(w.type==='vendor'&&w.st!=='out'){w.st='out';say('مش عايزين حاجة يا عم!');const f=fr('fady');if(f.state==='distracted'&&f.kind==='vendor'){f.state='seated';f.cool=1.2;G.saves++;}sfx.save();return;}
+    if(w.type==='farag'&&!w.served){w.served=true;serveTea();quip('الشاي يا رجالة',w.x,90,'npc');sfx.tea();react(AMR.tea,1);return;}
+    if(w.type==='vendor'&&w.st!=='out'){w.st='out';say(pickNew(AMR.noThanks));setTimeout(()=>quip('ماشي يا باشا، ربنا يسهّل',Math.max(16,w.x),90,'npc'),400);const f=fr('fady');if(f.state==='distracted'&&f.kind==='vendor'){f.state='seated';f.cool=1.2;G.saves++;}sfx.save();return;}
   }
   let bestF=null,bd=1e9;
   for(const f of G.friends){if(f.state!=='distracted')continue;if(hit(lx,ly,f.seat-13,17,26,47)){const d=Math.abs(lx-f.seat);if(d<bd){bd=d;bestF=f;}}}
@@ -1011,14 +1127,20 @@ for(const f of FR){
 }
 portrait(document.getElementById('hadyMini'),'hady');
 portrait(document.getElementById('amrFace'),'amr');
+portrait(document.getElementById('giftPortrait'),'amr');
 
 /* boot */
 reset();showBest();buildBg();fit();
+document.getElementById('menuBest').textContent=best?'أحسن قعدة: '+dur(best):'لسه محدش قعد';
+document.getElementById('giftGo').focus();
 
+const signEl=document.querySelector('.sign');
 let lastT=performance.now(),clock=0,shown=-1;
 function tick(now){
   const dt=Math.min(.05,(now-lastT)/1000);lastT=now;clock+=dt;
   update(dt);moveCam(dt);render(clock);
+  // the show's name on the hanging sign is HTML, so it follows the camera by hand
+  signEl.style.left=((80*cam.z+cam.ox)/W*100)+'%';signEl.style.top=((18.5*cam.z+cam.oy)/H*100)+'%';signEl.style.setProperty('--z',cam.z);
   const m=Math.floor(G.t);if(m!==shown){shown=m;document.getElementById('time').textContent=ar(m);}
 }
 function frame(now){tick(now);requestAnimationFrame(frame);}
