@@ -84,6 +84,14 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 .quip.them{color:var(--tea)}.quip.npc{color:var(--mint)}.quip.bad{color:var(--chili)}
 .sign{position:absolute;left:50%;top:15.4%;transform:translate(-50%,-50%);font-family:var(--display);font-size:calc(var(--s,4)*7.5px);line-height:1;color:var(--neon);text-shadow:0 0 calc(var(--s,4)*1.5px) rgba(77,255,166,.75);pointer-events:none}
 .tea-flag{position:absolute;top:8px;inset-inline-start:8px;font-family:var(--display);font-size:16px;color:#1a1208;background:var(--tea);border:2px solid #000;padding:0 8px 2px}
+.mini{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:3% 4% 0;box-sizing:border-box;text-align:center;z-index:3}
+.mini-tag{background:var(--chili);color:#fff;font-family:var(--display);font-size:max(12px,calc(var(--s,3)*4px));padding:0 10px 2px;border:2px solid #000}
+.mini-title{font-family:var(--display);font-size:max(20px,calc(var(--s,3)*8px));line-height:1.1;color:var(--neon);text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000,3px 3px 0 #000}
+.mini-help{font-weight:700;font-size:max(12px,calc(var(--s,3)*3.6px));text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000;text-wrap:balance}
+.mini-opts{position:absolute;bottom:5%;inset-inline:6%;display:flex;flex-direction:column;gap:6px;pointer-events:auto}
+.mini-opts button{font:inherit;font-weight:700;font-size:max(13px,calc(var(--s,3)*3.8px));background:var(--panel);color:var(--cream);border:2px solid #000;box-shadow:3px 3px 0 #000;padding:4px 10px;cursor:pointer}
+.mini-opts button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+.mini-opts button:focus-visible{outline:3px solid var(--cream);outline-offset:2px}
 @keyframes rise{0%{opacity:0;transform:translate(-50%,-70%)}12%{opacity:1;transform:translate(-50%,-100%)}78%{opacity:1}100%{opacity:0;transform:translate(-50%,-170%)}}
 @media (prefers-reduced-motion:reduce){.quip{animation:fade 1.7s linear forwards}@keyframes fade{0%,80%{opacity:1}100%{opacity:0}}}
 .clock,.best,.icon-btn{white-space:nowrap}
@@ -111,14 +119,21 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <canvas id="game" width="160" height="120" aria-label="ترابيزة القهوة"></canvas>
     <div class="sign" aria-hidden="true">عالابيض</div>
     <div class="tea-flag" id="teaFlag" hidden>وقت الشاي</div>
+    <div class="mini" id="miniUI" hidden>
+      <div class="mini-tag" id="miniTag"></div>
+      <div class="mini-title" id="miniTitle"></div>
+      <div class="mini-help" id="miniHelp"></div>
+      <div class="mini-opts" id="miniOpts"></div>
+    </div>
 
     <div class="overlay" id="startOv">
       <div class="card">
         <h1>عالابيض<em>القعدة</em></h1>
-        <p>كل شوية واحد من صحابك هيقوم. دوس عليه قبل ما البار يتملي. لو الترابيزة فضيت، خسرت.</p>
+        <p>كل شوية واحد من صحابك هيقوم. دوس عليه قبل ما البار يتملى. لو الترابيزة فضيت، خسرت.</p>
         <div class="legend" id="legend"></div>
         <p>إنت عمرو قرملاوي، المخرج. كلامك بيظهر في الشات تحت.</p>
         <p class="extras">عم فرج معاه شاي: دوس عليه والوقت يهدى. البياع رايح لفادي: ابعده. شعبان مش صاحبنا: متخليهوش يقعد في كرسي فاضي.</p>
+        <p class="extras">كل شوية شهدي وهادي هيتخانقوا، ولو شعبان قعد جنب عز هيتخانقوا برضه. اكسب الميني جيم عشان تهدّيهم.</p>
         <button class="btn" id="startBtn" type="button">ابدأ القعدة</button>
       </div>
     </div>
@@ -156,7 +171,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   </div>
 </main>
 
-<footer>نموذج أولي. الشلة والبياع متصممين من صور الكاست، وعم فرج وشعبان لسه مؤقتين.</footer>
+<footer>نموذج أولي. الشلة والبياع وعمرو والعوّاد متصممين من صور الكاست، وعم فرج وشعبان لسه مؤقتين.</footer>
 
 <script>
 (()=>{
@@ -183,12 +198,14 @@ const LOOKS={
     glasses:{frame:'#0e0e10'},shirt:'#b8c8b2',shirtD:'#97a891',pattern:'#eef3ea',chain:'#d8dce2'},
   amr:{skin:'#c08a62',skinD:'#9e6c47',hair:'#121012',hairStyle:'capFront',cap:'#3a3c44',capD:'#2a2b31',beard:true,bigBeard:true,must:'#121012',
     glasses:{frame:'#8d929a'},shirt:'#161618',shirtD:'#2a2a2e',phones:true,pants:'#1f2128'},
+  oud:{skin:'#d6a07c',skinD:'#b5805c',hair:'#1a1412',hairStyle:'curly',goatee:true,must:'#1a1412',
+    glasses:{frame:'#dfe3e6'},shirt:'#c9ccc8',shirtD:'#a7aca8',camo:'#8f9590'},
   farag:{skin:'#a8704a',skinD:'#87553a',hair:'#bdb6aa',hairStyle:'bald',must:'#d8d2c6',shirt:'#ddd5c2',shirtD:'#bdb39b',apron:'#6e3f26'},
   shaaban:{skin:'#c08053',skinD:'#9c633e',hair:P.hair,hairStyle:'cap',cap:'#c2412f',shirt:'#e7b53c',shirtD:'#c4922a',dots:'#c2412f',chain:'#f2cf55'},
   vendor:{skin:'#9c6a48',skinD:'#7d5136',hair:'#1a1412',hairStyle:'capBack',cap:'#a6d8cd',capD:'#79ada2',beard:true,must:'#1a1412',
     shirt:'#1d1d21',shirtD:'#3a3a44',jacket:true,scarf:'#55604a',chain:'#d8dce2',pants:'#2a3140'}
 };
-const IDLE_EXPR={ezz:'normal',fady:'smile',shohdy:'grin',hady:'flat',shaaban:'smile',farag:'normal',vendor:'grin'};
+const IDLE_EXPR={oud:'normal',ezz:'normal',fady:'smile',shohdy:'grin',hady:'flat',shaaban:'smile',farag:'normal',vendor:'grin'};
 
 /* ---------- pixel primitives ---------- */
 function shape(rows,x,y,fill,ol=P.k){
@@ -216,6 +233,7 @@ function hair(L,x,y){
     rects([[0,-2,9,3]],x,y,L.cap,P.k);rects([[-1,1,11,1]],x,y,L.capD,P.k);
     R(x+2,y-1,1,1,'#e6e6e6');R(x+4,y-1,1,1,'#e6e6e6');R(x+6,y-1,1,1,'#e6e6e6');
   }
+  else if(s==='curly'){rects([[-1,-2,11,4],[0,-3,2,1],[3,-3,3,1],[7,-3,2,1],[-1,2,2,3],[8,2,2,3]],x,y,Hc,P.k,1);[[1,-1],[5,-2],[8,0],[3,0],[-1,3]].forEach(([a,b])=>R(x+a,y+b,1,1,'#3a2e28'));}
   else if(s==='beanie'){R(x,y+2,1,2,Hc);R(x+8,y+2,1,2,Hc);rects([[0,-2,9,4]],x,y,L.cap,P.k,1);R(x,y+1,9,1,L.capD);}
   else if(s==='fade'){rects([[1,-2,7,1],[0,-1,9,2]],x,y,Hc,P.k,1);[[2,-2],[5,-2],[1,0],[4,-1],[7,0]].forEach(([a,b])=>R(x+a,y+b,1,1,'#3a2e28'));R(x,y+1,1,2,'#4a3a30');R(x+8,y+1,1,2,'#4a3a30');}
   else if(s==='bigcurly'){rects([[-2,-3,13,4],[-1,-4,3,1],[3,-4,3,1],[7,-4,3,1],[-2,1,3,4],[8,1,3,4]],x,y,Hc,P.k,1);[[0,-3],[4,-2],[8,-3],[2,-1],[6,0],[-2,2],[9,3],[10,1]].forEach(([a,b])=>R(x+a,y+b,1,1,'#3b2c24'));}
@@ -226,6 +244,7 @@ function head(L,x,y,o){
   shape(HEAD,x,y,L.skin);
   R(x,y+5,1,1,L.skinD);R(x+8,y+5,1,1,L.skinD);R(x+4,y+5,1,1,L.skinD);
   if(L.beard) rects([[0,4,1,4],[8,4,1,4],[1,6,1,3],[7,6,1,3],[2,8,5,1]],x,y,L.hair);
+  if(L.goatee){R(x+3,y+8,3,1,L.hair);R(x+4,y+9,1,1,L.hair);}
   if(L.bigBeard) rects([[2,9,5,1],[3,10,3,1]],x,y,L.hair,P.k);
   hair(L,x,y);
   if(L.must) R(x+2,y+6,5,1,L.must);
@@ -255,6 +274,7 @@ function torso(L,x,y,stand){
   if(L.placket)R(x+4,y+10,1,4,L.placket);
   if(L.letters)[[0,13],[1,13],[3,13],[4,13],[6,13],[7,13],[0,14],[2,14],[3,14],[5,14],[7,14],[8,14]].forEach(([a,b])=>R(x+a,y+b,1,1,L.letters));
   if(L.pattern)[[0,12],[3,11],[6,13],[1,15],[5,16],[8,11],[2,17],[7,17]].forEach(([a,b])=>R(x+a,y+b,1,1,L.pattern));
+  if(L.camo)[[0,12,3,2],[5,11,3,2],[2,15,4,2],[7,16,2,2],[-1,17,2,1]].forEach(([a,b,w,h])=>R(x+a,y+b,w,h,L.camo));
   if(L.jacket){R(x+1,y+10,2,5,L.shirtD);R(x+6,y+10,2,5,L.shirtD);R(x+4,y+12,1,h-2,'#6a6a72');}
   if(L.scarf){R(x+1,y+9,7,2,L.scarf);R(x+2,y+11,2,5,L.scarf);R(x+2,y+9,1,1,'#6c7a5e');}
   if(L.dots)[[1,12],[5,11],[7,14],[2,15],[9,13],[4,16]].forEach(([a,b])=>R(x+a,y+b,1,1,L.dots));
@@ -408,20 +428,70 @@ const FR=[
   {id:'hady',name:'هادي',seat:128,icon:'mom',mod:1.05,trait:'والدته بتتصل. مفيش نقاش.'}
 ];
 const TAP={
-  ezz:['هات التليفون ده!','ركّز معانا يا عز','مين دي اللي بتضحكلها؟','سيب السكرول وتعالى'],
-  fady:['اقفل يا فادي','قولها إنك في اجتماع','إنت اللي بتقرر… صح؟','ابعتلها "مشغول" وخلاص'],
-  fadyVendor:['حط الفلوس في جيبك','ده بيضحك عليك يا فادي','إنت مش محتاج ده'],
-  hady:['قولها خمس دقايق','قولها إنك مع الشباب','خمس دقايق بس يا هادي'],
-  shohdy:['كفاية يا شهدي','اقطع!','مش وقته يا سبيلبرج','الفيلم ده في دماغك بس']
+  ezz:['هات التليفون ده!','ركّز معانا يا عز','مين دي اللي بتضحكلها؟','سيب السكرول وتعالى','عز، إنت في الكادر','التليفون ده مش في السكريبت','ردّ عليها بعد التصوير','بصّ للكاميرا يا عز'],
+  fady:['اقفل يا فادي','قولها إنك في اجتماع','إنت اللي بتقرر… صح؟','ابعتلها "مشغول" وخلاص','فادي، إحنا بنصوّر','حطّ التليفون على الصامت','قولها إنك في لوكيشن','خلّي الخناقة بعد التصوير'],
+  fadyVendor:['حطّ الفلوس في جيبك','ده بيضحك عليك يا فادي','إنت مش محتاج ده','مكنة تانية؟ ما عندك تلاتة','رجّع المحفظة يا فادي'],
+  hady:['قولها خمس دقايق','قولها إنك مع الشباب','خمس دقايق بس يا هادي','سلّملي عليها وتعالى','هادي، المشهد محتاجك','قولها إن التصوير هيخلص بدري'],
+  shohdy:['كفاية يا شهدي','اقطع!','مش وقته يا سبيلبرج','الفيلم ده في دماغك بس','شهدي، أنا المخرج هنا','احكيه في البريك','مين هيموّل الفيلم ده؟','ارجع مكانك يا نجم']
 };
-const LEAVE={ezz:'ثانية واحدة… راجع',fady:'حاضر حاضر، جايلك',fadyVendor:'استنى يا عم أشوف!',hady:'طالع يما',shohdy:'رايح ألحق اللوكيشن'};
+// Amr reacting to what happens around the table
+const AMR={
+  leave:['استنى! المشهد لسه مخلصش','حد يرجّعه للكادر!','كده الراكور باظ','أنا قلت ستوب؟ محدش يقوم'],
+  back:['أهلًا بالنجم، ارجع مكانك','من أول المشهد يا جماعة','تمام، كمّلوا كأن مفيش حاجة حصلت'],
+  tea:['عم فرج أنقذ المشهد','استراحة شاي، دقيقة واحدة','حطّ الشاي بالراحة يا عم فرج، إحنا بنصوّر'],
+  vendor:['البياع داخل في الكادر','ركّز يا فادي، ده بياع','حد يطلّع البياع ده من الكادر'],
+  shaabanIn:['مين اللي دخّل ده في الكادر؟','الراجل ده مش في السكريبت','حد يعرف الأستاذ ده؟'],
+  shaabanSits:['هو قعد خلاص؟','تمام… بقى معانا ضيف شرف','حد يقول لشعبان إن ده تصوير'],
+  fightSH:['استنوا! شهدي وهادي هيتخانقوا','لا لا لا… مش دلوقتي يا شباب','الكاميرا شغالة يا جماعة!'],
+  fightSG:['عز وشعبان؟ ده اللي كان ناقص','هيبدأوا… حد يمسك عز','شعبان، ابعد عن عز'],
+  win:['حلو، كمّلوا كأن مفيش حاجة','تمام، اللقطة دي هتتشال في المونتاج','خلاص يا جماعة، صافي يا لبن'],
+  lose:['ستوب! كده باظت','مش هنقدر نستخدم اللقطة دي','حد يلمّ الكابلات… والناس'],
+  over:['ستوب. نكمّل بكرة','اقفلوا الإضاءة… وسيبوا المزيكا']
+};
+const LEAVE={ezz:'ثانية واحدة… راجع',fady:'حاضر حاضر، جايلك',fadyVendor:'استنى يا عم أشوف!',hady:'طالع يما',shohdy:'رايح ألحق اللوكيشن',
+  shohdyFight:'أنا ماشي! والفن ماشي معايا',hadyFight:'وأنا كمان ماشي',ezzFight:'أنا ماشي، اقعد إنت مع الشباب'};
 const BACK={ezz:'رجعت. فاتني إيه؟',fady:'خلاص، سيطرت على الموقف',hady:'قالتلي أقعد شوية',shohdy:'التصوير اتأجل'};
 const EXCUSE={
   ezz:'أنا كنت متابع القعدة كلها على فكرة. من التليفون.',
   fady:'أنا اللي قفلت السكة. هي بس اتصلت تاني… وتالت.',
   fadyVendor:'كان عنده عرض مايتفوتش. تلاتة بسعر واحد.',
   hady:'الوالدة. وبعدين القعدة كانت ناشفة أصلًا.',
-  shohdy:'أنا ماقمتش. أنا خرجت من الكادر لأسباب درامية.'
+  shohdy:'أنا ماقمتش. أنا خرجت من الكادر لأسباب درامية.',
+  shohdyFight:'هو اللي بدأ. أنا كنت بدافع عن الفن.',
+  hadyFight:'أنا قلتله رأيي بس. هو اللي حساس.',
+  ezzFight:'الراجل ده مش صاحبنا. ومش هقعد جنبه.'
+};
+// fights: who fights, what they shout, and what Amr can say to calm them
+const FIGHT={
+  sh:{tag:'خناقة! شهدي × هادي',a:'shohdy',b:'hady',
+    aLines:['إنت مبتفهمش في الفن!','وإنت شخصيتك ناشفة!','أنا فنان يا هادي!'],
+    bLines:['فيلمك ده محدش هيشوفه','إنت بتمثّل حتى وإنت قاعد','بطّل تصوّرني!'],
+    peace:['خلاص… إنت زي أخويا','ماشي، بس متصوّرنيش']},
+  sg:{tag:'خناقة! عز × شعبان',a:'ezz',b:'shaaban',
+    aLines:['إنت مين أصلًا؟','قوم من جنبي يا شعبان','حد يعرف الراجل ده؟'],
+    bLines:['نظارتك دي جايبها منين؟','إنت شبه حد أعرفه… مش فاكر مين','مالك قاعد مكشّر كده يا صاحبي؟'],
+    peace:['خلاص يا صاحبي، أنا ماشي']}
+};
+// the first answer is the right one; the buttons are shuffled
+const CHOICES={
+  sh:[
+    {q:'هادي: «فيلمك ده محدش هيتفرج عليه»',a:['إحنا هنتفرج عليه… غصب عننا','عنده حق يا شهدي','بصراحة ولا أنا']},
+    {q:'شهدي: «إنت شخصيتك ناشفة يا هادي»',a:['ناشفة بس طيبة، زي البسكوت','ناشفة جدًا فعلًا','ردّ عليه يا هادي']},
+    {q:'شهدي بيصوّر هادي من غير إذنه',a:['شهدي، الكاميرا هنا بتاعتي أنا','صوّره من الناحية التانية أحلى','ابتسم للكاميرا يا هادي']},
+    {q:'هادي: «والدتي بتقول إنك فاشل»',a:['والدتك بتقول كده على الكل يا هادي','والدتك عندها حق','كلّمها نسألها']}
+  ],
+  sg:[
+    {q:'شعبان: «نظارتك دي جايبها منين؟»',a:['شعبان، الكرسي ده محجوز من سنة','سؤال حلو، جايبها منين يا عز؟','خلّيه يجرّبها']},
+    {q:'عز: «إنت مين أصلًا؟»',a:['ده شعبان، وكان لسه ماشي','ده صاحبنا من زمان','اسأله هو']},
+    {q:'شعبان: «إنت شبه الممثل اللي…»',a:['ولا كلمة كمان يا شعبان','مين؟ قول قول','آه فعلًا شبهه']}
+  ]
+};
+const MINI_INFO={
+  mash:{title:'فضّ الاشتباك',help:'دوس بسرعة لحد ما البار يتملى'},
+  timing:{title:'اقطع في الوقت الصح',help:'دوس لما المؤشر ييجي على الأخضر، ٣ مرات'},
+  choice:{title:'قول الجملة الصح',help:'اختار الجملة اللي تهدّي الدنيا'},
+  fists:{title:'امسك الإيد',help:'دوس على كل إيد قبل ما تنزل'},
+  tea:{title:'الشاي طاير',help:'امسك كوبايات الشاي قبل ما تقع'}
 };
 function verdict(m){
   if(m<20)return'دي مش قعدة. دي وقفة.';
@@ -438,51 +508,124 @@ function dur(total){
   return m?hs+' و'+minutesAr(m):hs;
 }
 
-/* ---------- sound ---------- */
-let actx=null,muted=false;
-function tone(f,d,type='square',v=.05,slide=0){
-  if(muted||!actx)return;
-  const o=actx.createOscillator(),gn=actx.createGain(),n=actx.currentTime;
+/* ---------- sound: theme music, ambience and effects ---------- */
+// the theme sits on a ~166 BPM grid: loop from the first beat to the start of the last two bars, which are saved for the ending
+const LOOP_START=0.282,OUTRO_START=74.01,OUTRO_LEN=8.2;
+let actx=null,master=null,musicGain=null,musicBuf=null,musicSrc=null,musicLoading=false,noiseBuf=null,muted=false;
+function tone(f,d,type='square',v=.05,slide=0,delay=0){
+  if(!actx)return;
+  const o=actx.createOscillator(),gn=actx.createGain(),n=actx.currentTime+delay;
   o.type=type;o.frequency.setValueAtTime(f,n);if(slide)o.frequency.linearRampToValueAtTime(f+slide,n+d);
   gn.gain.setValueAtTime(v,n);gn.gain.exponentialRampToValueAtTime(.0001,n+d);
-  o.connect(gn).connect(actx.destination);o.start(n);o.stop(n+d+.02);
+  o.connect(gn).connect(master);o.start(n);o.stop(n+d+.02);
+}
+function noise(d,{type='bandpass',freq=1000,q=1,v=.05,delay=0}={}){
+  if(!actx||!noiseBuf)return;
+  const s=actx.createBufferSource(),f=actx.createBiquadFilter(),gn=actx.createGain(),n=actx.currentTime+delay;
+  s.buffer=noiseBuf;f.type=type;f.frequency.value=freq;f.Q.value=q;
+  gn.gain.setValueAtTime(v,n);gn.gain.exponentialRampToValueAtTime(.0001,n+d);
+  s.connect(f).connect(gn).connect(master);s.start(n,Math.random()*1.5);s.stop(n+d+.05);
+}
+function ensureAudio(){
+  try{
+    if(!actx){
+      actx=new (window.AudioContext||window.webkitAudioContext)();
+      master=actx.createGain();master.gain.value=muted?0:1;master.connect(actx.destination);
+      musicGain=actx.createGain();musicGain.gain.value=.55;musicGain.connect(master);
+      noiseBuf=actx.createBuffer(1,actx.sampleRate*2,actx.sampleRate);
+      const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+      // café murmur under everything
+      const s=actx.createBufferSource(),f=actx.createBiquadFilter(),gn=actx.createGain();
+      s.buffer=noiseBuf;s.loop=true;f.type='bandpass';f.frequency.value=420;f.Q.value=.8;gn.gain.value=.018;
+      s.connect(f).connect(gn).connect(master);s.start();
+    }
+    if(actx.state==='suspended')actx.resume();
+    loadMusic();
+  }catch(e){}
+}
+function loadMusic(){
+  if(musicBuf||musicLoading)return;musicLoading=true;
+  fetch('theme.mp3').then(r=>r.arrayBuffer()).then(b=>actx.decodeAudioData(b)).then(buf=>{musicBuf=buf;if(G.running)playLoop();}).catch(()=>{musicLoading=false;});
+}
+function stopMusic(){if(musicSrc){try{musicSrc.stop();}catch(e){}musicSrc=null;}}
+function playLoop(){
+  if(!musicBuf)return;stopMusic();
+  const s=actx.createBufferSource();s.buffer=musicBuf;s.loop=true;s.loopStart=LOOP_START;s.loopEnd=OUTRO_START;
+  s.connect(musicGain);s.start();musicSrc=s;
+}
+function playOutro(){
+  if(!musicBuf)return false;stopMusic();
+  const s=actx.createBufferSource();s.buffer=musicBuf;s.connect(musicGain);s.start(0,OUTRO_START);musicSrc=s;
+  s.onended=()=>{if(musicSrc===s)musicSrc=null;};
+  return true;
 }
 const sfx={
   ping:()=>tone(880,.04,'square',.02),
-  save:()=>{tone(660,.06);setTimeout(()=>tone(990,.08),60);},
-  leave:()=>tone(330,.22,'square',.05,-170),
-  tea:()=>[523,659,784].forEach((f,i)=>setTimeout(()=>tone(f,.1,'triangle',.07),i*80)),
-  bwomp:()=>{tone(220,.18,'sawtooth',.04,-60);setTimeout(()=>tone(165,.3,'sawtooth',.04,-50),180);},
-  over:()=>[392,330,262,196].forEach((f,i)=>setTimeout(()=>tone(f,.2,'triangle',.07),i*170))
+  notif:()=>{tone(1568,.07,'sine',.04);tone(2093,.09,'sine',.035,0,.08);},
+  ring:()=>{for(let i=0;i<2;i++){tone(1320,.06,'square',.018,0,i*.14);tone(1660,.06,'square',.014,0,i*.14+.06);}},
+  clapper:()=>noise(.06,{freq:3200,q:3,v:.12}),
+  coin:()=>{tone(1900,.06,'square',.02);tone(2550,.12,'square',.02,0,.07);},
+  save:()=>{tone(660,.06);tone(990,.08,'square',.05,0,.06);},
+  leave:()=>{tone(330,.22,'square',.05,-170);noise(.05,{type:'lowpass',freq:300,v:.08,delay:.05});noise(.05,{type:'lowpass',freq:300,v:.08,delay:.3});},
+  clink:()=>{tone(rand(2500,3300),.3,'sine',.03);tone(rand(3800,4400),.18,'sine',.015,0,.01);},
+  tea:()=>{[523,659,784].forEach((f,i)=>tone(f,.1,'triangle',.07,0,i*.08));sfx.clink();},
+  domino:()=>{const n=2+(Math.random()*3|0);for(let i=0;i<n;i++)noise(.035,{freq:2400,q:2.5,v:.07,delay:i*rand(.07,.14)});},
+  spoon:()=>{for(let i=0;i<5;i++)tone(3300+i*40,.04,'sine',.012,0,i*.09);},
+  horn:()=>{for(const dl of[0,.3]){tone(415,.22,'square',.012,0,dl);tone(520,.22,'square',.009,0,dl);}},
+  moto:()=>{
+    if(!actx)return;
+    const o=actx.createOscillator(),f=actx.createBiquadFilter(),gn=actx.createGain(),n=actx.currentTime;
+    o.type='sawtooth';o.frequency.setValueAtTime(70,n);o.frequency.linearRampToValueAtTime(140,n+.9);o.frequency.linearRampToValueAtTime(85,n+2);
+    f.type='lowpass';f.frequency.value=500;gn.gain.setValueAtTime(.0001,n);gn.gain.exponentialRampToValueAtTime(.03,n+.8);gn.gain.exponentialRampToValueAtTime(.0001,n+2);
+    o.connect(f).connect(gn).connect(master);o.start(n);o.stop(n+2.05);
+  },
+  punch:()=>{noise(.12,{type:'lowpass',freq:500,v:.16});tone(110,.14,'sine',.12,-60);},
+  block:()=>{noise(.05,{freq:1800,q:1.5,v:.1});tone(600,.05,'square',.03);},
+  clap:()=>noise(.07,{freq:2600,q:1.2,v:.14}),
+  miss:()=>tone(160,.15,'square',.04),
+  win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.12,'square',.04,0,i*.09)),
+  bwomp:()=>{tone(220,.18,'sawtooth',.04,-60);tone(165,.3,'sawtooth',.04,-50,.18);}
 };
+const SFX_FOR={gf:'ring',mom:'ring',scroll:'notif',film:'clapper'};
+const AMBIENT=['clink','clink','domino','domino','spoon','clink','horn','moto'];
+function ambience(dt){
+  G.ambT-=dt;if(G.ambT>0)return;
+  G.ambT=rand(1.4,4.2);const k=pick(AMBIENT);
+  if((k==='horn'||k==='moto')&&Math.random()<.5)return;
+  sfx[k]();
+}
 
 /* ---------- game state ---------- */
 let G;
 const fr=id=>G.friends.find(f=>f.id===id);
 function reset(){
   G={t:0,running:false,paused:false,over:false,slow:0,next:1.4,farT:7,venT:12,shaT:20,saves:0,last:null,
-    walkers:[],shaaban:null,shaabanSat:false,
+    walkers:[],shaaban:null,shaabanSat:false,mini:null,fightT:rand(18,28),sgWait:0,fightsWon:0,outro:null,ambT:2,newBest:false,
     friends:FR.map(d=>({...d,state:'seated',kind:null,p:0,fill:4,x:d.seat,timer:0,cool:1+Math.random()*2,blink:Math.random()*4,seatTaken:false}))};
 }
 const gap=()=>Math.max(0.85,2.6-G.t*0.012)*rand(0.7,1.3);
 const fillTime=f=>Math.max(1.7,5.2-G.t*0.02)*f.mod;
-function distract(f,kind,p0){f.state='distracted';f.kind=kind;f.p=p0;f.fill=fillTime(f);sfx.ping();}
+function distract(f,kind,p0){f.state='distracted';f.kind=kind;f.p=p0;f.fill=fillTime(f);(kind==='vendor'?sfx.coin:(sfx[SFX_FOR[f.icon]]||sfx.ping))();}
 function leave(f){
   f.state='leaving';f.x=f.seat;
-  const key=f.kind==='vendor'?'fadyVendor':f.id;
+  const key=f.kind==='vendor'?'fadyVendor':f.kind==='fight'?f.id+'Fight':f.id;
   G.last={id:f.id,key};
   quip(LEAVE[key],f.seat,34,'bad');sfx.leave();
+  if(f.kind!=='fight')react(AMR.leave,.6);
 }
 function tapFriend(f){
   const key=f.kind==='vendor'?'fadyVendor':f.id;
   f.state='seated';f.cool=1.2;G.saves++;
-  say(pick(TAP[key]));sfx.save();
+  say(pickNew(TAP[key]));sfx.save();
 }
 
 function update(dt){
   for(const f of G.friends){f.blink-=dt;if(f.blink<-0.14)f.blink=2+Math.random()*4;}
   amrTalk=Math.max(0,amrTalk-dt);
+  if(G.outro&&!G.outro.shown){G.outro.t+=dt;if(G.outro.t>=G.outro.len)showOverCard();}
   if(!G.running||G.paused)return;
+  ambience(dt);
+  if(G.mini){updMini(dt);return;}
   G.t+=dt;G.slow=Math.max(0,G.slow-dt);
   const dts=dt*(G.slow>0?0.35:1);
   G.next-=dts;
@@ -492,11 +635,12 @@ function update(dt){
     if(f.state==='distracted'){f.p+=dts/f.fill;if(f.p>=1)leave(f);}
     else if(f.state==='leaving'){f.x+=36*dt;if(f.x>=150){f.state='gone';f.timer=6;}}
     else if(f.state==='gone'){f.timer-=dt;if(f.timer<=0){if(f.seatTaken)f.state='locked';else{f.state='returning';f.x=150;}}}
-    else if(f.state==='returning'){f.x-=36*dt;if(f.x<=f.seat){f.x=f.seat;f.state='seated';f.cool=1.5;quip(BACK[f.id],f.seat,38,'them');}}
+    else if(f.state==='returning'){f.x-=36*dt;if(f.x<=f.seat){f.x=f.seat;f.state='seated';f.cool=1.5;quip(BACK[f.id],f.seat,38,'them');react(AMR.back,.35);}}
   }
   updWalkers(dt);updShaaban(dt);
   document.getElementById('teaFlag').hidden=!(G.slow>0);
-  if(G.friends.every(f=>f.state!=='seated'&&f.state!=='distracted'))gameOver();
+  if(G.friends.every(f=>f.state!=='seated'&&f.state!=='distracted')){gameOver();return;}
+  checkFights(dt);
 }
 function updWalkers(dt){
   G.farT-=dt;
@@ -508,7 +652,7 @@ function updWalkers(dt){
     else if(w.st==='in'){
       w.x+=14*dt;
       if(w.x>=22){w.x=22;const f=fr('fady');
-        if(f.state==='seated'){distract(f,'vendor',0.4);w.st='wait';quip('بسعر الجملة يا باشا',30,90,'npc');}
+        if(f.state==='seated'){distract(f,'vendor',0.4);w.st='wait';quip('بسعر الجملة يا باشا',30,90,'npc');react(AMR.vendor,.5);}
         else w.st='out';}
     }else if(w.st==='wait'){const f=fr('fady');if(!(f.state==='distracted'&&f.kind==='vendor'))w.st='out';}
     else{w.x-=30*dt;if(w.x<-20)w.dead=true;}
@@ -521,7 +665,7 @@ function updShaaban(dt){
   if(!s){
     G.shaT-=dt;
     if(G.shaT<=0){const tg=G.friends.filter(f=>f.state==='gone'||f.state==='leaving');
-      if(tg.length){G.shaaban={x:152,target:pick(tg),st:'in'};quip('إيه يا رجالة!',146,36,'npc');}else G.shaT=2;}
+      if(tg.length){G.shaaban={x:152,target:pick(tg),st:'in'};quip('إيه يا رجالة!',146,36,'npc');react(AMR.shaabanIn,.8);}else G.shaT=2;}
     return;
   }
   if(s.st==='in'){
@@ -533,25 +677,203 @@ function updShaaban(dt){
       const d=tg.seat-s.x;s.x+=Math.sign(d)*Math.min(Math.abs(d),18*dt);
       if(Math.abs(tg.seat-s.x)<0.5){
         tg.seatTaken=true;G.shaabanSat=true;G.shaaban=null;
-        quip('إزيكو يا رجالة! أنا شعبان',tg.seat,42,'npc');sfx.bwomp();
+        quip('إزيكو يا رجالة! أنا شعبان',tg.seat,42,'npc');sfx.bwomp();react(AMR.shaabanSits,1);
         if(tg.state==='returning'){tg.state='leaving';setTimeout(()=>quip('مين ده؟!',Math.min(140,tg.x),36,'bad'),300);}
       }
     }
   }else{s.x+=30*dt;if(s.x>=152){G.shaaban=null;G.shaT=rand(16,26);}}
 }
 
+/* ---------- fights and their mini-games ---------- */
+const MINI_TYPES=['mash','timing','choice','fists','tea'];
+let miniBag=[],lastMini=null;
+function nextMini(){ // every type once before any repeats, never the same twice in a row
+  if(!miniBag.length){miniBag=MINI_TYPES.slice().sort(()=>Math.random()-.5);if(miniBag[0]===lastMini)miniBag.push(miniBag.shift());}
+  return lastMini=miniBag.shift();
+}
+const seatOf=id=>id==='shaaban'?G.friends.find(f=>f.seatTaken).seat:fr(id).seat;
+const inFight=id=>!!(G.mini&&G.mini.phase!=='out'&&(FIGHT[G.mini.kind].a===id||FIGHT[G.mini.kind].b===id));
+function checkFights(dt){
+  G.fightT-=dt;
+  const sh=fr('shohdy'),hd=fr('hady');
+  if(G.fightT<=0&&sh.state==='seated'&&hd.state==='seated'&&!sh.seatTaken&&!hd.seatTaken){startFight('sh');return;}
+  // Shaaban sitting right next to Ezz starts one too
+  const tk=G.friends.find(f=>f.seatTaken),ez=fr('ezz');
+  if(tk&&Math.abs(tk.seat-ez.seat)===32&&(ez.state==='seated'||ez.state==='distracted')){G.sgWait+=dt;if(G.sgWait>1.3){G.sgWait=0;startFight('sg');}}
+  else G.sgWait=0;
+}
+function startFight(kind){
+  const F=FIGHT[kind],ax=seatOf(F.a),bx=seatOf(F.b);
+  for(const id of[F.a,F.b])if(id!=='shaaban'){const f=fr(id);f.state='seated';f.p=0;}
+  G.mini={kind,type:nextMini(),phase:'argue',pt:0,fx:(ax+bx)/2,fy:50,ax,bx};
+  say(pickNew(AMR[kind==='sh'?'fightSH':'fightSG']));
+  quip(pick(F.aLines),ax,34,'bad');sfx.punch();
+  setTimeout(()=>{if(G.mini&&G.mini.phase==='argue'){quip(pick(F.bLines),bx,34,'bad');sfx.punch();}},650);
+}
+function updMini(dt){
+  const m=G.mini;m.pt+=dt;
+  if(m.phase==='argue'&&m.pt>1.4){m.phase='intro';m.pt=0;showMiniUI(m);}
+  else if(m.phase==='intro'&&m.pt>1.6){m.phase='play';m.pt=0;initMini(m);}
+  else if(m.phase==='play')playMini(m,dt);
+  else if(m.phase==='result'&&m.pt>1.4){m.phase='out';m.pt=0;hideMiniUI();}
+  else if(m.phase==='out'&&m.pt>0.6)endFight(m);
+}
+function initMini(m){
+  m.total=m.left={mash:6,timing:10,choice:6.5,fists:10,tea:12}[m.type];
+  m.sparks=[];m.ok=0;m.miss=0;
+  if(m.type==='mash')m.v=0;
+  if(m.type==='timing'){m.mx=0;m.dir=1;m.sp=rand(70,95);newZone(m);}
+  if(m.type==='fists'||m.type==='tea'){m.items=[];m.spawn=.2;}
+  if(m.type==='choice')showChoice(m,pick(CHOICES[m.kind]));
+}
+function newZone(m){m.zw=Math.round(rand(14,22));m.zx=Math.round(rand(0,120-m.zw));}
+function playMini(m,dt){
+  m.left-=dt;
+  for(const s of m.sparks)s.l-=dt;m.sparks=m.sparks.filter(s=>s.l>0);
+  if(m.type==='mash'){m.v=Math.max(0,m.v-.13*dt);}
+  else if(m.type==='timing'){m.mx+=m.dir*m.sp*dt;if(m.mx>120){m.mx=120;m.dir=-1;}if(m.mx<0){m.mx=0;m.dir=1;}}
+  else if(m.type==='fists'){
+    m.spawn-=dt;
+    if(m.spawn<=0&&m.items.length<3){const life=Math.max(.8,1.25-m.ok*.06);m.items.push({x:rand(18,142),y:rand(24,84),life,max:life});m.spawn=rand(.55,.85);}
+    for(const it of m.items){it.life-=dt;if(it.life<=0){it.dead=true;m.miss++;sfx.punch();}}
+    m.items=m.items.filter(i=>!i.dead);
+    if(m.miss>=3)return finishMini(m,false);
+  }
+  else if(m.type==='tea'){
+    m.spawn-=dt;
+    if(m.spawn<=0){m.items.push({x:rand(14,146),y:-4,vy:rand(18,28)});m.spawn=rand(.5,.8);}
+    for(const it of m.items){it.vy+=34*dt;it.y+=it.vy*dt;if(it.y>116){it.dead=true;m.miss++;sfx.miss();}}
+    m.items=m.items.filter(i=>!i.dead);
+    if(m.miss>=3)return finishMini(m,false);
+  }
+  if(m.left<=0)finishMini(m,false);
+}
+function miniTap(lx,ly){
+  const m=G.mini;if(m.phase!=='play')return;
+  if(m.type==='mash'){m.v=Math.min(1,m.v+.085);m.sparks.push({x:lx,y:ly,l:.25});tone(400+m.v*600,.03,'square',.03);if(m.v>=1)finishMini(m,true);}
+  else if(m.type==='timing'){
+    if(m.mx>=m.zx&&m.mx<=m.zx+m.zw){m.ok++;sfx.clap();m.sp*=1.18;newZone(m);if(m.ok>=3)finishMini(m,true);}
+    else{m.miss++;sfx.miss();if(m.miss>=3)finishMini(m,false);}
+  }
+  else if(m.type==='fists'||m.type==='tea'){
+    let hitIt=null,bd=11;
+    for(const it of m.items){const d=Math.hypot(it.x-lx,it.y-ly);if(d<bd){bd=d;hitIt=it;}}
+    if(!hitIt)return;
+    m.items=m.items.filter(i=>i!==hitIt);m.ok++;m.sparks.push({x:hitIt.x,y:hitIt.y,l:.3});
+    m.type==='tea'?sfx.clink():sfx.block();
+    if(m.ok>=6)finishMini(m,true);
+  }
+}
+function finishMini(m,win){
+  if(m.phase!=='play')return;
+  m.phase='result';m.pt=0;m.win=win;
+  document.getElementById('miniOpts').textContent='';
+  document.getElementById('miniTitle').textContent=win?'زي الفل!':'باظت!';
+  document.getElementById('miniHelp').textContent='';
+  say(pickNew(win?AMR.win:AMR.lose));
+  if(win){G.fightsWon++;sfx.win();}else sfx.bwomp();
+}
+function endFight(m){
+  const F=FIGHT[m.kind];G.mini=null;
+  if(m.kind==='sh'){
+    if(m.win){quip(F.peace[0],m.ax,34,'them');setTimeout(()=>quip(F.peace[1],m.bx,34,'them'),500);}
+    else for(const id of[F.a,F.b]){const f=fr(id);f.kind='fight';leave(f);}
+    G.fightT=rand(30,45);
+  }else{
+    const seat=G.friends.find(f=>f.seatTaken);
+    if(m.win){
+      // Shaaban gives up the chair and its owner can come back
+      seat.seatTaken=false;G.shaabanSat=false;G.shaaban={x:seat.seat,st:'out'};
+      quip(F.peace[0],seat.seat,34,'npc');
+      if(seat.state==='locked'||seat.state==='gone'){seat.state='gone';seat.timer=2;}
+    }else{const f=fr('ezz');f.kind='fight';leave(f);}
+  }
+}
+function showMiniUI(m){
+  document.getElementById('miniTag').textContent=FIGHT[m.kind].tag;
+  document.getElementById('miniTitle').textContent=MINI_INFO[m.type].title;
+  document.getElementById('miniHelp').textContent=MINI_INFO[m.type].help;
+  document.getElementById('miniOpts').textContent='';
+  document.getElementById('miniUI').hidden=false;
+}
+function hideMiniUI(){document.getElementById('miniUI').hidden=true;document.getElementById('miniOpts').textContent='';}
+function showChoice(m,c){
+  document.getElementById('miniHelp').textContent=c.q;
+  const box=document.getElementById('miniOpts');box.textContent='';
+  c.a.map((t,i)=>({t,i})).sort(()=>Math.random()-.5).forEach(o=>{
+    const b=document.createElement('button');b.type='button';b.textContent=o.t;
+    b.addEventListener('click',()=>{if(G.mini===m)finishMini(m,o.i===0);});
+    box.appendChild(b);
+  });
+}
+function fist(x,y){rects([[-3,-2,7,5]],x,y,'#d6a07c',P.k);R(x-2,y-2,1,1,'#a87652');R(x,y-2,1,1,'#a87652');R(x+2,y-2,1,1,'#a87652');R(x-3,y+3,7,1,'#2a2a2e');}
+function flyingTea(x,y){rects([[-1,-2,3,4]],x,y,'#c4692a',P.k);R(x-1,y-2,3,1,'#f0dcc0');}
+function pips(ok,need,miss){
+  for(let i=0;i<need;i++)R(8+i*6,108,4,4,i<ok?'#86f7c4':'#2c3a38');
+  for(let i=0;i<3;i++)R(W-26+i*6,108,4,4,i<miss?'#e0533f':'#2c3a38');
+}
+function drawMini(){
+  const m=G.mini;if(!m||m.phase!=='play')return;
+  g.globalAlpha=.6;R(0,94,W,26,'#000');g.globalAlpha=1;
+  R(0,118,Math.round(W*Math.max(0,m.left)/m.total),2,'#86f7c4');
+  if(m.type==='mash'){rects([[30,100,100,6]],0,0,'#1b2423',P.k);R(30,100,Math.round(100*m.v),6,'#86f7c4');}
+  if(m.type==='timing'){rects([[20,99,120,6]],0,0,'#1b2423',P.k);R(20+m.zx,99,m.zw,6,'#5fd38a');R(19+Math.round(m.mx),96,2,12,'#ffffff');pips(m.ok,3,m.miss);}
+  if(m.type==='fists'){for(const it of m.items){fist(it.x,it.y);R(it.x-4,it.y+5,Math.max(1,Math.round(9*it.life/it.max)),1,'#e0533f');}pips(m.ok,6,m.miss);}
+  if(m.type==='tea'){for(const it of m.items)flyingTea(it.x,it.y);pips(m.ok,6,m.miss);}
+  for(const s of m.sparks){R(s.x-1,s.y-3,2,2,'#fff');R(s.x-3,s.y-1,2,2,'#fff');R(s.x+1,s.y-1,2,2,'#fff');R(s.x-1,s.y+1,2,2,'#fff');}
+}
+
+/* ---------- camera: zooms in on fights, pans to the oud player at the end ---------- */
+const cam={z:1,fx:W/2,fy:H/2,ox:0,oy:0};
+function camTarget(){
+  if(G.outro)return[3,OUD.x+4,OUD.y+10];
+  const m=G.mini;
+  if(m&&(m.phase==='intro'||m.phase==='play'||m.phase==='result'))return[2,m.fx,m.fy];
+  return[1,W/2,H/2];
+}
+function moveCam(dt){
+  const[tz,tx,ty]=camTarget(),k=Math.min(1,dt*5);
+  cam.z+=(tz-cam.z)*k;cam.fx+=(tx-cam.fx)*k;cam.fy+=(ty-cam.fy)*k;
+  if(Math.abs(tz-cam.z)<.01)cam.z=tz;
+  cam.ox=Math.round(Math.min(0,Math.max(W-W*cam.z,W/2-cam.fx*cam.z)));
+  cam.oy=Math.round(Math.min(0,Math.max(H-H*cam.z,H/2-cam.fy*cam.z)));
+}
+
+/* ---------- the oud player in the back, who plays the theme ---------- */
+const OUD={x:12,y:30};
+function musician(t){
+  const{x,y}=OUD,singing=!!(G.outro&&!G.outro.shown),playing=!!musicSrc;
+  rects([[-1,20,11,1]],x,y,'#5c361e',P.k);R(x,y+21,1,6,'#3e2a1e');R(x+8,y+21,1,6,'#3e2a1e');
+  person('oud',x,y,{expr:'normal',open:singing&&(t*5|0)%2,closed:!singing&&playing&&(t*.7|0)%3===0,t});
+  shape([[2,6],[1,8],[0,10],[0,10],[0,10],[1,8],[2,6]],x-4,y+12,'#7a3b1e');
+  R(x-2,y+13,6,1,'#a85a2e');R(x,y+15,2,2,'#2a140a');
+  for(let i=0;i<7;i++)R(x+6+i,y+13-i,1,1,'#4a2412');
+  R(x+12,y+5,2,2,'#4a2412');
+  rects([[2,16+(playing?Math.round(Math.sin(t*16)):0),2,2]],x,y,LOOKS.oud.skin,P.k);
+  if(playing){
+    const n=singing?5:3;
+    for(let i=0;i<n;i++){
+      const ph=(t*(singing?.9:.5)+i/n)%1,nx=Math.round(x+4+Math.sin(ph*6+i*2)*4),ny=Math.round(y-3-ph*20);
+      g.globalAlpha=1-ph;R(nx,ny,2,2,'#86f7c4');R(nx+1,ny-3,1,3,'#86f7c4');R(nx+2,ny-3,1,1,'#86f7c4');g.globalAlpha=1;
+    }
+  }
+}
+
 /* ---------- render ---------- */
 function render(t){
-  g=ctx;
+  g=ctx;g.imageSmoothingEnabled=false;
+  const shake=G.mini&&G.mini.phase==='play'&&(G.mini.type==='mash'||G.mini.type==='fists')?((t*30|0)%2?1:-1):0;
+  g.setTransform(cam.z,0,0,cam.z,cam.ox+shake,cam.oy);
   if(bg)g.drawImage(bg,0,0);
   neon(t);
+  musician(t);
   // back walkway: people leaving / returning / Shaaban
   for(const f of G.friends) if(f.state==='leaving'||f.state==='returning') person(f.id,f.x-4,34,{stand:true,frame:(f.x/3|0)%2,expr:f.state==='leaving'?'normal':IDLE_EXPR[f.id],t});
   if(G.shaaban)person('shaaban',G.shaaban.x-4,34,{stand:true,frame:(G.shaaban.x/3|0)%2,expr:'smile',t});
   for(const f of G.friends)chair(f.seat);
   for(const f of G.friends){
     const x=f.seat-4;
-    if(f.seatTaken){person('shaaban',x,SEAT_Y,{expr:'smile',open:(t*3|0)%4===0,blink:f.blink<0,t});continue;}
+    if(f.seatTaken){const fi=inFight('shaaban');person('shaaban',x,SEAT_Y,{expr:fi?'angry':'smile',open:fi?(t*9|0)%2:(t*3|0)%4===0,blink:f.blink<0,t});continue;}
     if(f.state!=='seated'&&f.state!=='distracted')continue;
     const o={t,blink:f.blink<0};
     if(f.state==='distracted'){
@@ -561,6 +883,7 @@ function render(t){
       else if(f.id==='hady'){o.pose='call';o.expr='flat';}
       else{o.pose='talk';o.closed=true;o.open=(t*8|0)%2;}
     }else o.expr=IDLE_EXPR[f.id];
+    if(inFight(f.id)){o.expr='angry';o.open=(t*9|0)%2;o.pose=null;o.blink=false;}
     person(f.id,x,SEAT_Y,o);
   }
   table(t);
@@ -576,21 +899,25 @@ function render(t){
   person('amr',143,93,{stand:true,pose:amrTalk>0?'point':'crossed',open:amrTalk>0&&(t*8|0)%2,expr:'normal',t});
   for(const f of G.friends)if(f.state==='distracted'&&!f.seatTaken)bubble(f.seat-7,26,f.kind==='vendor'?'money':f.icon,f.p,t);
   if(G.slow>0){g.globalAlpha=.12;R(0,0,W,H,'#ffb347');g.globalAlpha=1;}
+  g.setTransform(1,0,0,1,0,0);
+  drawMini();
 }
 
 /* ---------- DOM bits ---------- */
 const stage=document.getElementById('stage');
 function quip(text,lx,ly,cls){
   const d=document.createElement('div');d.className='quip '+(cls||'');d.textContent=text;
-  d.style.left=Math.min(84,Math.max(16,lx/W*100))+'%';d.style.top=(ly/H*100)+'%';
+  d.style.left=Math.min(84,Math.max(16,(lx*cam.z+cam.ox)/W*100))+'%';d.style.top=((ly*cam.z+cam.oy)/H*100)+'%';
   stage.appendChild(d);setTimeout(()=>d.remove(),1750);
 }
 // the player's lines go to Amr's chatbox; the last three stay visible
-let amrTalk=0,typer=null;
+let amrTalk=0,typer=null,lastSaid='';
+const pickNew=list=>{let x,n=0;do{x=pick(list);}while(x===lastSaid&&list.length>1&&++n<6);return x;};
+function react(list,p){if(Math.random()<p&&amrTalk<=.3)say(pickNew(list));}
 const chatLog=document.getElementById('chatLog');
 const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function say(text){
-  amrTalk=1.2;
+  amrTalk=1.2;lastSaid=text;
   if(typer){clearInterval(typer.id);typer.li.textContent=typer.text;typer=null;}
   const li=document.createElement('li');chatLog.appendChild(li);
   while(chatLog.children.length>3)chatLog.firstElementChild.remove();
@@ -615,48 +942,59 @@ function fit(){
 new ResizeObserver(fit).observe(document.getElementById('wrap'));
 
 const startOv=document.getElementById('startOv'),pauseOv=document.getElementById('pauseOv'),overOv=document.getElementById('overOv');
-function ensureAudio(){try{if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();}catch(e){}}
 function start(){
   ensureAudio();reset();G.running=true;
   document.querySelectorAll('.quip').forEach(q=>q.remove());
-  startOv.hidden=true;overOv.hidden=true;pauseOv.hidden=true;
+  startOv.hidden=true;overOv.hidden=true;pauseOv.hidden=true;hideMiniUI();
   chatLog.textContent='';say('أكشن. محدش يقوم من الترابيزة.');
+  playLoop();
 }
 function gameOver(){
-  G.running=false;G.over=true;sfx.over();
+  G.running=false;G.over=true;G.mini=null;hideMiniUI();
+  document.getElementById('teaFlag').hidden=true;
   const m=Math.floor(G.t);
-  const newBest=m>best;if(newBest){best=m;try{localStorage.setItem('alabyad-qaada-best',String(best));}catch(e){}}
+  G.newBest=m>best;if(G.newBest){best=m;try{localStorage.setItem('alabyad-qaada-best',String(best));}catch(e){}}
   showBest();
-  const last=G.last||{id:'ezz',key:'ezz'};
-  setTimeout(()=>{
-    portrait(document.getElementById('overPortrait'),last.id);
-    document.getElementById('overName').textContent=FR.find(f=>f.id===last.id).name;
-    document.getElementById('overQuote').textContent='«'+EXCUSE[last.key]+'»';
-    document.getElementById('overScore').textContent='القعدة استمرت '+dur(m)+(newBest&&m>0?' (رقم قياسي)':'');
-    document.getElementById('overStats').textContent=G.saves?('رجّعت حد للترابيزة '+(G.saves===1?'مرة واحدة':G.saves===2?'مرتين':G.saves<=10?ar(G.saves)+' مرات':ar(G.saves)+' مرة')+'.'):'ولا مرة رجّعت حد. ولا مرة.';
-    document.getElementById('overVerdict').textContent='هادي: '+verdict(m);
-    overOv.hidden=false;document.getElementById('againBtn').focus();
-  },800);
+  say(pickNew(AMR.over));
+  // pan to the oud player for the last two bars; a tap skips to the results
+  const played=playOutro();
+  if(!played)sfx.bwomp();
+  G.outro={t:0,len:played?OUTRO_LEN:3,shown:false};
 }
-function setPause(p){if(!G.running)return;G.paused=p;pauseOv.hidden=!p;if(p)document.getElementById('resumeBtn').focus();}
+const times=n=>n===1?'مرة واحدة':n===2?'مرتين':n<=10?ar(n)+' مرات':ar(n)+' مرة';
+const fights=n=>n===1?'خناقة واحدة':n===2?'خناقتين':n<=10?ar(n)+' خناقات':ar(n)+' خناقة';
+function showOverCard(){
+  if(!G.outro||G.outro.shown)return;G.outro.shown=true;
+  const m=Math.floor(G.t),last=G.last||{id:'ezz',key:'ezz'};
+  portrait(document.getElementById('overPortrait'),last.id);
+  document.getElementById('overName').textContent=FR.find(f=>f.id===last.id).name;
+  document.getElementById('overQuote').textContent='«'+EXCUSE[last.key]+'»';
+  document.getElementById('overScore').textContent='القعدة استمرت '+dur(m)+(G.newBest&&m>0?' (رقم قياسي)':'');
+  document.getElementById('overStats').textContent=(G.saves?'رجّعت حد للترابيزة '+times(G.saves)+'.':'ولا مرة رجّعت حد. ولا مرة.')+(G.fightsWon?' وفضّيت '+fights(G.fightsWon)+'.':'');
+  document.getElementById('overVerdict').textContent='هادي: '+verdict(m);
+  overOv.hidden=false;document.getElementById('againBtn').focus();
+}
+function setPause(p){if(!G.running)return;G.paused=p;pauseOv.hidden=!p;if(actx)(p?actx.suspend():actx.resume()).catch(()=>{});if(p)document.getElementById('resumeBtn').focus();}
 
 document.getElementById('startBtn').addEventListener('click',start);
 document.getElementById('againBtn').addEventListener('click',start);
 document.getElementById('resumeBtn').addEventListener('click',()=>setPause(false));
 document.getElementById('pauseBtn').addEventListener('click',()=>setPause(!G.paused));
-document.getElementById('muteBtn').addEventListener('click',e=>{muted=!muted;e.currentTarget.textContent='صوت: '+(muted?'لأ':'آه');});
+document.getElementById('muteBtn').addEventListener('click',e=>{muted=!muted;if(master)master.gain.value=muted?0:1;e.currentTarget.textContent='صوت: '+(muted?'لأ':'آه');});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)setPause(true);});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p')setPause(!G.paused);});
 
 const hit=(x,y,rx,ry,rw,rh)=>x>=rx&&x<=rx+rw&&y>=ry&&y<=ry+rh;
 cv.addEventListener('pointerdown',e=>{
+  if(G.outro&&!G.outro.shown){showOverCard();return;}
   if(!G.running||G.paused)return;
   const r=cv.getBoundingClientRect(),lx=(e.clientX-r.left)/r.width*W,ly=(e.clientY-r.top)/r.height*H;
+  if(G.mini){miniTap(lx,ly);return;}
   const s=G.shaaban;
   if(s&&s.st==='in'&&hit(lx,ly,s.x-9,28,18,32)){s.st='out';say('المكان محجوز يا صاحبي');setTimeout(()=>quip('ماشي يا صاحبي',Math.min(150,s.x+10),40,'npc'),600);sfx.save();return;}
   for(const w of G.walkers){
     if(!hit(lx,ly,w.x-10,88,22,32))continue;
-    if(w.type==='farag'&&!w.served){w.served=true;G.slow=5;quip('الشاي يا رجالة',w.x,90,'npc');sfx.tea();return;}
+    if(w.type==='farag'&&!w.served){w.served=true;G.slow=5;quip('الشاي يا رجالة',w.x,90,'npc');sfx.tea();react(AMR.tea,1);return;}
     if(w.type==='vendor'&&w.st!=='out'){w.st='out';say('مش عايزين حاجة يا عم!');const f=fr('fady');if(f.state==='distracted'&&f.kind==='vendor'){f.state='seated';f.cool=1.2;G.saves++;}sfx.save();return;}
   }
   let bestF=null,bd=1e9;
@@ -680,7 +1018,7 @@ reset();showBest();buildBg();fit();
 let lastT=performance.now(),clock=0,shown=-1;
 function tick(now){
   const dt=Math.min(.05,(now-lastT)/1000);lastT=now;clock+=dt;
-  update(dt);render(clock);
+  update(dt);moveCam(dt);render(clock);
   const m=Math.floor(G.t);if(m!==shown){shown=m;document.getElementById('time').textContent=ar(m);}
 }
 function frame(now){tick(now);requestAnimationFrame(frame);}
