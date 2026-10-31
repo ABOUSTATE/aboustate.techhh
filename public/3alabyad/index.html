@@ -42,6 +42,15 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;fl
 .icon-btn{font:inherit;font-size:14px;background:var(--panel);color:var(--cream);border:2px solid #000;box-shadow:3px 3px 0 #000;padding:2px 10px;cursor:pointer}
 .icon-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
 main{flex:1;min-height:0;display:grid;place-items:center}
+#cab{display:flex;flex-direction:column;gap:10px}
+.chat{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:3px solid #000;box-shadow:6px 6px 0 #000;padding:8px 10px;box-sizing:border-box;margin-inline-end:6px}
+.chat .pix{width:48px;height:45px;background:#1d2b29}
+.chat-body{flex:1;min-width:0}
+.chat-name{font-family:var(--display);font-size:16px;line-height:1.2;color:var(--neon)}
+.chat-name small{font-family:var(--body);font-size:12px;color:var(--muted);margin-inline-start:6px}
+.chat ol{list-style:none;margin:2px 0 0;padding:0;min-height:calc(3 * 1.45em);font-size:15px;line-height:1.45}
+.chat li{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.42}
+.chat li:last-child{opacity:1;font-weight:700}
 #stage{position:relative;box-shadow:0 0 0 3px #000,8px 8px 0 3px rgba(0,0,0,.55);touch-action:manipulation;user-select:none;-webkit-user-select:none}
 #game{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;cursor:pointer}
 footer{color:var(--muted);font-size:12px;text-align:center}
@@ -97,6 +106,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 </header>
 
 <main id="wrap">
+  <div id="cab">
   <div id="stage">
     <canvas id="game" width="160" height="120" aria-label="ترابيزة القهوة"></canvas>
     <div class="sign" aria-hidden="true">عالابيض</div>
@@ -107,6 +117,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         <h1>عالابيض<em>القعدة</em></h1>
         <p>كل شوية واحد من صحابك هيقوم. دوس عليه قبل ما البار يتملي. لو الترابيزة فضيت، خسرت.</p>
         <div class="legend" id="legend"></div>
+        <p>إنت عمرو قرملاوي، المخرج. كلامك بيظهر في الشات تحت.</p>
         <p class="extras">عم فرج معاه شاي: دوس عليه والوقت يهدى. البياع رايح لفادي: ابعده. شعبان مش صاحبنا: متخليهوش يقعد في كرسي فاضي.</p>
         <button class="btn" id="startBtn" type="button">ابدأ القعدة</button>
       </div>
@@ -135,6 +146,14 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       </div>
     </div>
   </div>
+  <div class="chat" id="chat">
+    <canvas id="amrFace" width="17" height="16" class="pix"></canvas>
+    <div class="chat-body">
+      <div class="chat-name">عمرو قرملاوي<small>المخرج</small></div>
+      <ol id="chatLog" aria-live="polite"><li>جاهزين؟ أول ما تدوس ابدأ هقول أكشن.</li></ol>
+    </div>
+  </div>
+  </div>
 </main>
 
 <footer>نموذج أولي. الشلة والبياع متصممين من صور الكاست، وعم فرج وشعبان لسه مؤقتين.</footer>
@@ -162,6 +181,8 @@ const LOOKS={
     shirt:'#9c9fa3',shirtD:'#808387',letters:'#2a3550',wide:true},
   hady:{skin:'#c99070',skinD:'#a8714f',hair:'#1a1412',hairStyle:'beanie',cap:'#17171b',capD:'#2e2e36',beard:true,must:'#1a1412',
     glasses:{frame:'#0e0e10'},shirt:'#b8c8b2',shirtD:'#97a891',pattern:'#eef3ea',chain:'#d8dce2'},
+  amr:{skin:'#c08a62',skinD:'#9e6c47',hair:'#121012',hairStyle:'capFront',cap:'#3a3c44',capD:'#2a2b31',beard:true,bigBeard:true,must:'#121012',
+    glasses:{frame:'#8d929a'},shirt:'#161618',shirtD:'#2a2a2e',phones:true,pants:'#1f2128'},
   farag:{skin:'#a8704a',skinD:'#87553a',hair:'#bdb6aa',hairStyle:'bald',must:'#d8d2c6',shirt:'#ddd5c2',shirtD:'#bdb39b',apron:'#6e3f26'},
   shaaban:{skin:'#c08053',skinD:'#9c633e',hair:P.hair,hairStyle:'cap',cap:'#c2412f',shirt:'#e7b53c',shirtD:'#c4922a',dots:'#c2412f',chain:'#f2cf55'},
   vendor:{skin:'#9c6a48',skinD:'#7d5136',hair:'#1a1412',hairStyle:'capBack',cap:'#a6d8cd',capD:'#79ada2',beard:true,must:'#1a1412',
@@ -190,6 +211,11 @@ function hair(L,x,y){
     rects([[0,-2,9,3]],x,y,L.cap,P.k);
     R(x,y,9,1,L.capD);R(x+3,y-1,3,1,Hc);R(x+4,y-2,1,1,L.capD);
   }
+  else if(s==='capFront'){ // dad cap with a small DND logo
+    R(x,y+2,1,2,Hc);R(x+8,y+2,1,2,Hc);
+    rects([[0,-2,9,3]],x,y,L.cap,P.k);rects([[-1,1,11,1]],x,y,L.capD,P.k);
+    R(x+2,y-1,1,1,'#e6e6e6');R(x+4,y-1,1,1,'#e6e6e6');R(x+6,y-1,1,1,'#e6e6e6');
+  }
   else if(s==='beanie'){R(x,y+2,1,2,Hc);R(x+8,y+2,1,2,Hc);rects([[0,-2,9,4]],x,y,L.cap,P.k,1);R(x,y+1,9,1,L.capD);}
   else if(s==='fade'){rects([[1,-2,7,1],[0,-1,9,2]],x,y,Hc,P.k,1);[[2,-2],[5,-2],[1,0],[4,-1],[7,0]].forEach(([a,b])=>R(x+a,y+b,1,1,'#3a2e28'));R(x,y+1,1,2,'#4a3a30');R(x+8,y+1,1,2,'#4a3a30');}
   else if(s==='bigcurly'){rects([[-2,-3,13,4],[-1,-4,3,1],[3,-4,3,1],[7,-4,3,1],[-2,1,3,4],[8,1,3,4]],x,y,Hc,P.k,1);[[0,-3],[4,-2],[8,-3],[2,-1],[6,0],[-2,2],[9,3],[10,1]].forEach(([a,b])=>R(x+a,y+b,1,1,'#3b2c24'));}
@@ -200,6 +226,7 @@ function head(L,x,y,o){
   shape(HEAD,x,y,L.skin);
   R(x,y+5,1,1,L.skinD);R(x+8,y+5,1,1,L.skinD);R(x+4,y+5,1,1,L.skinD);
   if(L.beard) rects([[0,4,1,4],[8,4,1,4],[1,6,1,3],[7,6,1,3],[2,8,5,1]],x,y,L.hair);
+  if(L.bigBeard) rects([[2,9,5,1],[3,10,3,1]],x,y,L.hair,P.k);
   hair(L,x,y);
   if(L.must) R(x+2,y+6,5,1,L.must);
   const shut=o.closed||o.blink,ey=y+4+(o.down?1:0);
@@ -245,6 +272,8 @@ function arms(L,x,y,o){
   if(p==='phone'){R(x+3,y+12,3,4,P.k);R(x+4,y+13,1,2,(t*4|0)%2?'#9fe2ff':'#6cc6f0');R(x+2,y+14,1,2,L.skin);R(x+6,y+14,1,2,L.skin);if(L.bracelet)R(x+1,y+15,1,1,'#d8dce2');}
   else if(p==='call'){rects([[9,7,2,4]],x,y,sleeve,P.k);rects([[8,1,2,6]],x,y,'#26242c',P.k);R(x+9,y+6,2,2,L.skin);if((t*6|0)%2){R(x+11,y,1,1,'#fff');R(x+12,y+2,1,1,'#fff');}}
   else if(p==='talk'){const w=Math.round(Math.sin(t*10)*1.5);rects([[-5,4,2,7]],x,y,sleeve,P.k);rects([[-7+w,1,3,3]],x,y,L.skin,P.k);}
+  else if(p==='crossed'){rects([[-1,13,11,2]],x,y,L.skin,P.k);R(x-1,y+13,2,2,sleeve);R(x+8,y+13,2,2,sleeve);}
+  else if(p==='point'){rects([[-7,12,7,2]],x,y,sleeve,P.k);rects([[-10,12,3,2]],x,y,L.skin,P.k);}
   else if(p==='money'){rects([[-1,12,4,2]],x,y,'#6bb36b',P.k);}
   else if(p==='tray'){R(x+9,y+12,2,2,L.skin);rects([[7,11,9,1]],x,y,'#c9c9cf',P.k);if(!o.empty){rects([[8,8,2,3],[13,8,2,3]],x,y,'#c4692a',P.k);R(x+8,y+8,2,1,'#f3e6c8');R(x+13,y+8,2,1,'#f3e6c8');}}
   else if(p==='box'){rects([[7,11,7,5]],x,y,'#b07a3c',P.k);R(x+9,y+13,3,1,'#f2cf55');R(x+6,y+13,2,2,L.skin);}
@@ -254,6 +283,7 @@ function person(key,x,y,o={}){
   if(o.stand) legs(L,x,y,o.frame||0);
   torso(L,x,y,o.stand);
   head(L,x,y,o);
+  if(L.phones){R(x-1,y+9,11,1,'#1a1b1e');rects([[-2,8,2,3],[9,8,2,3]],x,y,'#25272b',P.k);R(x-2,y+8,1,1,'#4a4d54');R(x+9,y+8,1,1,'#4a4d54');}
   arms(L,x,y,o);
 }
 
@@ -381,7 +411,7 @@ const TAP={
   ezz:['هات التليفون ده!','ركّز معانا يا عز','مين دي اللي بتضحكلها؟','سيب السكرول وتعالى'],
   fady:['اقفل يا فادي','قولها إنك في اجتماع','إنت اللي بتقرر… صح؟','ابعتلها "مشغول" وخلاص'],
   fadyVendor:['حط الفلوس في جيبك','ده بيضحك عليك يا فادي','إنت مش محتاج ده'],
-  hady:['هلا يما… خمس دقايق','قولها إنك مع الشباب','خمس دقايق بس يا هادي'],
+  hady:['قولها خمس دقايق','قولها إنك مع الشباب','خمس دقايق بس يا هادي'],
   shohdy:['كفاية يا شهدي','اقطع!','مش وقته يا سبيلبرج','الفيلم ده في دماغك بس']
 };
 const LEAVE={ezz:'ثانية واحدة… راجع',fady:'حاضر حاضر، جايلك',fadyVendor:'استنى يا عم أشوف!',hady:'طالع يما',shohdy:'رايح ألحق اللوكيشن'};
@@ -446,11 +476,12 @@ function leave(f){
 function tapFriend(f){
   const key=f.kind==='vendor'?'fadyVendor':f.id;
   f.state='seated';f.cool=1.2;G.saves++;
-  quip(pick(TAP[key]),f.seat,38,'us');sfx.save();
+  say(pick(TAP[key]));sfx.save();
 }
 
 function update(dt){
   for(const f of G.friends){f.blink-=dt;if(f.blink<-0.14)f.blink=2+Math.random()*4;}
+  amrTalk=Math.max(0,amrTalk-dt);
   if(!G.running||G.paused)return;
   G.t+=dt;G.slow=Math.max(0,G.slow-dt);
   const dts=dt*(G.slow>0?0.35:1);
@@ -538,6 +569,11 @@ function render(t){
     if(w.type==='farag')person('farag',w.x-4,93,{stand:true,frame:fr2,pose:'tray',empty:w.served,expr:'normal',t});
     else person('vendor',w.x-4,93,{stand:true,frame:w.st==='wait'?0:fr2,pose:'box',expr:'smile',open:w.st==='wait'&&(t*6|0)%2,t});
   }
+  // the director behind his camera, front right; he points at whoever he's talking to
+  rects([[128,96,9,6]],0,0,'#1b1c1f',P.k);rects([[124,97,4,4]],0,0,'#2b2d31',P.k);R(124,98,1,2,'#5c7fa0');
+  if((t*2|0)%2)R(135,97,1,1,'#e0533f');
+  R(132,103,1,15,'#3a3c40');R(129,108,1,10,'#3a3c40');R(135,108,1,10,'#3a3c40');R(129,107,7,1,'#3a3c40');
+  person('amr',143,93,{stand:true,pose:amrTalk>0?'point':'crossed',open:amrTalk>0&&(t*8|0)%2,expr:'normal',t});
   for(const f of G.friends)if(f.state==='distracted'&&!f.seatTaken)bubble(f.seat-7,26,f.kind==='vendor'?'money':f.icon,f.p,t);
   if(G.slow>0){g.globalAlpha=.12;R(0,0,W,H,'#ffb347');g.globalAlpha=1;}
 }
@@ -549,6 +585,18 @@ function quip(text,lx,ly,cls){
   d.style.left=Math.min(84,Math.max(16,lx/W*100))+'%';d.style.top=(ly/H*100)+'%';
   stage.appendChild(d);setTimeout(()=>d.remove(),1750);
 }
+// the player's lines go to Amr's chatbox; the last three stay visible
+let amrTalk=0,typer=null;
+const chatLog=document.getElementById('chatLog');
+const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function say(text){
+  amrTalk=1.2;
+  if(typer){clearInterval(typer.id);typer.li.textContent=typer.text;typer=null;}
+  const li=document.createElement('li');chatLog.appendChild(li);
+  while(chatLog.children.length>3)chatLog.firstElementChild.remove();
+  if(calm){li.textContent=text;return;}
+  let i=0;typer={li,text,id:setInterval(()=>{li.textContent=text.slice(0,++i);if(i>=text.length){clearInterval(typer.id);typer=null;}},22)};
+}
 function portrait(canvas,id){
   const o=g;g=canvas.getContext('2d');g.clearRect(0,0,canvas.width,canvas.height);
   person(id,4,4,{expr:IDLE_EXPR[id],t:0});g=o;
@@ -558,9 +606,11 @@ try{best=parseInt(localStorage.getItem('alabyad-qaada-best')||'0',10)||0;}catch(
 function showBest(){document.getElementById('best').textContent=best?'أحسن قعدة: '+dur(best):'';}
 function fit(){
   const wrap=document.getElementById('wrap');
-  const aw=wrap.clientWidth,ah=wrap.clientHeight;
+  const chat=document.getElementById('chat');
+  const aw=wrap.clientWidth-6,ah=wrap.clientHeight-chat.offsetHeight-16;
   let s=Math.min(aw/W,ah/H);if(s>=3)s=Math.floor(s);
   stage.style.setProperty('--s',s);stage.style.width=Math.floor(W*s)+'px';stage.style.height=Math.floor(H*s)+'px';
+  chat.style.width=Math.floor(W*s)+'px';
 }
 new ResizeObserver(fit).observe(document.getElementById('wrap'));
 
@@ -570,6 +620,7 @@ function start(){
   ensureAudio();reset();G.running=true;
   document.querySelectorAll('.quip').forEach(q=>q.remove());
   startOv.hidden=true;overOv.hidden=true;pauseOv.hidden=true;
+  chatLog.textContent='';say('أكشن. محدش يقوم من الترابيزة.');
 }
 function gameOver(){
   G.running=false;G.over=true;sfx.over();
@@ -602,11 +653,11 @@ cv.addEventListener('pointerdown',e=>{
   if(!G.running||G.paused)return;
   const r=cv.getBoundingClientRect(),lx=(e.clientX-r.left)/r.width*W,ly=(e.clientY-r.top)/r.height*H;
   const s=G.shaaban;
-  if(s&&s.st==='in'&&hit(lx,ly,s.x-9,28,18,32)){s.st='out';quip('المكان محجوز يا صاحبي',s.x,34,'us');setTimeout(()=>quip('ماشي يا صاحبي',Math.min(150,s.x+10),40,'npc'),600);sfx.save();return;}
+  if(s&&s.st==='in'&&hit(lx,ly,s.x-9,28,18,32)){s.st='out';say('المكان محجوز يا صاحبي');setTimeout(()=>quip('ماشي يا صاحبي',Math.min(150,s.x+10),40,'npc'),600);sfx.save();return;}
   for(const w of G.walkers){
     if(!hit(lx,ly,w.x-10,88,22,32))continue;
     if(w.type==='farag'&&!w.served){w.served=true;G.slow=5;quip('الشاي يا رجالة',w.x,90,'npc');sfx.tea();return;}
-    if(w.type==='vendor'&&w.st!=='out'){w.st='out';quip('مش عايزين حاجة يا عم!',w.x+8,90,'us');const f=fr('fady');if(f.state==='distracted'&&f.kind==='vendor'){f.state='seated';f.cool=1.2;G.saves++;}sfx.save();return;}
+    if(w.type==='vendor'&&w.st!=='out'){w.st='out';say('مش عايزين حاجة يا عم!');const f=fr('fady');if(f.state==='distracted'&&f.kind==='vendor'){f.state='seated';f.cool=1.2;G.saves++;}sfx.save();return;}
   }
   let bestF=null,bd=1e9;
   for(const f of G.friends){if(f.state!=='distracted')continue;if(hit(lx,ly,f.seat-13,17,26,47)){const d=Math.abs(lx-f.seat);if(d<bd){bd=d;bestF=f;}}}
@@ -621,6 +672,7 @@ for(const f of FR){
   d.append(c,tx);legend.appendChild(d);
 }
 portrait(document.getElementById('hadyMini'),'hady');
+portrait(document.getElementById('amrFace'),'amr');
 
 /* boot */
 reset();showBest();buildBg();fit();
