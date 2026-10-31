@@ -29,6 +29,10 @@
       "destination": "/anawdameery/index.html"
     },
     {
+      "source": "/3alabyad/",
+      "destination": "/3alabyad/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
@@ -47,6 +51,11 @@
     {
       "source": "/anawdameery",
       "destination": "/anawdameery/",
+      "permanent": false
+    },
+    {
+      "source": "/3alabyad",
+      "destination": "/3alabyad/",
       "permanent": false
     }
   ],
