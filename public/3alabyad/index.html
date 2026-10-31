@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="theme-color" content="#0d1918" />
 <title>قعدة عالابيض</title>
@@ -24,7 +24,7 @@
   --body:"Baloo Bhaijaan 2","Segoe UI",Tahoma,sans-serif;
   color-scheme:dark;
 }
-html,body{height:100%}
+html,body{height:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 [hidden]{display:none!important}
 body{direction:rtl;
   box-sizing:border-box;margin:0;background:var(--ink);color:var(--cream);font-family:var(--body);
@@ -1222,6 +1222,12 @@ document.getElementById('muteBtn').addEventListener('click',e=>{muted=!muted;if(
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&!menuShown)setPause(true);});
 document.addEventListener('keydown',e=>{if(menuShown||!giftOv.hidden)return;if(e.key==='Escape'||e.key==='p')setPause(!G.paused);});
 
+// fast repeated taps are the game, so phones must not treat them as double-tap or pinch zoom
+cv.addEventListener('touchend',e=>e.preventDefault(),{passive:false});
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+let lastTouch=0;
+document.addEventListener('touchend',e=>{const n=Date.now();if(n-lastTouch<350&&!e.target.closest('button'))e.preventDefault();lastTouch=n;},{passive:false});
 const hit=(x,y,rx,ry,rw,rh)=>x>=rx&&x<=rx+rw&&y>=ry&&y<=ry+rh;
 cv.addEventListener('pointerdown',e=>{
   if(G.outro&&!G.outro.shown){showOverCard();return;}
