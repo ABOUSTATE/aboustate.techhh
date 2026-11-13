@@ -54,19 +54,30 @@
     pointer-events:none}
   body[data-logo="off"] .logo{display:none}
 
+  /* --k shrinks the clock when the overtime "+" makes it one character wider */
+  body{--k:1}
+  body.over{--k:.86}
   .clock{font-family:Anton,Impact,sans-serif;line-height:1;white-space:nowrap;direction:ltr;
-    font-size:min(30vw,50vh);color:var(--gold);
+    font-size:calc(min(30vw,50vh) * var(--k));color:var(--gold);
     -webkit-text-stroke:.05em var(--ink);paint-order:stroke fill;
     text-shadow:
       .012em .012em 0 var(--ink), .024em .024em 0 var(--ink), .036em .036em 0 var(--ink),
       .048em .048em 0 var(--ink), .06em .06em 0 var(--ink), .072em .072em 0 var(--ink),
       .084em .084em 0 var(--brick), .096em .096em 0 var(--brick), .108em .108em 0 var(--brick);
     transition:color .25s, transform .25s; transform-origin:50% 55%}
-  body[data-logo="off"] .clock{font-size:min(34vw,64vh)}
+  body[data-logo="off"] .clock{font-size:calc(min(34vw,64vh) * var(--k))}
   .clock .ch{display:inline-block;width:.5em;text-align:center}
   .clock .ch.sep{width:.26em;transform:translateY(-.04em)}
   .clock .ch.sep.blink{opacity:.25}
+  .clock .ch.plus{width:.36em}
   body[data-warn="on"][data-state="running"].final .clock{color:var(--cream);animation:beat 1s ease-out infinite}
+
+  /* overtime: keeps counting past zero, shown as extra time that doesn't count */
+  body.over .clock{color:var(--cream)}
+  body.over .bar{display:none}
+  .overtag{display:none;font:900 min(4.4vw,5.4vh)/1.3 Cairo,sans-serif;color:var(--gold);background:var(--ink);
+    padding:.15em .9em;border-radius:999px;border:.5vmin solid var(--cream);box-shadow:.6vmin .6vmin 0 var(--brick)}
+  body.over .overtag{display:block}
   @keyframes beat{0%{transform:scale(1.06)}35%{transform:scale(1)}}
 
   .bar{width:min(78vw,140vh);height:3.2vmin;min-height:14px;border-radius:999px;background:var(--cream);
@@ -78,14 +89,15 @@
   /* time's up */
   .done{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;
     opacity:0;transition:opacity .2s}
-  body[data-state="done"] .done{opacity:1}
-  body[data-state="done"] .stage{opacity:.18;filter:blur(.6vmin)}
+  body[data-state="done"] .done, body.timesup .done{opacity:1}
+  body[data-state="done"] .stage, body.timesup .stage{opacity:.18;filter:blur(.6vmin)}
+  .stage{transition:opacity .3s, filter .3s}
   .done span{font-family:Cairo,sans-serif;font-weight:900;font-size:min(16vw,26vh);line-height:1.1;color:var(--gold);
     -webkit-text-stroke:.06em var(--ink);paint-order:stroke fill;
     text-shadow:.03em .03em 0 var(--ink),.06em .06em 0 var(--ink),.08em .08em 0 var(--brick),.1em .1em 0 var(--brick);
     animation:shake .5s ease-in-out infinite alternate}
   @keyframes shake{from{transform:rotate(-3deg) scale(1)}to{transform:rotate(3deg) scale(1.05)}}
-  body[data-state="done"] .bg{animation:flash .5s steps(1) 6}
+  body[data-state="done"] .bg, body.timesup .bg{animation:flash .5s steps(1) 6}
   @keyframes flash{50%{filter:brightness(1.35) saturate(1.2)}}
 
   /* ---------- dock ---------- */
@@ -140,8 +152,8 @@
   .close{width:46px;height:46px;border-radius:50%;border:2.5px solid var(--ink);font-size:24px;font-weight:700;background:#fff}
   .note{margin:18px 0 0;font-size:13px;line-height:1.5;color:#6b4c3e}
 
-  @media (orientation:portrait){ .clock{font-size:min(38vw,40vh)} }
-  @media (max-height:520px){ .logo{height:20vmin} .clock{font-size:min(28vw,46vh)} }
+  @media (orientation:portrait){ .clock{font-size:calc(min(38vw,40vh) * var(--k))} }
+  @media (max-height:520px){ .logo{height:20vmin} .clock{font-size:calc(min(28vw,46vh) * var(--k))} }
 </style>
 </head>
 <body data-state="idle" data-ui="shown" data-bg="burst" data-logo="on" data-bar="on" data-warn="on" data-mode="down">
@@ -151,6 +163,7 @@
     <img class="logo" src="/anawdameery/logo.png" alt="أنا وضميري" />
     <div class="clock" id="clock" aria-live="off"></div>
     <div class="bar"><i id="fill"></i></div>
+    <div class="overtag" dir="rtl">وقت إضافي · مش محسوب</div>
   </main>
 
   <div class="done"><span dir="rtl">خلص الوقت!</span></div>
@@ -198,6 +211,9 @@
       <label>Background
         <div class="seg" data-key="bg"><button data-v="burst">Burst</button><button data-v="orange">Orange</button><button data-v="ink">Black</button></div>
       </label>
+      <label id="over-row">After zero
+        <div class="seg" data-key="over"><button data-v="stop">Stop</button><button data-v="on">Overtime</button></div>
+      </label>
       <label>Logo
         <div class="seg" data-key="logo"><button data-v="on">Show</button><button data-v="off">Hide</button></div>
       </label>
@@ -224,14 +240,14 @@
   const body = document.body;
   const PRESETS = [30, 60, 120, 180, 300, 600, 900, 1800];
   const KEY = "anawdameery-timer";
-  const DEFAULTS = { mode: "down", dur: 180, bg: "burst", logo: "on", bar: "on", warn: "on", sound: "off" };
+  const DEFAULTS = { mode: "down", dur: 180, bg: "burst", logo: "on", bar: "on", warn: "on", sound: "off", over: "on" };
 
   let cfg = { ...DEFAULTS };
   try { Object.assign(cfg, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch {} };
 
   // ---- timer state: elapsed time is measured, never counted, so it can't drift ----
-  let acc = 0, t0 = 0, running = false, raf = 0, lastShown = "";
+  let acc = 0, t0 = 0, running = false, raf = 0, lastShown = "", overHit = false, timesUpTimer = 0;
   const elapsed = () => acc + (running ? performance.now() - t0 : 0);
 
   const pad = (n) => String(n).padStart(2, "0");
@@ -243,8 +259,15 @@
   const clock = $("#clock"), fill = $("#fill");
   function render() {
     const ms = elapsed();
-    let sec, frac;
-    if (cfg.mode === "down") {
+    let sec, frac, sign = "";
+    if (cfg.mode === "down" && cfg.over === "on" && ms >= cfg.dur * 1000) {
+      // overtime: the clock keeps going past zero as +MM:SS
+      if (!overHit && running) timesUp();
+      sec = Math.floor((ms - cfg.dur * 1000) / 1000);
+      sign = "+";
+      frac = 0;
+      body.classList.remove("final");
+    } else if (cfg.mode === "down") {
       const left = Math.max(0, cfg.dur * 1000 - ms);
       sec = Math.ceil(left / 1000);
       frac = cfg.dur ? left / (cfg.dur * 1000) : 0;
@@ -255,13 +278,15 @@
       frac = 1;
       body.classList.remove("final");
     }
-    const txt = fmt(sec);
+    body.classList.toggle("over", sign === "+");
+    const txt = sign + fmt(sec);
     // blink the colon while paused mid-run
     const blink = !running && ms > 0 && body.dataset.state !== "done" && Math.floor(performance.now() / 600) % 2 === 0;
     const key = txt + blink;
     if (key !== lastShown) {
       lastShown = key;
-      clock.innerHTML = [...txt].map((c) => `<span class="ch${c === ":" ? " sep" + (blink ? " blink" : "") : ""}">${c}</span>`).join("");
+      clock.innerHTML = [...txt].map((c) =>
+        `<span class="ch${c === ":" ? " sep" + (blink ? " blink" : "") : c === "+" ? " plus" : ""}">${c}</span>`).join("");
     }
     fill.style.transform = `scaleX(${frac})`;
   }
@@ -277,7 +302,7 @@
 
   function start() {
     if (body.dataset.state === "done") reset();
-    if (cfg.mode === "down" && elapsed() >= cfg.dur * 1000) return;
+    if (cfg.mode === "down" && cfg.over !== "on" && elapsed() >= cfg.dur * 1000) return;
     unlockAudio();
     t0 = performance.now(); running = true;
     setState("running"); wake(true); bump();
@@ -289,7 +314,15 @@
   }
   function reset() {
     acc = 0; running = false; stopAlarm();
+    overHit = false; clearTimeout(timesUpTimer); body.classList.remove("timesup");
     setState("idle"); wake(false); render();
+  }
+  // overtime: flash "time's up" and ring, then keep counting with the controls still hidden
+  function timesUp() {
+    overHit = true;
+    if (cfg.sound === "on") alarm();
+    body.classList.add("timesup");
+    timesUpTimer = setTimeout(() => body.classList.remove("timesup"), 2600);
   }
   function finish() {
     acc = cfg.dur * 1000; running = false;
@@ -378,6 +411,7 @@
       seg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === draft[seg.dataset.key]));
     });
     $("#dur-block").style.display = draft.mode === "up" ? "none" : "";
+    $("#over-row").style.display = draft.mode === "up" ? "none" : "";
     $("#mm").firstChild.nodeValue = pad(Math.floor(draft.dur / 60));
     $("#ss").firstChild.nodeValue = pad(draft.dur % 60);
     document.querySelectorAll("#presets .chip").forEach((c) => c.classList.toggle("on", +c.dataset.v === draft.dur));
